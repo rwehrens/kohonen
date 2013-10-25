@@ -1,0 +1,17 @@
+citHeader("To cite the kohonen package publications use:")
+
+citEntry(entry="Article",
+         title = "Self- and Super-organising Maps in R: the kohonen package",
+         author = personList(as.person("R. Wehrens"), 
+                             as.person("L.M.C. Buydens")),
+         year         = 2007,
+	 journal      = "J. Stat. Softw.",
+         volume         = "21",
+	 number		= "5",
+         url          = "http://www.jstatsoft.org/v21/i05",
+         
+         textVersion = 
+         paste("R. Wehrens and L.M.C. Buydens,", 
+               "Self- and Super-organising Maps in R: the kohonen package",
+               "J. Stat. Softw., 21(5), 2007")
+)

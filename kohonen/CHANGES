@@ -1,0 +1,101 @@
+The kohonen package version 2.0.0 is described in 
+R. Wehrens and L.M.C. Buydens, J. Stat. Softw. 21(5), 2007
+
+Changes in version 2.0.1:
+  - fixed a bug in unit.distances: for rectangular maps the toroidal
+    argument was ignored. Updated the corresponding example as well.
+  - added an argument 'n.hood' to functions som, xyf, bdk and
+    supersom, so that the user can decide what distance measure to use
+    when calculating distances between units. Useful to compare the
+    results with other som implementations.
+  - specification of radius as (start, stop), similar to alpha. This
+    gives better control (suggestion of Hadley Wickham).
+  - more sanity checking in functions som, xyf, bdk and supersom 
+    (suggestion of Hadley Wickham).
+  - added the J. Stat. Softw. paper and a CITATION file to the distribution.
+
+Changes in version 2.0.2:
+  - changed the 'predict.kohonen' function to take account of a change
+    in the behaviour of 'aggregate' in R version 2.6.0 and later
+
+Changes in version 2.0.3:
+  - removed a bug in supersom, introduced in 2.0.1 when checking if
+    the data are numeric.
+  - added an example for supersom.
+  - removed a bug in plot.kohcounts, arising when empty units are
+    present
+  - updated man files for methods 'plot', 'predict', and 'map'
+
+Changes in version 2.0.4:
+  - introduction of tricolor function
+  - prediction of multiple layers
+  - Y in function xyf now can also be a factor
+  - any element of the data argument in function supersom can now also
+    be a factor
+  - added new prediction examples for som, xyf and supersom
+  - uniform output of som, xyf and supersom functions
+
+Changes in version 2.0.5:
+  - Changed title of the "quality" type plotting function to
+    "Distance" rather than "Similarity"
+  - Extra parameter "heatkeywidth" (thanks to Henning Rust) for
+    control over the size of the heatkey. Useful for cases with
+    multiple plots, and probably elsewhere too.
+  - Added plotting type "dist.neighbours" which shows Ultsch' U-matrix:
+    units are coloured according to the sum of the distances to their
+    immediate neighbours. A high distance can be interpreted as being
+    on a class boundary.
+  - Plotting types "quality", "dist.neighbours" and "counts" now
+    invisibly return what they show.
+  - Added information on the wine varieties, as well as a reference to
+    the original publication.
+  - Cleaned up C-code and man pages to eliminate warnings in the
+    development version of R 2.9.0
+
+Changes in version 2.0.6:
+  - Added palette.name as argument to plot.kohcode
+  - Function-specific default palettes
+  - Changed contact address to ron.wehrens at iasma.it
+  - Added visualisation of clustering of units (Leo Lopes)
+
+Changes in version 2.0.8:
+  - changed contact email address once again to fmach.it
+  - added name space
+  - compressed documentation file kohonen-manual.pdf
+
+Changes in version 2.0.9:
+  - Added useDynLib directive to NAMESPACE for compatibility with
+    older R versions
+
+Changes in version 2.0.10:
+  - added xpd = NA to add.cluster.boundaries so that also segments
+    outside the official plotting area are shown
+  - added an example for component planes (suggestion by Andreas Henelius)
+  - fixed a bug concerning maxlegendcols (spotted by Andreas Henelius)
+
+Changes in version 2.0.11:
+  - parameter contin was effectively not used in functions xyf,
+    supersom and bdk (spotted by Andrey Ziyatdinov); now corrected
+  - in supersom the original code to estimate contin was giving
+    errors; now corrected
+  - removed a bug in assigning column names to the codebook vectors in
+    supersom
+  - added topographic error measures (proposed independently by John
+    Pearce and Marco Pomati)
+
+Changes in version 2.0.12:
+  - removed the restriction that a legend in a codes plot was only
+    shown when the number of variables was smaller than 15 (segments)
+  - fixed a bug in add.cluster.boundaries: now the correct boundaries
+    are shown also for toroidal maps (Thomas Campagne)
+  - added identify.kohonen
+  - predict.kohonen now returns a factor if the training was also done
+    with a factor; man page is updated so that the examples reflect
+    this correctly. (Triggered by Ben Harrison)
+
+
+
+Wishlist:
+  - more flexible definition of distances: should be user-definable
+    for every data layer.
+  - support for multi-core training...
