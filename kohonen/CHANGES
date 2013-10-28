@@ -94,6 +94,7 @@ Changes in version 2.0.12:
     this correctly. (Triggered by Ben Harrison)
 
 
+***********************************************************************
 
 Wishlist:
   - more flexible definition of distances: should be user-definable
