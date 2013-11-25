@@ -108,7 +108,7 @@
     }
   }
 
-  prediction <- lapply(unit.predictions, function(x) x[mapping,])
+  prediction <- lapply(unit.predictions, function(x) x[mapping,,drop = FALSE])
   if (any(!contin))
       prediction[!contin] <- lapply(prediction[!contin],
                                     classmat2classvec, threshold = threshold)
