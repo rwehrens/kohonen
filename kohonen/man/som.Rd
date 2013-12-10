@@ -70,8 +70,8 @@ Xtest <- scale(wines[-training, ],
 som.wines <- som(Xtraining, grid = somgrid(5, 5, "hexagonal"))
 
 som.prediction <- predict(som.wines, newdata = Xtest,
-          trainX = Xtraining,
-          trainY = factor(wine.classes[training]))
+                          trainX = Xtraining,
+                          trainY = factor(wine.classes[training]))
 table(wine.classes[-training], som.prediction$prediction)
 }
 \keyword{classif}

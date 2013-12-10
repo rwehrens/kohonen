@@ -595,17 +595,19 @@ plot.heatkey <- function (x, zlim, bgcol, labels, contin, heatkeywidth, ...)
 ###   toroidal maps (bug fix)
 ### * in rectangular maps some superfluous lines are no longer drawn
 ###   (purely esthetic improvement)
+### Dec 10, 2013: additional bug fix (bug noted by Thomas Campagne),
+### and an additional change for toroidal maps: boundaries at the
+### outside of the map are now drawn even when they are already
+### present at the other end of the map (easier interpretation)
 
 add.cluster.boundaries <- function(x, clustering, lwd = 5, ...)
 {
   grd <- x$grid
   if (x$toroidal) {
     ydiff <- diff(grd$pts[1 + c(0, grd$xdim),2])
-    
-    botrow <- c(grd$xdim, 1:grd$xdim, 1)
-    toprow <- c(grd$xdim*grd$ydim,
-                grd$xdim*grd$ydim + 1 - (grd$xdim:1),
-                grd$xdim*grd$ydim - grd$xdim + 1)
+
+    botrow <- 1:grd$xdim
+    toprow <- grd$xdim*grd$ydim + 1 - (grd$xdim:1)
     rightcol <- (1:grd$ydim)*grd$xdim
     leftcol <- (1:grd$ydim)*grd$xdim + 1 - grd$xdim
     
@@ -613,12 +615,21 @@ add.cluster.boundaries <- function(x, clustering, lwd = 5, ...)
                     cbind(grd$pts[toprow, 1], min(grd$pts[,2]) - ydiff),
                     cbind(grd$pts[leftcol, 1] - 1, grd$pts[leftcol, 2]),
                     cbind(grd$pts[rightcol, 1] + 1, grd$pts[rightcol,2]))
-
-    grd$pts <- rbind(grd$pts, newpts)
-    ## for debugging:
-    ## par("xpd" = TRUE); text(grd$pts[,1], grd$pts[,2], 1:nrow(grd$pts))
-
     cluster <- c(clustering, clustering[c(botrow, toprow, rightcol, leftcol)])
+    if (x$grid$topo == "hexagonal") {
+      ## we need to add two extra points, one in the bottom right, the
+      ## other top left - explicitly add the clustering of these two
+      ## points, too. These are the cluster ids of the top left and
+      ## bottom right corners of the _original_ map
+      newpts <- rbind(newpts,
+                      c(grd$pts[toprow[grd$xdim],1]+1,
+                        min(grd$pts[,2]) - ydiff),
+                      c(grd$pts[botrow[1], 1]-1,
+                        max(grd$pts[,2]) + ydiff))
+      cluster <- c(cluster, clustering[toprow[1]], clustering[grd$xdim])
+    }
+    
+    grd$pts <- rbind(grd$pts, newpts)
   } else {
     cluster <- clustering
   }
@@ -639,35 +650,43 @@ add.cluster.boundaries <- function(x, clustering, lwd = 5, ...)
     neighbours <- neighbours[!idx,]
   }
   
-  ## Function to actually plot the boundaries. We only need to check
-  ## E, NE and NW to avoid drawing double lines.
+  ## Function to actually plot the boundaries. For clarity, we 
+  ## draw boundaries at the edges on both sides of the map, which is
+  ## achieved simply by ignoring double lines - just plot'em all.
   plot.hex.boundary <- function(nb, grd, lwd, ...) {
     radius <- .5/cos(pi/6)             ## horizontal unit distance always 1
-    ##    browser()
+
+    ## for debugging...
+    ## text(grd$pts, labels = 1:nrow(grd$pts))
+    ## browser()
     for (i in 1:nrow(nb)) {
       u1 <- nb[i,1]
       u2 <- nb[i,2]
       
       dloc <- grd$pts[u1,] - grd$pts[u2,]
-      
-      angle <- 2 * pi/3                                 ## NW
-      if (abs(dloc[2]) < .1 & dloc[1] > .1) {           ## E
-        angle <- 0
-      } else {
-        if (dloc[1] > .1 & dloc[2] > .1)
-            angle <- pi/3                               ## NE
-      }
 
-      ## with a toroidal grid one can have a SE line that according to
-      ## the above rules will be drawn as a NW line - should not
-      ## happen. The same holds for a W border, that will be drawn as
-      ## a NW border.
-      if (dloc[2] > -.1 & dloc[1] > -.6) 
-          segments(grd$pts[u2,1]+radius*cos(angle-pi/6),
-                   grd$pts[u2,2]+radius*sin(angle-pi/6), 
-                   grd$pts[u2,1]+radius*cos(angle+pi/6),
-                   grd$pts[u2,2]+radius*sin(angle+pi/6),
-                   lwd = lwd, xpd = NA, ...)  
+      if (abs(dloc[2]) < .1) {         # vertical line segments
+        angle <- pi                    # left
+        if (dloc[1] > .9) angle <- 0   # right
+      } else {
+        if (dloc[2] > .1) {            
+          angle <- pi/3                # NE
+          if (dloc[1] < -.1)            
+              angle <- 2*pi/3          # NW
+        } else {                       # dloc[2] < -.1
+          if (dloc[1] > .1) {
+            angle <- -pi/3             # SE
+          } else {
+            angle <- -2*pi/3           # SW
+          }
+        }
+      }
+              
+      segments(grd$pts[u2,1]+radius*cos(angle-pi/6),
+               grd$pts[u2,2]+radius*sin(angle-pi/6), 
+               grd$pts[u2,1]+radius*cos(angle+pi/6),
+               grd$pts[u2,2]+radius*sin(angle+pi/6),
+               lwd = lwd, xpd = NA, ...)  
     }
   }
 

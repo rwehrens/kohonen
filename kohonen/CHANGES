@@ -96,6 +96,10 @@ Changes in version 2.0.12:
 Changes in version 2.0.13:
   - predict.kohonen choked on a matrix containing only one sample (Max
     Kuhn, who also provided the solution)
+  - plotting for toroidal maps has been improved once again: not only
+    are the bonudaries finally shown correctly, also the cluster
+    boundaries at the edges of the map are shown twice when necessary
+    for better interpretability.
 
 
 ***********************************************************************
