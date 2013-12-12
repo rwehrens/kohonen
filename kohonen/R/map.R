@@ -21,6 +21,11 @@
 ### FIXME: inefficient (but correct) if there are zeros in x$weights;
 ### whatmap is a more elegant way to exclude layers.
 
+### Bug fix 12/12/13: for mapping factors, the corresponding whatmap
+### layer should first be converted to a matrix, otherwise no
+### meaningful distance can be calculated. Spotted by CRAN checks on
+### memory leaks (BDRipley)
+
 "map.kohonen" <- function(x, newdata, whatmap=NULL, weights,
                           scale.distances = (nmaps > 1), ...)
 {
@@ -48,6 +53,8 @@
   for (i in seq(along = whatmap)) {
     np <- ncol(codes[[ whatmap[i] ]])
     dt <- newdata[[ whatmap[i] ]]
+    if (is.factor(dt))
+        dt <- classvec2classmat(dt)
     cd <- codes[[ whatmap[i] ]]
     
     distances[,i] <- .C("mapKohonen",

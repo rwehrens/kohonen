@@ -101,6 +101,12 @@ Changes in version 2.0.13:
     boundaries at the edges of the map are shown twice when necessary
     for better interpretability.
 
+Changes in version 2.0.14:
+  - fixed a bug, disguised as a memory leak, where map.kohonen
+    attempted to calculate a distance between elements of a factor,
+    rather than using the membership matrix. (Spotted by CRAN checks
+    focusing on memory leaks, BDRipley)
+
 
 ***********************************************************************
 
