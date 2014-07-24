@@ -113,4 +113,5 @@ Changes in version 2.0.14:
 Wishlist:
   - more flexible definition of distances: should be user-definable
     for every data layer.
-  - support for multi-core training...
+  - revisit definition of Tanimoto distance.
+  - support for multi-core training.
