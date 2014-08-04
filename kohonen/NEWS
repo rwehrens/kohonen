@@ -107,6 +107,10 @@ Changes in version 2.0.14:
     rather than using the membership matrix. (Spotted by CRAN checks
     focusing on memory leaks, BDRipley)
 
+Changes in version 2.0.15:
+  - renamed this file to "NEWS"
+  - updated maintainer email address
+
 
 ***********************************************************************
 
