@@ -1,8 +1,8 @@
 Package: kohonen
-Version: 2.0.16
-Title: Supervised and unsupervised self-organising maps
+Version: 2.0.17
+Title: Supervised and Unsupervised Self-Organising Maps
 Author: Ron Wehrens
 Maintainer: Ron Wehrens <ron.wehrens@gmail.com>
-Description: Supervised and unsupervised self-organising maps
+Description: The package, named after the inventor of self-organising maps, Teuvo Kohonen, provides functions to train supervised and self-organising maps. Also interrogation of the maps and prediction using trained maps are supported.
 License: GPL (>= 2)
 Depends: R (>= 2.6.0), class, MASS
