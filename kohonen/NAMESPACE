@@ -1,13 +1,17 @@
-# Default NAMESPACE created by R
-# Remove the previous line if you edit this file
+export("som","xyf", "bdk", "supersom",
+       "classvec2classmat", "classmat2classvec",
+       "map", "add.cluster.boundaries",
+       "topo.error", "unit.distances", "check.whatmap", "tricolor")
 
-# Export all names
-exportPattern(".")
+S3method(print, kohonen)
+S3method(plot, kohonen)
+S3method(predict, kohonen)
+S3method(summary, kohonen)
+S3method(identify, kohonen)
+S3method(map, kohonen)
 
 useDynLib(kohonen)
 
 # Import all packages listed as Imports or Depends
-import(
-  class,
-  MASS
-)
+importFrom(class, somgrid)
+importFrom(MASS, eqscplot)

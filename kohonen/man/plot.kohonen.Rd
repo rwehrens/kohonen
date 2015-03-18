@@ -1,14 +1,5 @@
 \name{plot.kohonen}
 \alias{plot.kohonen}
-\alias{plot.somgrid}
-\alias{plot.kohchanges}
-\alias{plot.kohcounts}
-\alias{plot.kohcodes}
-\alias{plot.kohprop}
-\alias{plot.kohquality}
-\alias{plot.heatkey}
-\alias{plot.kohmapping}
-\alias{plot.kohUmatrix}
 \alias{identify.kohonen}
 \alias{add.cluster.boundaries}
 \title{Plot kohonen object}
