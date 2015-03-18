@@ -111,6 +111,12 @@ Changes in version 2.0.15:
   - renamed this file to "NEWS"
   - updated maintainer email address
 
+Changes in version 2.0.16:
+  - added check to xyf and bdk functions to avoid matrices with
+    differing numbers of rows. This was happily accepted but led to
+    incorrect results. (Thanks to Johanna Laibe for noticing this
+    behaviour)
+
 
 ***********************************************************************
 

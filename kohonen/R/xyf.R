@@ -24,6 +24,9 @@
     }
   }
   ny <- ncol(YY)
+  if (nrow(YY) != nd)
+    stop("Both data matrices should have the same number of rows")
+
   if (missing(contin))
     contin <- any(abs(rowSums(YY) - 1) > 1e-8)
   
