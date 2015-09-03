@@ -117,6 +117,12 @@ Changes in version 2.0.16:
     incorrect results. (Thanks to Johanna Laibe for noticing this
     behaviour)
 
+Changes in verson 2.0.18:
+  - added a package-specific NAMESPACE file
+
+Changes in version 2.0.19:
+  - replaced MASS:::eqscplot simply by eqscplot
+  - added imports from default packages to NAMESPACE file
 
 ***********************************************************************
 
