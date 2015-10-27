@@ -12,6 +12,38 @@
 ### Added quality plot, August 30 2007.
 ### Added default titles, August 31 2007.
 
+Hexagon <- function (a, b, unitcell = 1, col = "grey", border=NA) {
+    x <- a - unitcell/2
+    y <- b - unitcell/2
+
+    # basic trigonometry yields the coordinates in the local coordinates
+    # of the square centered around each node center. Let's say, (0, 0) is
+    # the bottom left corner of this (1, 1) square, we have:
+    # - abscissa are 0, 0 + unitcell/2, and 0 + unitcell
+    # - ordinates are 0 + unitcell/2 - 2 * unitcell * tan(pi/6),
+    #                 0 + unitcell/2 - 1 * unitcell * tan(pi/6),
+    #                 0 + unitcell/2 + 1 * unitcell * tan(pi/6),
+    #                 0 + unitcell/2 + 2 * unitcell * tan(pi/6)
+
+    # after simplification, we have:
+    polygon(c(x, x,
+              x + unitcell/2, x + unitcell,
+              x + unitcell,   x + unitcell/2),
+            c(y + unitcell * 0.2113249, y + unitcell * 0.7886751,
+              y + unitcell * 1.07735,   y + unitcell * 0.7886751,
+              y + unitcell * 0.2113249, y - unitcell * 0.07735027),
+            col = col, border=border)
+}
+
+hexagons <- function(x, y, unitcell, col, border) {
+    if (length(col) != length(x))
+        col <- rep(col[1], length(x))
+    for (idx in 1:length(x))
+        Hexagon(x[idx], y[idx],
+                unitcell = unitcell, col = col[idx], border = border)
+}
+
+
 "plot.kohonen" <- function (x,
                             type = c("codes", "changes", "counts",
                               "dist.neighbours", "mapping", "property",
@@ -22,37 +54,43 @@
                             bgcol=NULL, zlim = NULL, heatkey = TRUE,
                             property, contin, whatmap = NULL,
                             codeRendering = NULL, keepMargins = FALSE,
-                            heatkeywidth = .2, ...)
+                            heatkeywidth = .2, shape = c("circle", "hexagon"),
+                            border = "black", ...)
 {
   type <- match.arg(type)
 
   switch(type,
          mapping = plot.kohmapping(x = x, classif = classif,
            main = main, labels = labels, pchs = pchs,
-           bgcol = bgcol, keepMargins = keepMargins, ...),
+           bgcol = bgcol, keepMargins = keepMargins, shape = shape,
+           border = border, ...),
          property = plot.kohprop(x = x, property, main = main,
            palette.name = palette.name, ncolors = ncolors,
            zlim = zlim, heatkey = heatkey,
-           contin = contin, keepMargins = keepMargins, 
-           heatkeywidth = heatkeywidth, ...),
+           contin = contin, keepMargins = keepMargins,
+           heatkeywidth = heatkeywidth, shape = shape,
+           border = border, ...),
          codes = plot.kohcodes(x = x, main = main,
            palette.name = palette.name, bgcol = bgcol,
            whatmap = whatmap, codeRendering = codeRendering,
-           keepMargins = keepMargins, ...),
+           keepMargins = keepMargins, shape = shape, border = border, ...),
          quality = plot.kohquality(x = x, classif = classif, main = main,
            palette.name = palette.name, ncolors = ncolors,
-           zlim = zlim, heatkey = heatkey, keepMargins = keepMargins, 
-           heatkeywidth = heatkeywidth, ...),
+           zlim = zlim, heatkey = heatkey, keepMargins = keepMargins,
+           heatkeywidth = heatkeywidth, shape = shape,
+           border = border, ...),
          counts = plot.kohcounts(x = x, classif = classif, main = main,
            palette.name = palette.name, ncolors = ncolors,
            zlim = zlim, heatkey = heatkey, keepMargins = keepMargins,
-           heatkeywidth = heatkeywidth, ...),
+           heatkeywidth = heatkeywidth, shape = shape,
+           border = border, ...),
          changes = plot.kohchanges(x = x, main = main,
            keepMargins = keepMargins, ...),
          dist.neighbours = plot.kohUmatrix(x = x, main = main,
            palette.name = palette.name, ncolors = ncolors,
            zlim = zlim, heatkey = heatkey, keepMargins = keepMargins,
-           heatkeywidth = heatkeywidth, ...))
+           heatkeywidth = heatkeywidth, shape = shape,
+           border = border, ...))
 }
 
 
@@ -76,10 +114,11 @@ plot.somgrid <- function(x, xlim, ylim, ...)
 ### Adapted for version 2.0: April 11.
 
 plot.kohmapping <- function(x, classif, main, labels, pchs, bgcol,
-                            keepMargins, ...)
+                            keepMargins, shape = c("circle", "hexagon"),
+                            border = "black", ...)
 {
   if (is.null(main)) main <- "Mapping plot"
-  
+
   margins <- rep(0.6, 4)
   if (main != "") margins[3] <- margins[3] + 2
   if (!keepMargins) {
@@ -87,7 +126,7 @@ plot.kohmapping <- function(x, classif, main, labels, pchs, bgcol,
     on.exit(par(mar = opar))
   }
   par(mar=margins)
-    
+
   if (is.null(classif) & !is.null(x$unit.classif)) {
     classif <- x$unit.classif
   } else {
@@ -96,7 +135,7 @@ plot.kohmapping <- function(x, classif, main, labels, pchs, bgcol,
   }
   if (is.null(classif))
     stop("No mapping available")
-  
+
   plot(x$grid, ...)
   title.y <- max(x$grid$pts[,2]) + 1.2
   if (title.y > par("usr")[4] - .2){
@@ -109,9 +148,16 @@ plot.kohmapping <- function(x, classif, main, labels, pchs, bgcol,
   }
 
   if (is.null(bgcol)) bgcol <- "transparent"
-  symbols(x$grid$pts[, 1], x$grid$pts[, 2],
-          circles = rep(0.5, nrow(x$grid$pts)),
-          inches = FALSE, add = TRUE, bg = bgcol)
+
+  shape <- match.arg(shape)
+  switch(shape,
+         circle = symbols(x$grid$pts[, 1], x$grid$pts[, 2],
+                          circles = rep(0.5, nrow(x$grid$pts)),
+                          inches = FALSE, add = TRUE, bg = bgcol),
+         hexagon = hexagons(x$grid$pts[, 1], x$grid$pts[, 2],
+                            unitcell = 1, col = bgcol, border = border)
+         )
+
   if (is.null(labels) & !is.null(pchs))
     points(x$grid$pts[classif, 1] + rnorm(length(classif), 0, 0.12),
            x$grid$pts[classif, 2] + rnorm(length(classif), 0, 0.12),
@@ -130,11 +176,12 @@ plot.kohmapping <- function(x, classif, main, labels, pchs, bgcol,
 
 plot.kohprop <- function(x, property, main, palette.name, ncolors,
                          zlim, heatkey, contin, keepMargins,
-                         heatkeywidth, ...)
+                         heatkeywidth, shape = c("circle", "hexagon"),
+                         border = "black", ...)
 {
   if (is.null(main)) main <- "Property plot"
   if (is.null(palette.name)) palette.name <- heat.colors
-  
+
   margins <- rep(0.6, 4)
   if (heatkey) margins[2] <- margins[2] + 4
   if (main != "") margins[3] <- margins[3] + 2
@@ -143,7 +190,7 @@ plot.kohprop <- function(x, property, main, palette.name, ncolors,
     on.exit(par(mar = opar))
   }
   par(mar = margins)
-  
+
   plot(x$grid, ...)
   title.y <- max(x$grid$pts[,2]) + 1.2
   if (title.y > par("usr")[4] - .2){
@@ -154,11 +201,11 @@ plot.kohprop <- function(x, property, main, palette.name, ncolors,
          main, adj = .5, cex = par("cex.main"),
          font = par("font.main"))
   }
-  
+
   if (is.null(zlim))
     zlim <- range(property, finite = TRUE)
 
-  if (missing(ncolors)) 
+  if (missing(ncolors))
     ncolors <- min(length(unique(property[!is.na(property)])), 20)
   bgcol <- palette.name(ncolors)
 
@@ -169,16 +216,21 @@ plot.kohprop <- function(x, property, main, palette.name, ncolors,
                                include.lowest = TRUE))
   bgcolors[!is.na(showcolors)] <- bgcol[showcolors[!is.na(showcolors)]]
 
-  symbols(x$grid$pts[, 1], x$grid$pts[, 2],
-          circles = rep(0.5, nrow(x$grid$pts)), inches = FALSE,
-          add = TRUE, fg = "black", bg = bgcolors)
+  shape <- match.arg(shape)
+  switch(shape,
+         circle = symbols(x$grid$pts[, 1], x$grid$pts[, 2],
+                          circles = rep(0.5, nrow(x$grid$pts)),
+                          inches = FALSE, add = TRUE, bg = bgcolors),
+         hexagon = hexagons(x$grid$pts[, 1], x$grid$pts[, 2],
+                            unitcell = 1, col = bgcolors, border = border)
+         )
 
   ## if contin, a pretty labelling of z colors will be used; if not,
-  ## all colours will have their own label. The latter only if 
+  ## all colours will have their own label. The latter only if
   ## property is a factor, unless explicitly given.
   if (missing(contin))
     contin <- !is.factor(property)
-  
+
   if (heatkey) {
     if (length(unique(property)) < 10 & !contin) {
       plot.heatkey(x, zlim, bgcol, labels = levels(as.factor(property)),
@@ -204,9 +256,9 @@ plot.kohprop <- function(x, property, main, palette.name, ncolors,
 plot.kohchanges <- function(x, main, keepMargins, ...)
 {
   if (is.null(main)) main <- "Training progress"
-  
+
   nmaps <- ncol(x$changes)
-  
+
   ## check whether a legend is necessary and what names should be used
   if (nmaps > 1) {
     if (!is.null(colnames(x$changes))) {
@@ -234,7 +286,7 @@ plot.kohchanges <- function(x, main, keepMargins, ...)
   }
 
   ## plot the plot!
-  matplot(huhn, type = "l", lty = 1, main = main, 
+  matplot(huhn, type = "l", lty = 1, main = main,
           ylab = "Mean distance to closest unit", xlab = "Iteration", ...)
   abline(h=0, col="gray")
 
@@ -245,7 +297,7 @@ plot.kohchanges <- function(x, main, keepMargins, ...)
 
   ## plot the legend
   if (nmaps > 1)
-    legend("topright", legend = varnames, lty=1, col = 1:nmaps, bty="n") 
+    legend("topright", legend = varnames, lty=1, col = 1:nmaps, bty="n")
 
   invisible()
 }
@@ -255,11 +307,12 @@ plot.kohchanges <- function(x, main, keepMargins, ...)
 ### Checked: April 13.
 
 plot.kohcounts <- function(x, classif, main, palette.name, ncolors,
-                           zlim, heatkey, keepMargins, heatkeywidth, ...)
+                           zlim, heatkey, keepMargins, heatkeywidth,
+                           shape, border, ...)
 {
   if (is.null(main)) main <- "Counts plot"
   if (is.null(palette.name)) palette.name <- heat.colors
-  
+
   if (is.null(classif) & !is.null(x$unit.classif)) {
     classif <- x$unit.classif
   } else {
@@ -275,11 +328,12 @@ plot.kohcounts <- function(x, classif, main, palette.name, ncolors,
 
   contin <- FALSE
   if (max(counts, na.rm = TRUE) > 10) contin <- TRUE
-  
+
   plot.kohprop(x, property = counts, main = main,
                palette.name = palette.name, ncolors = ncolors,
                zlim = zlim, heatkey = heatkey, contin = contin,
-               keepMargins = keepMargins, heatkeywidth = heatkeywidth, ...)
+               keepMargins = keepMargins, heatkeywidth = heatkeywidth,
+               shape = shape, border = border, ...)
 
   invisible(counts)
 }
@@ -287,11 +341,12 @@ plot.kohcounts <- function(x, classif, main, palette.name, ncolors,
 ### Introduced for version 2.0.5: Jan 16, 2009
 
 plot.kohUmatrix <- function(x, classif, main, palette.name, ncolors,
-                            zlim, heatkey, keepMargins, heatkeywidth, ...)
+                            zlim, heatkey, keepMargins, heatkeywidth,
+                            shape, border, ...)
 {
   if (x$method != "som" & x$method != "supersom")
     stop("Neighbour distance plot only implemented for (super)som")
-  
+
   if (is.null(main)) main <- "Neighbour distance plot"
   if (is.null(palette.name)) palette.name <- heat.colors
 
@@ -315,7 +370,7 @@ plot.kohUmatrix <- function(x, classif, main, palette.name, ncolors,
                 x$weights[k] * dist(x$codes[[k]][c(i,j),])
           }
         }
-        
+
         nhbrdist[j,i] <- nhbrdist[i,j]
       }
     }
@@ -325,7 +380,8 @@ plot.kohUmatrix <- function(x, classif, main, palette.name, ncolors,
   plot.kohprop(x, property = neigh.dists, main = main,
                palette.name = palette.name, ncolors = ncolors,
                zlim = zlim, heatkey = heatkey, contin = TRUE,
-               keepMargins = keepMargins, heatkeywidth = heatkeywidth, ...)
+               keepMargins = keepMargins, heatkeywidth = heatkeywidth,
+               shape = shape, border = border, ...)
 
   invisible(neigh.dists)
 }
@@ -334,7 +390,7 @@ plot.kohUmatrix <- function(x, classif, main, palette.name, ncolors,
 ### Revised as a property plot: August 31 2007.
 
 plot.kohquality <- function(x, classif, main, palette.name, ncolors,
-                            zlim, heatkey, keepMargins, ...)
+                            zlim, heatkey, keepMargins, shape, border, ...)
 {
   if (is.null(main)) main <- "Distance plot"
   if (is.null(palette.name)) palette.name <- heat.colors
@@ -357,11 +413,11 @@ plot.kohquality <- function(x, classif, main, palette.name, ncolors,
   similarities <- rep(NA, nrow(x$grid$pts))
   hits <- as.integer(names(table(classif)))
   similarities[hits] <- sapply(split(distances, classif), mean)
-                      
+
   plot.kohprop(x, property = similarities, main = main,
                palette.name = palette.name, ncolors = ncolors,
                zlim = zlim, heatkey = heatkey, contin = TRUE,
-               keepMargins = keepMargins, ...)
+               keepMargins = keepMargins, shape = shape, border = border, ...)
 
   invisible(similarities)
 }
@@ -373,7 +429,8 @@ plot.kohquality <- function(x, classif, main, palette.name, ncolors,
 ### Added palette.name for version 2.0.6. Aug 3, 2010.
 
 plot.kohcodes <- function(x, main, palette.name, bgcol, whatmap,
-                          codeRendering, keepMargins, ...)
+                          codeRendering, keepMargins, shape = c("circle", "hexagon"),
+                          border = "black", ...)
 {
   if (!keepMargins) {
     opar <- par(c("mar", "ask"))
@@ -381,10 +438,10 @@ plot.kohcodes <- function(x, main, palette.name, bgcol, whatmap,
   }
 
   if (is.null(palette.name)) palette.name <- terrain.colors
-  
+
   whatmap <- check.whatmap(x, whatmap)
   nmaps <- length(whatmap)
-  
+
   ## check if x$codes is a list; if so, call this function for every
   ## list element separately.
   if (is.list(x$codes)) {
@@ -429,25 +486,26 @@ plot.kohcodes <- function(x, main, palette.name, bgcol, whatmap,
 
       plot.kohcodes(huhn, main = main.title, palette.name = palette.name,
                     bgcol=bgcol, whatmap = NULL,
-                    codeRendering = cR, keepMargins = TRUE, ...)
+                    codeRendering = cR, keepMargins = TRUE,
+                    shape = shape, border = border, ...)
     }
   } else {
     codes <- x$codes
     nvars <- ncol(codes)
-    
+
     maxlegendcols <- 3  ## nr of columns for the legend
     if (is.null(codeRendering))  ## use default
       codeRendering <- ifelse(nvars < 15, "segments", "lines")
-    
+
     margins <- rep(0.6, 4)  # no text annotation anywhere
     if (!is.null(main))
       margins[3] <- margins[3] + 2
     par(mar = margins)
-    
+
     if (codeRendering == "segments" & # we need space for the legend here...
         ##        nvars < 15 &
         !is.null(colnames(codes))) {
-      plot(x$grid, 
+      plot(x$grid,
            ylim = c(max(x$grid$pts[,2]) + min(x$grid$pts[,2]), -2))
       current.plot <- par("mfg")
       plot.width <- diff(par("usr")[1:2])
@@ -476,7 +534,7 @@ plot.kohcodes <- function(x, main, palette.name, bgcol, whatmap,
                            fill = palette.name(nvars), ...)
 
       par(mfg = current.plot)
-      plot(x$grid, 
+      plot(x$grid,
            ylim = c(max(x$grid$pts[,2]) + min(x$grid$pts[,2]),
              -leg.result$rect$h))
 
@@ -488,7 +546,7 @@ plot.kohcodes <- function(x, main, palette.name, bgcol, whatmap,
     } else {
       plot(x$grid, ...)
     }
-    
+
     title.y <- max(x$grid$pts[,2]) + 1.2
     if (title.y > par("usr")[4] - .2){
       title(main)
@@ -498,12 +556,18 @@ plot.kohcodes <- function(x, main, palette.name, bgcol, whatmap,
            main, adj = .5, cex = par("cex.main"),
            font = par("font.main"))
     }
-    
+
     if (is.null(bgcol)) bgcol <- "transparent"
-    symbols(x$grid$pts[, 1], x$grid$pts[, 2],
-            circles = rep(0.5, nrow(x$grid$pts)), inches = FALSE,
-            add = TRUE, bg = bgcol)
-    
+
+    shape <- match.arg(shape)
+    switch(shape,
+           circle = symbols(x$grid$pts[, 1], x$grid$pts[, 2],
+                            circles = rep(0.5, nrow(x$grid$pts)),
+                            inches = FALSE, add = TRUE, bg = bgcol),
+           hexagon = hexagons(x$grid$pts[, 1], x$grid$pts[, 2],
+                              unitcell = 1, col = bgcol, border = border)
+           )
+
     if (codeRendering == "lines") {
       yrange <- range(codes)
       codes <- codes - mean(yrange)
@@ -518,7 +582,7 @@ plot.kohcodes <- function(x, main, palette.name, bgcol, whatmap,
                    labels = NULL, len = 0.4,
                    add=TRUE, col.segments=palette.name(nvars),
                    draw.segments=TRUE)
-           },             
+           },
            lines = {
              for (i in 1:nrow(x$grid$pts)) { # draw baseline
                if (yrange[1]<0 & yrange[2] > 0) {
@@ -538,7 +602,7 @@ plot.kohcodes <- function(x, main, palette.name, bgcol, whatmap,
            stars = stars(codes, locations = x$grid$pts,
              labels = NULL, len = 0.4, add=TRUE)
            )
-    
+
   }
 
   invisible()
@@ -548,10 +612,10 @@ plot.kohcodes <- function(x, main, palette.name, bgcol, whatmap,
 ### Added heatkeywidth parameter in version 2.0.5 (contribution by
 ### Henning Rust)
 
-plot.heatkey <- function (x, zlim, bgcol, labels, contin, heatkeywidth, ...)  
+plot.heatkey <- function (x, zlim, bgcol, labels, contin, heatkeywidth, ...)
 {
   ncolors <- length(bgcol)
-  
+
   yrange <- range(x$grid$pts[, 2])
   smallestx <- min(x$grid$pts[,1])
   ## A width of .2 looks OK on my screen
@@ -578,7 +642,7 @@ plot.heatkey <- function (x, zlim, bgcol, labels, contin, heatkeywidth, ...)
   } else {
     if (is.null(labels))
       labels <- 1:ncolors
-    
+
     text(xleft[2] - 1.3 * diff(xleft),
          yleft[-1] - 0.5*diff(yleft[1:2]),
          sort(labels),
@@ -610,7 +674,7 @@ add.cluster.boundaries <- function(x, clustering, lwd = 5, ...)
     toprow <- grd$xdim*grd$ydim + 1 - (grd$xdim:1)
     rightcol <- (1:grd$ydim)*grd$xdim
     leftcol <- (1:grd$ydim)*grd$xdim + 1 - grd$xdim
-    
+
     newpts <- rbind(cbind(grd$pts[botrow, 1], max(grd$pts[,2]) + ydiff),
                     cbind(grd$pts[toprow, 1], min(grd$pts[,2]) - ydiff),
                     cbind(grd$pts[leftcol, 1] - 1, grd$pts[leftcol, 2]),
@@ -628,12 +692,12 @@ add.cluster.boundaries <- function(x, clustering, lwd = 5, ...)
                         max(grd$pts[,2]) + ydiff))
       cluster <- c(cluster, clustering[toprow[1]], clustering[grd$xdim])
     }
-    
+
     grd$pts <- rbind(grd$pts, newpts)
   } else {
     cluster <- clustering
   }
-  
+
   nhbrdist <- unit.distances(grd, FALSE) ## new grd is treated as non-toroid
   nhbrdist[col(nhbrdist) >= row(nhbrdist)] <- 2
   neighbours <- which(nhbrdist > .95 & nhbrdist < 1.05, arr.ind = TRUE)
@@ -649,8 +713,8 @@ add.cluster.boundaries <- function(x, clustering, lwd = 5, ...)
     idx <- apply(neighbours, 1, function(x) all(x > grd$xdim*grd$ydim))
     neighbours <- neighbours[!idx,]
   }
-  
-  ## Function to actually plot the boundaries. For clarity, we 
+
+  ## Function to actually plot the boundaries. For clarity, we
   ## draw boundaries at the edges on both sides of the map, which is
   ## achieved simply by ignoring double lines - just plot'em all.
   plot.hex.boundary <- function(nb, grd, lwd, ...) {
@@ -662,16 +726,16 @@ add.cluster.boundaries <- function(x, clustering, lwd = 5, ...)
     for (i in 1:nrow(nb)) {
       u1 <- nb[i,1]
       u2 <- nb[i,2]
-      
+
       dloc <- grd$pts[u1,] - grd$pts[u2,]
 
       if (abs(dloc[2]) < .1) {         # vertical line segments
         angle <- pi                    # left
         if (dloc[1] > .9) angle <- 0   # right
       } else {
-        if (dloc[2] > .1) {            
+        if (dloc[2] > .1) {
           angle <- pi/3                # NE
-          if (dloc[1] < -.1)            
+          if (dloc[1] < -.1)
               angle <- 2*pi/3          # NW
         } else {                       # dloc[2] < -.1
           if (dloc[1] > .1) {
@@ -681,12 +745,12 @@ add.cluster.boundaries <- function(x, clustering, lwd = 5, ...)
           }
         }
       }
-              
+
       segments(grd$pts[u2,1]+radius*cos(angle-pi/6),
-               grd$pts[u2,2]+radius*sin(angle-pi/6), 
+               grd$pts[u2,2]+radius*sin(angle-pi/6),
                grd$pts[u2,1]+radius*cos(angle+pi/6),
                grd$pts[u2,2]+radius*sin(angle+pi/6),
-               lwd = lwd, xpd = NA, ...)  
+               lwd = lwd, xpd = NA, ...)
     }
   }
 
@@ -696,7 +760,7 @@ add.cluster.boundaries <- function(x, clustering, lwd = 5, ...)
                              function(idx)
                              diff(grd$pts[idx,1]) == 1 &
                              diff(grd$pts[idx,2]) == 0))
-                       
+
     for (i in verticals) {
       segments(x0 = mean(grd$pts[nb[i,],1]),
                y0 = grd$pts[nb[i,1],2] - .5,
@@ -721,7 +785,7 @@ add.cluster.boundaries <- function(x, clustering, lwd = 5, ...)
   }
 
   switch(grd$topo,
-         rectangular = 
+         rectangular =
          plot.rect.boundary(neighbours, grd, lwd = lwd, ...),
          plot.hex.boundary(neighbours, grd, lwd = lwd, ...))
 

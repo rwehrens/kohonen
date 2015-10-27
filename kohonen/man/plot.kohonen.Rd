@@ -14,7 +14,8 @@
      palette.name = NULL, ncolors, bgcol = NULL,
      zlim = NULL, heatkey = TRUE, property, contin,
      whatmap = NULL, codeRendering = NULL, keepMargins = FALSE,
-     heatkeywidth = .2, \dots)
+     heatkeywidth = .2, shape = c("circle", "hexagon"),
+     border = "black", \dots)
 \method{identify}{kohonen}(x, \dots)
 add.cluster.boundaries(x, clustering, lwd = 5, ...)
 }
@@ -59,13 +60,15 @@ add.cluster.boundaries(x, clustering, lwd = 5, ...)
   \item{heatkeywidth}{width of the colour key; the default of 0.2 should
     work in most cases but in some cases, e.g. when plotting multiple
     figures, it may need to be adjusted.}
+  \item{shape}{choose the shape to be drawn: 'circle' (default) or 'hexagon'}
+  \item{border}{color of the hexagon border: only useful when drawing hexagons}
   \item{lwd, \dots}{other graphical parameters.}
   \item{clustering}{cluster labels of the map units.}
 }
 \details{Several different types of plots are supported:
   \describe{
     \item{"changes"}{shows the mean distance to the closest codebook vector
-      during training.} 
+      during training.}
     \item{"codes"}{shows the codebook vectors.}
     \item{"counts"}{shows the number of objects mapped to the
       individual units. Empty units are depicted in gray.}
@@ -92,7 +95,7 @@ add.cluster.boundaries(x, clustering, lwd = 5, ...)
   clicked on with the mouse. The tolerance is calculated from the ratio
   of the plotting region and the user coordinates, so clicking at any
   place within a unit should work.
-  
+
   Function \code{add.cluster.boundaries} will add to an existing plot of
   a map thick lines, visualizing which units would be clustered
   together. In toroidal maps, boundaries at the edges will only be shown
@@ -117,7 +120,7 @@ coolBlueHotRed <- function(n, alpha = 1) {
   rainbow(n, end=4/6, alpha=alpha)[n:1]
 }
 plot(kohmap, type="quality", palette.name = coolBlueHotRed)
-plot(kohmap, type="mapping", 
+plot(kohmap, type="mapping",
      labels = wine.classes, col = wine.classes+1,
      main = "mapping plot")
 
@@ -125,7 +128,7 @@ plot(kohmap, type="mapping",
 xyfpredictions <- classmat2classvec(predict(kohmap)$unit.predictions)
 bgcols <- c("gray", "pink", "lightgreen")
 plot(kohmap, type="mapping", col = wine.classes+1,
-     pchs = wine.classes, bgcol = bgcols[as.integer(xyfpredictions)], 
+     pchs = wine.classes, bgcol = bgcols[as.integer(xyfpredictions)],
      main = "another mapping plot")
 
 ## Show 'component planes'
