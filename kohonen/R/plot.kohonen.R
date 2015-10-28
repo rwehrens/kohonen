@@ -36,8 +36,11 @@ Hexagon <- function (a, b, unitcell = 1, col = "grey", border=NA) {
 }
 
 hexagons <- function(x, y, unitcell, col, border) {
+    # col can be a vector of values coming from the palette,
+    # or simply one value ('black'): then replicate that color
     if (length(col) != length(x))
         col <- rep(col[1], length(x))
+
     for (idx in 1:length(x))
         Hexagon(x[idx], y[idx],
                 unitcell = unitcell, col = col[idx], border = border)
@@ -54,7 +57,7 @@ hexagons <- function(x, y, unitcell, col, border) {
                             bgcol=NULL, zlim = NULL, heatkey = TRUE,
                             property, contin, whatmap = NULL,
                             codeRendering = NULL, keepMargins = FALSE,
-                            heatkeywidth = .2, shape = c("circle", "hexagon"),
+                            heatkeywidth = .2, shape = c("round", "straight"),
                             border = "black", ...)
 {
   type <- match.arg(type)
@@ -114,7 +117,7 @@ plot.somgrid <- function(x, xlim, ylim, ...)
 ### Adapted for version 2.0: April 11.
 
 plot.kohmapping <- function(x, classif, main, labels, pchs, bgcol,
-                            keepMargins, shape = c("circle", "hexagon"),
+                            keepMargins, shape = c("round", "straight"),
                             border = "black", ...)
 {
   if (is.null(main)) main <- "Mapping plot"
@@ -149,13 +152,22 @@ plot.kohmapping <- function(x, classif, main, labels, pchs, bgcol,
 
   if (is.null(bgcol)) bgcol <- "transparent"
 
+  # choose symbol to draw based on shape (round, square), and grid (rect, hex)
   shape <- match.arg(shape)
-  switch(shape,
+  sym <- ifelse(shape == 'round', 'circle',
+                ifelse(x$grid$topo == 'rectangular', 'square', 'hexagon'))
+
+  switch(sym,
          circle = symbols(x$grid$pts[, 1], x$grid$pts[, 2],
                           circles = rep(0.5, nrow(x$grid$pts)),
-                          inches = FALSE, add = TRUE, bg = bgcol),
+                          inches = FALSE, add = TRUE,
+                          fg = border, bg = bgcol),
          hexagon = hexagons(x$grid$pts[, 1], x$grid$pts[, 2],
-                            unitcell = 1, col = bgcol, border = border)
+                            unitcell = 1, col = bgcol, border = border),
+         square = symbols(x$grid$pts[, 1], x$grid$pts[, 2],
+                          squares = rep(1, nrow(x$grid$pts)),
+                          inches = FALSE, add = TRUE,
+                          fg = border, bg = bgcol)
          )
 
   if (is.null(labels) & !is.null(pchs))
@@ -176,7 +188,7 @@ plot.kohmapping <- function(x, classif, main, labels, pchs, bgcol,
 
 plot.kohprop <- function(x, property, main, palette.name, ncolors,
                          zlim, heatkey, contin, keepMargins,
-                         heatkeywidth, shape = c("circle", "hexagon"),
+                         heatkeywidth, shape = c("round", "straight"),
                          border = "black", ...)
 {
   if (is.null(main)) main <- "Property plot"
@@ -216,13 +228,22 @@ plot.kohprop <- function(x, property, main, palette.name, ncolors,
                                include.lowest = TRUE))
   bgcolors[!is.na(showcolors)] <- bgcol[showcolors[!is.na(showcolors)]]
 
+  # choose symbol to draw based on shape (round, square), and grid (rect, hex)
   shape <- match.arg(shape)
-  switch(shape,
+  sym <- ifelse(shape == 'round', 'circle',
+                ifelse(x$grid$topo == 'rectangular', 'square', 'hexagon'))
+
+  switch(sym,
          circle = symbols(x$grid$pts[, 1], x$grid$pts[, 2],
-                          circles = rep(0.5, nrow(x$grid$pts)),
-                          inches = FALSE, add = TRUE, bg = bgcolors),
+                         circles = rep(0.5, nrow(x$grid$pts)),
+                         inches = FALSE, add = TRUE,
+                         fg = border, bg = bgcolors),
          hexagon = hexagons(x$grid$pts[, 1], x$grid$pts[, 2],
-                            unitcell = 1, col = bgcolors, border = border)
+                            unitcell = 1, col = bgcolors, border = border),
+         square = symbols(x$grid$pts[, 1], x$grid$pts[, 2],
+                          squares = rep(1, nrow(x$grid$pts)),
+                          inches = FALSE, add = TRUE,
+                          fg = border, bg = bgcolors)
          )
 
   ## if contin, a pretty labelling of z colors will be used; if not,
@@ -429,7 +450,7 @@ plot.kohquality <- function(x, classif, main, palette.name, ncolors,
 ### Added palette.name for version 2.0.6. Aug 3, 2010.
 
 plot.kohcodes <- function(x, main, palette.name, bgcol, whatmap,
-                          codeRendering, keepMargins, shape = c("circle", "hexagon"),
+                          codeRendering, keepMargins, shape = c("round", "straight"),
                           border = "black", ...)
 {
   if (!keepMargins) {
@@ -559,13 +580,22 @@ plot.kohcodes <- function(x, main, palette.name, bgcol, whatmap,
 
     if (is.null(bgcol)) bgcol <- "transparent"
 
+    # choose symbol to draw based on shape (round, square), and grid (rect, hex)
     shape <- match.arg(shape)
-    switch(shape,
+    sym <- ifelse(shape == 'round', 'circle',
+                  ifelse(x$grid$topo == 'rectangular', 'square', 'hexagon'))
+
+    switch(sym,
            circle = symbols(x$grid$pts[, 1], x$grid$pts[, 2],
                             circles = rep(0.5, nrow(x$grid$pts)),
-                            inches = FALSE, add = TRUE, bg = bgcol),
+                            inches = FALSE, add = TRUE,
+                            fg = border, bg = bgcol),
            hexagon = hexagons(x$grid$pts[, 1], x$grid$pts[, 2],
-                              unitcell = 1, col = bgcol, border = border)
+                              unitcell = 1, col = bgcol, border = border),
+           square = symbols(x$grid$pts[, 1], x$grid$pts[, 2],
+                            squares = rep(1, nrow(x$grid$pts)),
+                            inches = FALSE, add = TRUE,
+                            fg = border, bg = bgcol)
            )
 
     if (codeRendering == "lines") {

@@ -14,7 +14,7 @@
      palette.name = NULL, ncolors, bgcol = NULL,
      zlim = NULL, heatkey = TRUE, property, contin,
      whatmap = NULL, codeRendering = NULL, keepMargins = FALSE,
-     heatkeywidth = .2, shape = c("circle", "hexagon"),
+     heatkeywidth = .2, shape = c("round", "straight"),
      border = "black", \dots)
 \method{identify}{kohonen}(x, \dots)
 add.cluster.boundaries(x, clustering, lwd = 5, ...)
@@ -60,8 +60,10 @@ add.cluster.boundaries(x, clustering, lwd = 5, ...)
   \item{heatkeywidth}{width of the colour key; the default of 0.2 should
     work in most cases but in some cases, e.g. when plotting multiple
     figures, it may need to be adjusted.}
-  \item{shape}{choose the shape to be drawn: 'circle' (default) or 'hexagon'}
-  \item{border}{color of the hexagon border: only useful when drawing hexagons}
+  \item{shape}{kind shape to be drawn: "round" (circle) or "straight".
+    Choosing "straight" produces a map of squares when the grid is "rectangular",
+    and produces a map of hexagons when the grid is "hexagonal".}
+  \item{border}{color of the shapes's border.}
   \item{lwd, \dots}{other graphical parameters.}
   \item{clustering}{cluster labels of the map units.}
 }
