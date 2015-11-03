@@ -115,7 +115,7 @@ kohmap <- xyf(scale(wines), classvec2classmat(wine.classes),
               grid = somgrid(5, 5, "hexagonal"), rlen=100)
 plot(kohmap, type="changes")
 plot(kohmap, type="codes", main = c("Codes X", "Codes Y"))
-plot(kohmap, type="counts")
+plot(kohmap, type="counts", shape = "straight")
 
 ## palette suggested by Leo Lopes
 coolBlueHotRed <- function(n, alpha = 1) {
@@ -131,7 +131,7 @@ xyfpredictions <- classmat2classvec(predict(kohmap)$unit.predictions)
 bgcols <- c("gray", "pink", "lightgreen")
 plot(kohmap, type="mapping", col = wine.classes+1,
      pchs = wine.classes, bgcol = bgcols[as.integer(xyfpredictions)],
-     main = "another mapping plot")
+     main = "another mapping plot", shape = "straight", border = NA)
 
 ## Show 'component planes'
 set.seed(7)

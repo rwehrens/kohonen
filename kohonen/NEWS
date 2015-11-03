@@ -124,6 +124,11 @@ Changes in version 2.0.19:
   - replaced MASS:::eqscplot simply by eqscplot
   - added imports from default packages to NAMESPACE file
 
+Changes in version 2.0.20:
+  - added support for hexagonal and square units in plotting maps
+    (contribution by Romain Bossart)
+
+
 ***********************************************************************
 
 Wishlist:
