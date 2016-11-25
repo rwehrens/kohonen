@@ -98,7 +98,7 @@
                              function(x) all(is.na(x))))
           for (i in seq(along = nas)) {
             unit.predictions[[ii]][nas[i], ] <-
-              colMeans(unit.predictions[[ii]][nhbrdist[nas[i],] == 1, ,
+              colMeans(unit.predictions[[ii]][abs(nhbrdist[nas[i],] - 1) < 1e-8, ,
                                               drop=FALSE], na.rm = TRUE)
           }
           

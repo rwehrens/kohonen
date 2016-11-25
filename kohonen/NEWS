@@ -128,11 +128,14 @@ Changes in version 2.0.20:
   - added support for hexagonal and square units in plotting maps
     (contribution by Romain Bossart)
 
+Changes in version 2.0.21:
+  - fixed a bug where distances between units were compared in the
+    wrong way (found by Christoph Weber and Michael Wenk)
+
 
 ***********************************************************************
 
 Wishlist:
   - more flexible definition of distances: should be user-definable
-    for every data layer.
-  - revisit definition of Tanimoto distance.
-  - support for multi-core training.
+    for every data layer: coming up in Version 3.0!
+  - support for multi-core training: coming up in Version 3.0!

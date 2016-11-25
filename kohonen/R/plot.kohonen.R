@@ -788,8 +788,8 @@ add.cluster.boundaries <- function(x, clustering, lwd = 5, ...)
     verticals <- which(apply(nb[,2:1],
                              1,
                              function(idx)
-                             diff(grd$pts[idx,1]) == 1 &
-                             diff(grd$pts[idx,2]) == 0))
+                               abs(diff(grd$pts[idx,1]) - 1) < 1e-8 &
+                               abs(diff(grd$pts[idx,2])) < 1e-8))
 
     for (i in verticals) {
       segments(x0 = mean(grd$pts[nb[i,],1]),
@@ -802,8 +802,8 @@ add.cluster.boundaries <- function(x, clustering, lwd = 5, ...)
     horizontals <- which(apply(nb[,2:1],
                                1,
                                function(idx)
-                               diff(grd$pts[idx,2]) == 1 &
-                               diff(grd$pts[idx,1]) == 0))
+                                 abs(diff(grd$pts[idx,2]) - 1) < 1e-8 &
+                                 abs(diff(grd$pts[idx,1])) < 1e-8))
     for (i in horizontals) {
       segments(x0 = grd$pts[nb[i,1],1] - .5,
                y0 = mean(grd$pts[nb[i,],2]),

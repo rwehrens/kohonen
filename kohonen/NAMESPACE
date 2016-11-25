@@ -17,7 +17,7 @@ importFrom(class, somgrid)
 importFrom(MASS, eqscplot)
 
 # Import from default packages
-importFrom("graphics", "abline", "axTicks", "axis", "identify",
+importFrom("graphics", "abline", "axTicks", "axis", "identify", "polygon",
            "legend", "lines", "matplot", "par", "plot", "points",
            "rect", "segments", "stars", "symbols", "text", "title") 
 importFrom("grDevices", "heat.colors", "terrain.colors")
