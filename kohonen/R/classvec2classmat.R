@@ -1,6 +1,6 @@
 classvec2classmat <- function(yvec)
 {
-  yvec <- factor(yvec)
+  if (!is.factor(yvec)) yvec <- factor(yvec)
   nclasses <- nlevels(yvec)
 
   outmat <- matrix(0, length(yvec), nclasses)
@@ -20,5 +20,5 @@ classmat2classvec <- function(ymat, threshold=0)
   classes <- apply(ymat, 1, function(x) which(x == max(x))[1])
   classes[apply(ymat, 1, max) < threshold] <- NA
   
-  class.names[classes]
+  factor(class.names[classes], levels = class.names)
 }

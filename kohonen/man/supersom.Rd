@@ -1,61 +1,80 @@
 \name{supersom}
+\alias{som}
+\alias{xyf}
 \alias{supersom}
-\title{Super-organising maps}
+\title{Self- and super-organising maps}
 \description{
-  An extension of \code{xyf} maps to multiple data layers, possibly with
-  different numbers of variables (though equal numbers of objects). NAs
-  are allowed (see below). A weighted distance over all layers is
-  calculated to determine the winning units during training.
+  A supersom is an extension of self-organising maps (SOMs) to multiple
+  data layers, possibly with different numbers and different types of
+  variables (though equal numbers of objects). NAs are allowed. A
+  weighted distance over all layers is calculated to determine the
+  winning units during training.
+  Functions \code{som} and \code{xyf} are simply wrappers for supersoms
+  with one and two layers, respectively.
 }
 
 \usage{
+som(X, ...)
+xyf(X, Y, ...)
 supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
-    radius = quantile(nhbrdist, 0.67) * c(1, -1), 
-    contin, toroidal = FALSE, n.hood, whatmap = NULL, weights = 1,
-    maxNA.fraction = .5, keep.data = TRUE)
+         radius = quantile(nhbrdist, 0.67), 
+         whatmap = NULL, user.weights = 1, maxNA.fraction = 0L,
+         keep.data = TRUE, dist.fcts = NULL,
+         mode = c("online", "batch", "pbatch"), cores = -1, init,
+         normalizeDataLayers = TRUE)
 }
 
 \arguments{
-  \item{data}{list of data matrices.}
-  \item{grid}{a grid for the representatives: see \code{\link[class]{somgrid}}.}
+  \item{X, Y}{numerical data matrices, or factors.}
+  \item{data}{list of data matrices (numerical) of factors. If a vector
+    is entered, it will be converted to a one-column matrix.}
+  \item{grid}{a grid for the codebook vectors:
+    see \code{\link[class]{somgrid}}.}
   \item{rlen}{the number of times the complete data set will be
     presented to the network.}
   \item{alpha}{learning rate, a vector of two numbers indicating the
     amount of change. Default is to decline linearly from 0.05 to 0.01
-    over \code{rlen} updates.}
+    over \code{rlen} updates. Not used for the batch algorithm.}
   \item{radius}{the radius of the neighbourhood, either given as a
     single number or a vector (start, stop). If it is given as a single
     number the radius will run from the given number to the negative
     value of that number; as soon as the neighbourhood gets smaller than
     one only the winning unit will be updated. The default is to start with a
     value that covers 2/3 of all unit-to-unit distances.}
-  \item{contin}{parameter indicating whether data are continuous or
-    categorical, i.e. a logical vector. If only \code{TRUE} or
-    \code{FALSE} is given, this is taken to hold for all elements in
-    \code{data}. The default is to check whether row sums in the data
-    matrices are equal to 1: in that case the corresponding
-    \code{contin} element is \code{FALSE}.}
-  \item{toroidal}{if TRUE, the edges of the map are joined. Note
-    that in a hexagonal toroidal map, the number of rows must be even.}
-  \item{n.hood}{the shape of the neighbourhood, either "circular" or
-    "square". The latter is the default for rectangular maps, the former
-    for hexagonal maps.}
-  \item{whatmap}{For \code{supersom} maps: what layers to use in the
-    mapping.}
-  \item{weights}{the weights given to individual layers. Default is 1/n,
-    with n the number of layers.}
+  \item{whatmap}{What data layers to use. If unspecified all layers are used.}
+  \item{user.weights}{the weights given to individual layers. The default is
+    to give all layers equal weight.}
   \item{maxNA.fraction}{the maximal fraction of values that may be NA to
     prevent the row or column to be removed.}
-  \item{keep.data}{save data in return value.}
+  \item{keep.data}{if TRUE, return original data and mapping
+    information. If FALSE, only return the trained map (in essence the
+    codebook vectors).}
+  \item{dist.fcts}{vector of distance functions to be used for the
+    individual data layers, of the same length as the \code{data}
+    argument, or the same length of the \code{whatmap} argument. If the
+    length of this vector is one, the  
+    same distance will be used for all layers. Admissable values
+    currently are "sumofsquares", "euclidean", "manhattan", and
+    "tanimoto". Default is to use "sumofsquares" for continuous data,
+    and "tanimoto" for factors.}
+  \item{mode}{type of learning algorithm.}
+  \item{cores}{number of cores to use in the "pbatch" learning mode. The
+    default, -1, corresponds to using all available cores.}
+  \item{init}{list of matrices, initial values for the
+    codebook vectors. The list should have the same length as the data
+    list, and corresponding numbers of variables (columns). Each list
+    element should have a number of rows corresponding to the number of
+    units in the map.}
+  \item{normalizeDataLayers}{boolean, indicating whether
+    \code{distance.weights} should be calculated (see details section).
+    If \code{normalizeDataLayers == FALSE} the user weights 
+    are applied to the data immediately.}
+  \item{\dots}{Further arguments for the \code{supersom} function
+    presented to the \code{som} or \code{xyf} wrappers.}
 }
-
 \value{
-  an object of class "kohonen" with components
+  An object of class "kohonen" with components
   \item{data}{data matrix, only returned if \code{keep.data == TRUE}.}
-  \item{contin}{parameter indicating whether elements of \code{data}
-    are continuous or categorical.}
-  \item{na.rows}{indices of objects (rows) that are removed because at
-    least one of the layers has to many NAs for these objects.}
   \item{unit.classif}{winning units for all data objects,
     only returned if \code{keep.data == TRUE}.}
   \item{distances}{distances of objects to their corresponding winning
@@ -64,28 +83,54 @@ supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
   \item{codes}{a list of matrices containing codebook vectors.}
   \item{changes}{matrix of mean average deviations from code vectors;
     every map corresponds with one column.}
-  \item{toroidal}{whether a toroidal map is used.}
-  \item{n.hood}{the shape of the neighbourhood, either "circular" or
-    "square". The latter is the default for rectangular maps, the former
-    for hexagonal maps.}
-  \item{weights}{For \code{supersom} maps: weights of layers uses in the
-    mapping.}
-  \item{whatmap}{For \code{supersom} maps: what layers to use in the
-    mapping.}
-  \item{method}{type of map, here "supersom".}
+  \item{alpha, radius, user.weights, whatmap, maxNA.fraction}{input arguments
+    presented to the function.}
+  \item{distance.weights}{if \code{normalizeDataLayers} weights to
+    equalize the influence of the individual data layers, else a vector
+    of ones.}
+  \item{dist.fcts}{distance functions corresponding to all layers of the
+    data, not just the ones indicated by the whatmap argument.}
 }
+\details{In order to avoid some layers to overwhelm others, simply
+  because of the scale of the data points, the \code{supersom} function
+  by default applies internal weights to balance this. The \code{user.weights}
+  argument is applied on top of that: the result is that when a user
+  specifies equal weights for all layers (the default), all layers
+  contribute equally to the global distance measure. For large data
+  sets (defined as containing more than 500 records), a sample of size
+  500 is used to calculate the mean distances in each data layer. If
+  \code{normalizeDataLayers == FALSE} the user weights are applied
+  directly to the data (\code{distance.weights} are set to 1).
+}
+\references{R. Wehrens and L.M.C. Buydens, J. Stat. Softw. 21 (5), 2007;
+R. Wehrens and J. Kruisselbrink, in preparation.}
+\author{Ron Wehrens and Johannes Kruisselbrink}
 
-\references{R. Wehrens and L.M.C. Buydens, J. Stat. Softw. 21 (5), 2007}
-\author{Ron Wehrens}
-
-\seealso{\code{\link[class]{somgrid}}, \code{\link{plot.kohonen}}}
+\seealso{\code{somgrid}, \code{\link{plot.kohonen}},
+  \code{\link{predict.kohonen}}, \code{\link{map.kohonen}}}
 \examples{
+data(wines)
+
+## som
+som.wines <- som(scale(wines), grid = somgrid(5, 5, "hexagonal"))
+summary(som.wines)
+
+## xyf
+xyf.wines <- xyf(scale(wines), vintages, grid = somgrid(5, 5, "hexagonal"))
+summary(xyf.wines)
+
+## supersom example
 data(yeast)
-yeast.supersom <- supersom(yeast, somgrid(6, 6, "hexagonal"), whatmap = 3:6)
+yeast.supersom <- supersom(yeast, somgrid(6, 6, "hexagonal"),
+                           whatmap = c("alpha", "cdc15", "cdc28", "elu"),
+                           maxNA.fraction = .5)
+
+plot(yeast.supersom, "changes")
+
 obj.classes <- as.integer(yeast$class)
 colors <- c("yellow", "green", "blue", "red", "orange")
 plot(yeast.supersom, type = "mapping", col = colors[obj.classes],
-     pch = obj.classes, main = "yeast data", keepMargins = TRUE)
+     pch = obj.classes, main = "yeast data")
 }
 
 \keyword{classif}

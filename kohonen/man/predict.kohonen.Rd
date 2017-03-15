@@ -3,123 +3,157 @@
 \title{Predict properties using a trained Kohonen map}
 \description{
   Map objects to a trained Kohonen map, and return for each object the
-  property associated with the corresponding winning unit. For
-  \code{som} and \code{supersom} maps, the unit properties are
-  calculated using explicit arguments \code{trainX} and \code{trainY};
-  for \code{xyf} and \code{bdk} maps, the predicted properties are the
-  Y-codebookvectors. Note that in the latter case only the X-space is
-  used for prediction.
+  desired property associated with the corresponding winning
+  unit. These properties may be provided explicitly (argument
+  \code{unit.predictions}) or implicitly (by providing
+  \code{trainingdata}, that will be mapped to the SOM - the averages of
+  the winning units for the trainingdata then will be used as
+  unit.predictions). If not given at all, the codebook vectors of the
+  map will be used.
 }
 \usage{
-\method{predict}{kohonen}(object, newdata, trainX, trainY, unit.predictions,
-                 threshold = 0, whatmap = NULL, weights = 1, ...)
+\method{predict}{kohonen}(object,
+                          newdata = NULL,
+                          unit.predictions = NULL,
+                          trainingdata = NULL,
+                          whatmap = NULL,
+                          threshold = 0, ...)
 }
 \arguments{
-  \item{object}{Trained network.}
-  \item{newdata}{Data matrix for which predictions are to be made. If
-    not given, defaults to the training data (when available).}
-  \item{trainX}{Training data for obtaining predictions for unsupervised
-    maps; necessary for \code{som} maps trained with the
-    \code{keep.data = FALSE} option.}
-  \item{trainY}{Values for the dependent variable for the training data;
-    necessary for \code{som} and \code{supersom} maps.}
-  \item{unit.predictions}{Possible override of the predictions for each
-    unit.}
-  \item{threshold}{Used in class predictions; see
-    \code{\link{classmat2classvec}}.}
-  \item{whatmap}{For \code{supersom} maps: what layers to use in the
-    mapping.}
-  \item{weights}{For \code{supersom} maps: weights of layers uses in the
-    mapping.}
-  \item{\dots}{Currently not used.} 
+  \item{object}{Trained network, containing one or more information layers.}
+  \item{newdata}{List of data matrices, or one single data matrix, for
+    which predictions are to be made. The data layers should match those
+    in the trained map. If not presented, the training data in the map
+    will be used.}
+  \item{unit.predictions}{Explicit definition of the predictions for each
+    unit. Should be a list of matrices, vectors or factors, of the same
+    length as \code{object$codes}.}
+  \item{trainingdata}{List of data matrices, or one single data matrix,
+    determining the mapping of the training data. Normally, data stored
+    in the \code{kohonen} object will be used for this, but one can also
+    specify this argument explicitly. Layers should match the trained map.}
+  \item{whatmap}{What layers to use in the mapping. If not provided the
+    intersection of the names of the newdata, the trainingdata, and the
+    codebook vectors in the \code{kohonen} object will be used. If no
+    names are present in the data layers, or if whatmap is in numerical
+    form, the data layers in the different data objects should match
+    exactly.}
+  \item{threshold}{Used in converting class predictions back into
+    factors; see \code{\link{classmat2classvec}}.}
+  \item{\dots}{Further arguments to be passed to \code{map.kohonen}, in
+    particular \code{maxNA.fraction} and \code{weights}. If not provided
+    they will be taken from \code{object}.} 
 }
 \value{
   Returns a list with components
   \item{prediction}{predicted values for the properties of
     interest. When multiple values are predicted, this element is a
     list, otherwise a vector or a matrix.}
-  \item{unit.classif}{unit numbers to which objects in the data matrix are
-    mapped.}
-  \item{unit.predictions}{mean values associated with map units. Again,
-    when multiple properties are predicted, this is a list.}
+  \item{unit.classif}{vector of unit numbers to which objects in the newdata
+    object are mapped.}
+  \item{unit.predictions}{prediction values associated with map
+    units. Again, when multiple properties are predicted, this is a
+    list.}
+  \item{whatmap}{the numbers of the data layers in the kohonen object
+    used in the mapping on which the predictions are based.}
+}
+\details{
+  The new data are mapped to the trained SOM using
+  the layers indicated by the \code{whatmap} argument. The predictions
+  correspond to the \code{unit.predictions}, normally corresponding to
+  the averages of the training data mapping to individual units. If no
+  \code{unit.predictions} are provided, the \code{trainingdata} will be
+  used to calculate them - if \code{trainingdata} is not provided by the
+  user and the \code{kohonen} object contains data, these will be used.
+  If no objects of the training data are mapping to a particular unit,
+  the prediction for that unit will be NA.
 }
 \author{Ron Wehrens}
-\seealso{\code{\link{som}},\code{\link{xyf}},\code{\link{bdk}},
+\seealso{\code{\link{som}},\code{\link{xyf}},
   \code{\link{supersom}}, \code{\link{map}}}
 \examples{
 data(wines)
-set.seed(7)
 
 training <- sample(nrow(wines), 120)
 Xtraining <- scale(wines[training, ])
 Xtest <- scale(wines[-training, ],
                center = attr(Xtraining, "scaled:center"),
                scale = attr(Xtraining, "scaled:scale"))
+trainingdata <- list(measurements = Xtraining,
+                     vintages = vintages[training])
+testdata <- list(measurements = Xtest, vintages = vintages[-training])
 
-som.wines <- som(Xtraining, grid = somgrid(5, 5, "hexagonal"))
+mygrid = somgrid(5, 5, "hexagonal")
+som.wines <- supersom(trainingdata, grid = mygrid)
 
-som.prediction <- predict(som.wines, newdata = Xtest,
-          trainX = Xtraining,
-          trainY = factor(wine.classes[training]))
-table(wine.classes[-training], som.prediction$prediction)
+## ################################################################
+## Situation 0: obtain expected values for training data (all layers,
+## also if not used in training) on the basis of the position in the map
+som.prediction <- predict(som.wines)
 
-### more complicated examples
+## ################################################################
+## Situation 1: obtain predictions for all layers used in training
+
+som.prediction <- predict(som.wines, newdata = testdata)
+table(vintages[-training], som.prediction$predictions[["vintages"]])
+
+
+## ################################################################
+## Situation 2: obtain predictions for the vintage based on the mapping
+## of the sample characteristics only. There are several ways of doing this:
+
+som.prediction <- predict(som.wines, newdata = testdata,
+                          whatmap = "measurements")
+table(vintages[-training], som.prediction$predictions[["vintages"]])
+
+## same, but now indicated implicitly
+som.prediction <- predict(som.wines, newdata = testdata[1])
+table(vintages[-training], som.prediction$predictions[["vintages"]])
+
+## if no names are present in the list elements whatmap needs to be
+## given explicitly; note that the order of the data layers needs to be
+## consistent with the kohonen object
+som.prediction <- predict(som.wines, newdata = list(Xtest), whatmap = 1)
+table(vintages[-training], som.prediction$predictions[["vintages"]])
+
+
+## ###############################################################
+## Situation 3: predictions for layers not present in the original
+## data. Training data need to be provided for those layers.
+som.wines <- supersom(Xtraining, grid = mygrid)
+som.prediction <- predict(som.wines, newdata = testdata,
+                          trainingdata = trainingdata)
+table(vintages[-training], som.prediction$predictions[["vintages"]])
+
+## ################################################################
+## yeast examples, including NA values
+
 data(yeast)
-
-### only consider complete cases
-missings <- (apply(cbind(yeast$alpha, yeast$cdc15), 1,
-                   function(x) any(is.na(x))))
-
-yeast2 <- list(alpha = yeast$alpha[!missings,],
-               cdc15 = yeast$cdc15[!missings,],
-               class = yeast$class[!missings])
-
-set.seed(7)
-training.indices <- sample(nrow(yeast2$alpha), 300)
-training <- rep(FALSE, nrow(yeast2$alpha))
+training.indices <- sample(nrow(yeast$alpha), 300)
+training <- rep(FALSE, nrow(yeast$alpha))
 training[training.indices] <- TRUE
 
-## unsupervised mapping
-yeast2.som <- som(yeast2$alpha[training,], somgrid(4, 6, "hexagonal"))
-yeast2.som.prediction <- predict(yeast2.som,
-                                 newdata = yeast2$alpha[!training,],
-                                 trainY = yeast2$class[training])
-table(yeast2$class[!training], yeast2.som.prediction$prediction)
+## unsupervised mapping, based on the alpha layer only. Prediction
+## for all layers including alpha
+yeast.som <- supersom(lapply(yeast, function(x) subset(x, training)),
+                      somgrid(4, 6, "hexagonal"),
+                      whatmap = "alpha", maxNA.fraction = .5)
+yeast.som.prediction <-
+  predict(yeast.som,
+          newdata = lapply(yeast, function(x) subset(x, !training)))
 
-## supervised mapping (XYF) - trainY is no longer necessary
-yeast2.xyf <- xyf(yeast2$alpha[training,], yeast2$class[training],
-                  somgrid(4, 6, "hexagonal"))
-yeast2.xyf.prediction <- predict(yeast2.xyf,
-                                 newdata = yeast2$alpha[!training,])
-table(yeast2$class[!training], yeast2.xyf.prediction$prediction)
+table(yeast$class[!training], yeast.som.prediction$prediction[["class"]])
 
-## supervised mapping (BDK)
-yeast2.bdk <- bdk(yeast2$alpha[training,], yeast2$class[training],
-                  somgrid(4, 6, "hexagonal"))
-yeast2.bdk.prediction <- predict(yeast2.bdk,
-                                 newdata = yeast2$alpha[!training,])
-table(yeast2$class[!training], yeast2.bdk.prediction$prediction)
-
-## unsupervised mapping (supersom): prediction of data layer not used
-## in training
-yeast2.ssom <- supersom(lapply(yeast2, function(x) subset(x, training)),
-                        grid = somgrid(4, 6, "hexagonal"),
-                        whatmap = 1)
-yeast2.ssom.prediction <- predict(yeast2.ssom,
-                                  newdata = lapply(yeast2,
-                                    function(x) subset(x, !training)),
-                                  trainY = list(class = yeast2$class[training]))
-table(yeast2$class[!training], yeast2.ssom.prediction$prediction)
-
-## supervised mapping (supersom): prediction of a data layer that has
-## been used in training - trainY is not necessary
-yeast2.ssom2 <- supersom(lapply(yeast2, function(x) subset(x, training)),
-                         grid = somgrid(4, 6, "hexagonal"),
-                         whatmap = c(1,3))
-yeast2.ssom2.prediction <- predict(yeast2.ssom2, 
-                                   newdata = lapply(yeast2,
-                                     function(x) subset(x, !training)),
-                                   whatmap = 1)
-table(yeast2$class[!training], yeast2.ssom2.prediction$prediction)
+## ################################################################
+## supervised mapping - creating the map is now based on both
+## alpha and class, prediction for class based on the mapping of alpha.
+yeast.som2 <- supersom(lapply(yeast, function(x) subset(x, training)),
+                       grid = somgrid(4, 6, "hexagonal"),
+                       whatmap = c("alpha", "class"), maxNA.fraction = .5)
+yeast.som2.prediction <-
+  predict(yeast.som2,
+          newdata = lapply(yeast, function(x) subset(x, !training)),
+          whatmap = "alpha")
+table(yeast$class[!training], yeast.som2.prediction$prediction[["class"]])
 }
 \keyword{classif}

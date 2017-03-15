@@ -3,13 +3,17 @@
 
 unit.distances <- function(grid, toroidal)
 {
+  if (missing(toroidal)) toroidal <- grid$toroidal
+
   if (!toroidal) {
-    if (grid$n.hood == "circular")
+    if (grid$topo == "hexagonal") {
       return(as.matrix(stats::dist(grid$pts)))
-    if (grid$n.hood == "square")
+    } else {
       return(as.matrix(stats::dist(grid$pts, method="maximum")))
+    }
   }
 
+  ## only for toroidal maps:
   np <- nrow(grid$pts)
   maxdiffx <- grid$xdim/2
   maxdiffy <- max(grid$pts[,2])/2
@@ -31,7 +35,7 @@ unit.distances <- function(grid, toroidal)
     }
   }
 
-  if (grid$n.hood == "circular") {
+  if (grid$topo == "hexagonal") {
     sqrt(result + t(result))
   } else {
     result + t(result)

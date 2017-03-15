@@ -1,183 +1,254 @@
-"supersom" <- function(data,
-                       grid = somgrid(),
-                       rlen = 100,
-                       alpha = c(0.05, 0.01),
-                       radius = quantile(nhbrdist, 0.67) * c(1, -1),
-                       contin,
-                       toroidal = FALSE,
-                       n.hood,
-                       whatmap = NULL,
-                       weights = 1,
-                       maxNA.fraction = .5,
-                       keep.data = TRUE)
+supersom <- function(data,
+                     grid = somgrid(),
+                     rlen = 100,
+                     alpha = c(0.05, 0.01),
+                     radius = quantile(nhbrdist, 0.67),
+                     whatmap = NULL,
+                     user.weights = 1,
+                     maxNA.fraction = 0L,
+                     keep.data = TRUE,
+                     dist.fcts = NULL,
+                     mode = c("online", "batch", "pbatch"),
+                     cores = -1,
+                     init,
+                     normalizeDataLayers = TRUE)
 {
-  if (length(weights) == 1) weights <- rep(weights, length(data))
-
-  whatmap <- check.whatmap(data, whatmap)
-  whatmap <- whatmap[weights[whatmap] != 0]
-  nmat <- length(whatmap)
-
+  ## ##########################################################################
+  ## Check data
+  if (!is.list(data) & (is.vector(data) | is.factor(data) | is.matrix(data)))
+    data <- list(data)
   orig.data <- data
+  nmat <- length(data)
+  
+  data <- check.data(data)
+  nachecks <- check.data.na(data, maxNA.fraction = maxNA.fraction)
+  data <- remove.data.na(data, nachecks)
+  
+  ## ##########################################################################
+  ## Check radius update parameters
+  nhbrdist <- unit.distances(grid)
+  if (length(radius) == 1)
+    radius <- c(radius, 0)
+
+  ## ##########################################################################
+  ## Whatmap
+  whatmap <- check.whatmap(data, whatmap)
+  nmap <- length(whatmap)
   data <- data[whatmap]
-  weights <- weights[whatmap]
-  orig.weights <- rep(0, length(orig.data))
-  orig.weights[whatmap] <- weights
-
-  if (length(weights) != length(data))
-    stop("number of weights should equal the number of data matrices")
-
-  if (abs(sum(weights)) < .Machine$double.eps) {
-    stop("weights sum to zero")
+  nobjects <- nrow(data[[1]])
+  nvar <- sapply(data, ncol)
+  data.matrix <- matrix(unlist(data), ncol = nobjects, byrow = TRUE)
+  
+  nNA <- getnNA(data, maxNA.fraction, nobjects)
+  
+  ## ##########################################################################
+  ## Distances.
+  ## Situations:
+  ## - no distances defined. Then we take the defaults for ALL layers
+  ##   and select the relevant ones according to whatmap
+  ## - distances defined for all layers: simply take the relevant ones
+  ##   according to whatmap
+  ## - distances defined for only the whatmap layers: substitute the
+  ##   missing ones by default distances
+  if (length(dist.fcts) == length(orig.data)) {
+    orig.dist.fcts <- dist.fcts
+    dist.fcts <- dist.fcts[whatmap]
   } else {
+    if (length(dist.fcts) == 1) {
+      orig.dist.fcts <- rep(dist.fcts, length(orig.data))
+      dist.fcts <- orig.dist.fcts[whatmap]
+    } else {
+      defaultDist <- "sumofsquares"
+      defaultClassDist <- "tanimoto"
+      factorLayers <- sapply(orig.data,
+                             function(datamat)
+                               is.factor(datamat) ||
+                               is.factor.matrix(datamat))
+      default.dist.fcts <- rep(defaultDist, length(orig.data))
+      if (any(factorLayers))
+        default.dist.fcts[which(factorLayers)] <- defaultClassDist
+      
+      if (length(dist.fcts) == 0) {
+        orig.dist.fcts <- default.dist.fcts
+        dist.fcts <- orig.dist.fcts[whatmap]
+      } else {
+        if (length(dist.fcts) == length(whatmap)) {
+          orig.dist.fcts <- default.dist.fcts
+          orig.dist.fcts[whatmap] <- dist.fcts
+        } else {
+          stop("Wrong number of distances defined")
+        }}}}
+  
+  dist.ptrs <- getDistancePointers(dist.fcts,
+                                   maxNA.fraction = maxNA.fraction)
+
+  ## ##########################################################################
+  ## Get or create initial codebooks
+  ncodes <- nrow(grid$pts)
+  if (missing(init)) {
+    starters <- sample(1:nobjects, ncodes, replace = FALSE)
+    init <- lapply(data, function(x) x[starters,,drop=FALSE])
+  } else {
+    ## Check length and dimensions
+    if (!is.list(init) & (is.vector(init) | is.factor(init) | is.matrix(init)))
+      init <- list(init)
+    if (length(init) != nmap)
+      stop("Incorrect number of initialization matrices")
+    if (!all(sapply(init, nrow) == ncodes))
+      stop("Incorrect number of objects in initalization matrices")
+    if (!all(sapply(init, ncol) == nvar)) {
+      if (maxNA.fraction == 0L) {
+        stop("Incorrect number of variables in initialization matrices")
+      } else {
+        stop("Incorrect number of variables in initialization matrices, ",
+             "maybe due to the removal of columns because of NAs")
+      }
+    }
+  }
+  ## Skip this if no NAs are allowed - that has already been checked
+  ## note that these matrices contain objects in the columns, and
+  ## variables in the rows
+  if (maxNA.fraction > 0L) {
+    ## Fill in any NAs with random draws (nonNA) from the
+    ## corresponding columns in data
+    for (jj in seq(along = init)) {
+      nastarters <- which(is.na(init[[jj]]), arr.ind = TRUE)
+      if (nrow(nastarters) > 0) {
+        for (i in unique(nastarters[,1])) { ## rows
+          idx <- which(nastarters[,1] == i) ## columns
+          imputers <- sample(data[[jj]][i, !is.na(data[[jj]][i,])],
+                             length(idx),
+                             replace = TRUE)
+          init[[jj]][i, nastarters[idx,2]] <- imputers
+        }
+      }
+    }
+  }
+  init.matrix <- matrix(unlist(init), ncol = ncodes, byrow = TRUE)
+  
+
+  ## ####################################################################
+  ## Weights
+
+  distance.weights <- orig.user.weights <- rep(0, nmat)
+  if (length(whatmap) == 1) {
+    weights <- user.weights <- 1
+    distance.weights[whatmap] <- orig.user.weights[whatmap] <- 1
+  } else {
+    if (length(user.weights) == 1) {
+      user.weights <- rep(user.weights, length(whatmap))
+    } else {
+      if (length(user.weights) == nmat)
+        user.weights <- user.weights[whatmap]
+    }
+    if (any(user.weights == 0))
+      stop("Incompatibility between whatmap and user.weights")
+
+    if (abs(sum(user.weights)) < .Machine$double.eps) 
+      stop("user.weights sum to zero")
+
+    user.weights <- user.weights / sum(user.weights)
+
+    orig.user.weights[whatmap] <- user.weights
+    ## calculate distance weights from the init data (not containing any
+    ## NA values) - the goal is to bring each data layer
+    ## to more or less the same scale, after which the user weights are
+    ## applied. We call object.distances layer by layer here, which
+    ## leads to a list of distance vectors.
+    
+    if (normalizeDataLayers) {
+      meanDistances <-
+        lapply(seq(along = init),
+               function(ii)
+                 object.distances(list(data = init[ii],
+                                       whatmap = 1,
+                                       user.weights = 1,
+                                       distance.weights = 1,
+                                       maxNA.fraction = maxNA.fraction,
+                                       dist.fcts = dist.fcts[ii]),
+                                  type = "data"))
+      ## The distance weights are then the reciprocal values of the median
+      ## distances per layer
+      distance.weights[whatmap] <- 1 / sapply(meanDistances, median)
+    } else {
+      distance.weights <- rep(1, length(data))
+    }
+    
+    weights <- user.weights * distance.weights[whatmap]
     weights <- weights / sum(weights)
   }
-
-  if (!is.list(data) | !all(sapply(data, is.matrix) | sapply(data, is.factor)))
-    stop("data should be a list of data matrices or factors")
-  if (any(sapply(data, is.factor))) {
-    data[sapply(data, is.factor)] <-
-      lapply(data[sapply(data, is.factor)], classvec2classmat)
-  }
-
-  if (!all(sapply(data, is.numeric)))
-    stop("Argument data should be numeric")
-
-  if (missing(contin)) {
-    ## contin == FALSE if this is a class label or membership
-    ## estimate; in that case variables can be interpreted as fractions,
-    ## i.e. they should not contain NAs and sum to 1
-    contin <- rep(NA, length(orig.data))
-    names(contin) <- names(orig.data)
-    contin[whatmap] <- sapply(data,
-                              function(x) {
-                                !any(is.na(x)) &&
-                                  any(abs(rowSums(x) - 1) > 1e-8)})
-  } else {
-    if (length(contin) == 1)
-      contin <- rep(contin, length(orig.data))
-    
-    if (length(contin) != length(orig.data))
-      stop("incorrect length of contin parameter")
-  }
-    
-  ## remove NAs: individual NAs are allowed but rows or columns
-  ## containing more than maxNA.fraction of NAs are removed. Columns
-  ## are only removed in one data matrix.
-  nacols <- lapply(data,
-                   function(x)
-                   which(apply(x, 2, function(y)
-                               (sum(is.na(y)) / length(y)) > maxNA.fraction)))
-  for (i in 1:nmat)
-    if (length(nacols[[i]]) != 0) {
-      warning(paste("removing", length(nacols[[i]]),
-                    "NA columns from training data matrix", i, "\n"))
-      data[[i]] <- data[[i]][,-nacols[[i]], drop=FALSE]
-    }
   
-  ## rows of NAs result in the object being removed from the data set.
-  narows <- lapply(data,
-                   function(x)
-                   which(apply(x, 1,
-                               function(y)
-                               (sum(is.na(y)) / length(y)) > maxNA.fraction)))
-  narows <- unique(unlist(narows))
-  if (length(narows) > 0) {
-    warning(paste("removing", length(narows),
-                  "NA objects from the training data\n"))
-    for (i in 1:nmat)
-      data[[i]] <- data[[i]][-narows, , drop=FALSE]
-  } else {
-    narows <- NULL
-  }
-
-  ## for (i in 1:nmat)
-  ##   dimnames(data[[i]]) <- NULL
-  nobjects <- unique(sapply(data, nrow))
-  if (length(nobjects) > 1)
-    stop("unequal numbers of objects in data list")
-  nvar <- sapply(data, ncol)
-
-  nNA <- sapply(data, function(x) apply(x, 1, function(y) sum(is.na(y))))
-  
-  if (missing(n.hood)) {
-    n.hood <- switch(grid$topo,
-                     hexagonal = "circular",
-                     rectangular = "square")
-  } else {
-    n.hood <- match.arg(n.hood, c("circular", "square"))
-  }
-  grid$n.hood <- n.hood
-  ng <- nrow(grid$pts)
-  nhbrdist <- unit.distances(grid, toroidal)
-  ## temporary variables for storing distances of an object to all units
-  unitdistances <- matrix(0, ng, nmat)
-  if (length(radius) == 1) radius <- sort(radius * c(1, -1), decreasing = TRUE)
-  
-  ## initialisation
-  starters <- sample(1:nobjects, ng, replace = FALSE)
-  init <- vector("list", nmat)
-  for (i in 1:nmat) {
-    init[[i]] <- data[[i]][starters,]
-    nastarters <- which(is.na(init[[i]])) # fill in NAs with random numbers
-    init[[i]][nastarters] <- rnorm(length(nastarters))
-  }
-  
-  changes <- rep(0, rlen*nmat)
-  maxdists <- rep(0, nmat)
-  
-  ## change data and init into large concatenated matrices
-  data2 <- matrix(unlist(data), nrow=nobjects)
-  init <- matrix(unlist(init), nrow=ng)
-  
-  res <- .C("supersom",
-            data = as.double(data2),
-            codes = as.double(init),
-            nhbrdist = as.double(nhbrdist),
-            alpha = as.double(alpha),
-            radii = as.double(radius),
-            weights = as.double(weights), # vector now
-            changes = as.double(changes), # matrix with n columns
-            unitdistances = as.double(unitdistances), # matrix with n columns
-            maxdists = as.double(maxdists),
-            nobjects = as.integer(nobjects),
-            nmat = as.integer(nmat), # number of data matrices
-            nvar = as.integer(nvar), # vector!
-            nNA = as.integer(nNA), # matrix containing the number of NAs
-            ncodes = as.integer(ng),
-            rlen = as.integer(rlen),
-            NAOK = TRUE,
-            PACKAGE = "kohonen")
-
-  changes <- matrix(res$changes, ncol=nmat)
+  ## ##########################################################################
+  ## Go!
+  mode <- match.arg(mode)
+  switch(mode,
+  online = {
+    res <- RcppSupersom(data = data.matrix,
+                        codes = init.matrix,
+                        numVars = nvar,
+                        weights = weights,
+                        distanceFunctions = dist.ptrs,
+                        numNAs = nNA,
+                        neighbourhoodDistances = nhbrdist,
+                        neighbourhoodFct =
+                          as.integer(grid$neighbourhood.fct),
+                        alphas = alpha,
+                        radii = radius,
+                        numEpochs = rlen)
+  },
+  batch = {
+    res <- RcppBatchSupersom(data = data.matrix,
+                             codes = init.matrix,
+                             numVars = nvar,
+                             weights = weights,
+                             distanceFunctions = dist.ptrs,
+                             numNAs = nNA,
+                             neighbourhoodDistances = nhbrdist,
+                             neighbourhoodFct =
+                               as.integer(grid$neighbourhood.fct),
+                             radii = radius,
+                             numEpochs = rlen)
+  },
+  pbatch = {
+    res <- RcppParallelBatchSupersom(data = data.matrix,
+                                     codes = init.matrix,
+                                     numVars = nvar,
+                                     weights = weights,
+                                     distanceFunctions = dist.ptrs,
+                                     numNAs = nNA,
+                                     neighbourhoodDistances = nhbrdist,
+                                     neighbourhoodFct =
+                                       as.integer(grid$neighbourhood.fct),
+                                     radii = radius,
+                                     numEpochs = rlen,
+                                     numCores = cores)
+  })
+  changes <- matrix(res$changes, ncol = nmap, byrow = TRUE)
   colnames(changes) <- names(data)
-  
-  codes2 <- matrix(res$codes, nrow=ng)
-  
-  codes <- vector("list", length(orig.data))
-  endings <- cumsum(nvar)
-  beginnings <- c(1, cumsum(nvar)[-nmat] + 1)
+  mycodes <- res$codes
 
-  for (i in 1:nmat) {
-    codes[[ whatmap[i] ]] <- codes2[, beginnings[i]:endings[i], drop=FALSE]
-    
-    if (is.factor(orig.data[[ whatmap[i] ]])) {
-      colnames(codes[[ whatmap[i] ]]) <- levels(orig.data[[ whatmap[i] ]])
-    } else {
-      colnames(codes[[ whatmap[i] ]]) <- colnames(data[[i]])
-    } 
-  }
-  
+  ## ##########################################################################
+  ## Format the codes
+  layerID <- rep(1:nmap, nvar)
+  mycodes2 <- split(as.data.frame(mycodes), layerID)
+  mycodes3 <- lapply(mycodes2, function(x) t(as.matrix(x)))
+  codes <- vector(length(orig.data), mode = "list")
   names(codes) <- names(orig.data)
+  codes[whatmap] <- mycodes3
+  for (ii in seq(along = whatmap))
+    colnames(codes[[ whatmap[ii] ]]) <- colnames(data[[ii]])
 
+  ## ##########################################################################
+  ## Prepare results
   if (keep.data) {
     mapping <- map.kohonen(list(codes = codes,
-                                weights = orig.weights,
-                                whatmap = whatmap), 
-                           newdata = orig.data)
-        
+                                distance.weights = distance.weights,
+                                dist.fcts = orig.dist.fcts),
+                           newdata = orig.data,
+                           whatmap = whatmap,
+                           user.weights = orig.user.weights,
+                           maxNA.fraction = maxNA.fraction)
     structure(list(data = orig.data,
-                   contin = contin,
-                   na.rows = narows,
                    unit.classif = mapping$unit.classif,
                    distances = mapping$distances,
                    grid = grid,
@@ -185,23 +256,23 @@
                    changes = changes,
                    alpha = alpha,
                    radius = radius,
-                   toroidal = toroidal,
-                   weights = orig.weights,
+                   user.weights = orig.user.weights,
+                   distance.weights = distance.weights,
                    whatmap = whatmap,
-                   method = "supersom"),
+                   maxNA.fraction = maxNA.fraction,
+                   dist.fcts = orig.dist.fcts),
               class = "kohonen")
   } else {
     structure(list(grid = grid,
-                   contin = contin,
                    codes = codes,
                    changes = changes,
                    alpha = alpha,
                    radius = radius,
-                   toroidal = toroidal,
-                   weights = orig.weights, 
+                   user.weights = orig.user.weights,
+                   distance.weights = distance.weights,
                    whatmap = whatmap,
-                   method = "supersom"),
+                   maxNA.fraction = maxNA.fraction,
+                   dist.fcts = orig.dist.fcts),
               class = "kohonen")
   }
 }
-

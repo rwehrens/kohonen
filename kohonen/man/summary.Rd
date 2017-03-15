@@ -18,11 +18,10 @@
   \item{\dots}{Not used.}
 }
 \author{Ron Wehrens}
-\seealso{\code{\link{som}}, \code{\link{xyf}}, \code{\link{bdk}},
-  \code{\link{supersom}}}
+\seealso{\code{\link{som}}, \code{\link{xyf}}, \code{\link{supersom}}}
 \examples{
 data(wines)
-xyf.wines <- xyf(scale(wines), classvec2classmat(wine.classes),
+xyf.wines <- xyf(scale(wines), classvec2classmat(vintages),
                  grid = somgrid(5, 5, "hexagonal"))
 xyf.wines
 summary(xyf.wines)

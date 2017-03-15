@@ -10,21 +10,23 @@
   data(nir)
 
   set.seed(3)
-  nirnet <- xyf(data = nir$spectra[nir$training,],
+  nirnet <- xyf(X = nir$spectra[nir$training,],
                 Y = nir$composition[nir$training,],
-                xweight=.75,
+                user.weights = c(3,1),
                 grid = somgrid(6, 6, "hexagonal"), rlen=500)
   plot(nirnet, "counts", main="Counts")
 
   ## Focus on compound 2 (water):
-  dev.new(width = 14)
   par(mfrow = c(1,2))
   set.seed(13)
-  nirnet <- xyf(data = nir$spectra[nir$training,],
-                Y = nir$composition[nir$training, 2],
+  nirnet <- xyf(X = nir$spectra[nir$training,],
+                Y = nir$composition[nir$training, 2, drop = FALSE],
                 grid = somgrid(6, 6, "hexagonal"), rlen=500)
-  water.xyf <- predict(nirnet)$prediction
-  plot(nirnet, "property", property = water.xyf,
+  water.xyf <-
+    predict(nirnet, newdata = nir$spectra[nir$training,],
+            unit.predictions = getCodes(nirnet, 2),
+            whatmap = 1)$prediction
+  plot(nirnet, "property", property = water.xyf[[1]],
        main="Prediction of water content")
   ## Plot temperatures as circles
   symbols(nirnet$grid$pts[nirnet$unit.classif,] +
@@ -34,13 +36,15 @@
 
   ## Model temperatures
   set.seed(13)
-  nirnet2 <- xyf(data = nir$spectra[nir$training,],
-                 Y = nir$temperature[nir$training],
-                 xweight=.25,
+  nirnet2 <- xyf(X = nir$spectra[nir$training,],
+                 Y = matrix(nir$temperature[nir$training], ncol = 1),
+                 user.weights = c(1,3),
                  grid = somgrid(6, 6, "hexagonal"), rlen=500)
-  temp.xyf <- predict(nirnet2)$prediction
+  temp.xyf <- predict(nirnet2, newdata = nir$spectra[nir$training,],
+                      unit.predictions = getCodes(nirnet2, 2),
+                      whatmap = 1)$prediction
 
-  plot(nirnet2, "property", property = temp.xyf,
+  plot(nirnet2, "property", property = temp.xyf[[1]],
        palette.name = rainbow,
        main="Prediction of temperatures")
   ## Plot concentrations of water as circles

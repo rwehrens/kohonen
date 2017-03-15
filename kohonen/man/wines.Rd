@@ -1,14 +1,11 @@
 \name{wines}
 \alias{wines}
-\alias{wine.classes}
 \alias{vintages}
 \docType{data}
 \title{Wine data}
 \description{
   A data frame containing 177 rows and thirteen columns; object
-  \code{vintages} contains the class labels. For compatibility with
-  older versions of the package, variable \code{wine.classes} is
-  retained, too.
+  \code{vintages} contains the class labels. 
   
   These data are the results of chemical analyses of
   wines grown in the same region in Italy (Piedmont) but derived from

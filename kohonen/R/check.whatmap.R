@@ -1,37 +1,32 @@
 check.whatmap <- function(x, whatmap)
 {
-  checkpar <- NULL
   whatmap <- unique(whatmap)
-  
-  if (!is.null(x$codes)) {
-    checkpar <- x$codes
+
+  checkpar <- NULL
+  if (class(x) == "kohonen") {
+    checkpar <- getCodes(x)
   } else {
-    if (!is.null(x$data)) {
-      checkpar <- x$data
-    } else {
-      if (is.list(x)) # not foolproof!
-        checkpar <- x
-    }
+    if (is.list(x)) # not foolproof!
+      checkpar <- x
   }
   if (is.null(checkpar))
     stop("no possibility to check argument 'whatmap'!")
-
-  if (!is.list(checkpar)) return(0) #OK, no selection
+  
   if (is.null(whatmap)) {
     if (is.null(x$whatmap)) {
-      return(1:length(checkpar))  #OK, no selection
+      return(1:length(checkpar))  # no selection, return all layers
     } else {
       return(x$whatmap)
     }
   }
 
-  if ((is.numeric(whatmap) && all(whatmap %in% 1:length(checkpar))) |
-      all(whatmap %in% names(checkpar))) {
-    ## if necessary, convert the whatmap argument to indices
-    if (!is.numeric(whatmap))
-      whatmap <- which(names(checkpar) %in% whatmap)
+  if (is.numeric(whatmap) && all(whatmap %in% 1:length(checkpar)))
+    return(sort(whatmap))
 
-    return(whatmap) # valid selection
+  if (is.character(whatmap)) {
+    idx <- match(whatmap, names(checkpar)) ## works also when comparing to NULL
+    if (any(!is.na(idx))) 
+      return(sort(idx))
   }
 
   stop("incorrect whatmap argument") # invalid selection

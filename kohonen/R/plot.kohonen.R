@@ -1,31 +1,7 @@
-### $Id: plot.kohonen.R 23 2013-10-11 13:31:05Z ron.wehrens@gmail.com $
-### Version 2.0.5: added parameter heatkeywidth (suggestion by Henning
-### Rust). Especially useful for multiple plots in one figure.
-
-### Parameter 'main' is mentioned explicitly since in most cases the
-### default leaves open ugly space above the plot. We explicitly put
-### it 1.2 units above the top row using 'text', if this is within the
-### par("usr") range. Else, we use the standard 'title' command.
-
-### Addition 04/11/07: keepMargins, codeRendering and whatmap arguments.
-### Adapted for version 2.0: April 11, 2007
-### Added quality plot, August 30 2007.
-### Added default titles, August 31 2007.
-
 Hexagon <- function (a, b, unitcell = 1, col = "grey", border=NA) {
     x <- a - unitcell/2
     y <- b - unitcell/2
 
-    # basic trigonometry yields the coordinates in the local coordinates
-    # of the square centered around each node center. Let's say, (0, 0) is
-    # the bottom left corner of this (1, 1) square, we have:
-    # - abscissa are 0, 0 + unitcell/2, and 0 + unitcell
-    # - ordinates are 0 + unitcell/2 - 2 * unitcell * tan(pi/6),
-    #                 0 + unitcell/2 - 1 * unitcell * tan(pi/6),
-    #                 0 + unitcell/2 + 1 * unitcell * tan(pi/6),
-    #                 0 + unitcell/2 + 2 * unitcell * tan(pi/6)
-
-    # after simplification, we have:
     polygon(c(x, x,
               x + unitcell/2, x + unitcell,
               x + unitcell,   x + unitcell/2),
@@ -47,65 +23,71 @@ hexagons <- function(x, y, unitcell, col, border) {
 }
 
 
-"plot.kohonen" <- function (x,
-                            type = c("codes", "changes", "counts",
-                              "dist.neighbours", "mapping", "property",
-                              "quality"),
-                            classif = NULL,
-                            labels = NULL, pchs = NULL, main = NULL,
-                            palette.name = NULL, ncolors,
-                            bgcol=NULL, zlim = NULL, heatkey = TRUE,
-                            property, contin, whatmap = NULL,
-                            codeRendering = NULL, keepMargins = FALSE,
-                            heatkeywidth = .2, shape = c("round", "straight"),
-                            border = "black", ...)
+plot.kohonen <- function (x,
+                          type = c("codes", "changes", "counts",
+                                   "dist.neighbours", "mapping", "property",
+                                   "quality"),
+                          whatmap = NULL,
+                          classif = NULL, labels = NULL, pchs = NULL,
+                          main = NULL, palette.name = NULL, ncolors,
+                          bgcol=NULL, zlim = NULL, heatkey = TRUE,
+                          property, 
+                          codeRendering = NULL, keepMargins = FALSE,
+                          heatkeywidth = .2,
+                          shape = c("round", "straight"),
+                          border = "black", ...)
 {
   type <- match.arg(type)
-
+  
   switch(type,
-         mapping = plot.kohmapping(x = x, classif = classif,
-           main = main, labels = labels, pchs = pchs,
-           bgcol = bgcol, keepMargins = keepMargins, shape = shape,
-           border = border, ...),
-         property = plot.kohprop(x = x, property, main = main,
-           palette.name = palette.name, ncolors = ncolors,
-           zlim = zlim, heatkey = heatkey,
-           contin = contin, keepMargins = keepMargins,
-           heatkeywidth = heatkeywidth, shape = shape,
-           border = border, ...),
-         codes = plot.kohcodes(x = x, main = main,
-           palette.name = palette.name, bgcol = bgcol,
-           whatmap = whatmap, codeRendering = codeRendering,
-           keepMargins = keepMargins, shape = shape, border = border, ...),
-         quality = plot.kohquality(x = x, classif = classif, main = main,
-           palette.name = palette.name, ncolors = ncolors,
-           zlim = zlim, heatkey = heatkey, keepMargins = keepMargins,
-           heatkeywidth = heatkeywidth, shape = shape,
-           border = border, ...),
-         counts = plot.kohcounts(x = x, classif = classif, main = main,
-           palette.name = palette.name, ncolors = ncolors,
-           zlim = zlim, heatkey = heatkey, keepMargins = keepMargins,
-           heatkeywidth = heatkeywidth, shape = shape,
-           border = border, ...),
-         changes = plot.kohchanges(x = x, main = main,
-           keepMargins = keepMargins, ...),
-         dist.neighbours = plot.kohUmatrix(x = x, main = main,
-           palette.name = palette.name, ncolors = ncolors,
-           zlim = zlim, heatkey = heatkey, keepMargins = keepMargins,
-           heatkeywidth = heatkeywidth, shape = shape,
-           border = border, ...))
+         mapping =
+           plot.kohmapping(x = x, classif = classif, main = main,
+                           labels = labels, pchs = pchs, bgcol = bgcol,
+                           keepMargins = keepMargins, shape = shape,
+                           border = border, ...),  
+         property =
+           plot.kohprop(x = x, property, main = main,
+                        palette.name = palette.name, ncolors = ncolors,
+                        zlim = zlim, heatkey = heatkey,
+                        keepMargins = keepMargins,
+                        heatkeywidth = heatkeywidth, shape = shape,
+                        border = border, ...),
+         codes =
+           plot.kohcodes(x = x, whatmap = whatmap, main = main,
+                         palette.name = palette.name, bgcol = bgcol,
+                         codeRendering = codeRendering,
+                         keepMargins = keepMargins, shape = shape,
+                         border = border, ...),
+         quality =
+           plot.kohquality(x = x, classif = classif, main = main,
+                           palette.name = palette.name, ncolors = ncolors,
+                           zlim = zlim, heatkey = heatkey,
+                           keepMargins = keepMargins,
+                           heatkeywidth = heatkeywidth, shape = shape,
+                           border = border, ...),
+         counts =
+           plot.kohcounts(x = x, classif = classif, main = main,
+                          palette.name = palette.name, ncolors = ncolors,
+                          zlim = zlim, heatkey = heatkey,
+                          keepMargins = keepMargins,
+                          heatkeywidth = heatkeywidth, shape = shape,
+                          border = border, ...),
+         changes =
+           plot.kohchanges(x = x, main = main,
+                           keepMargins = keepMargins, ...),
+         dist.neighbours =
+           plot.kohUmatrix(x = x, main = main, 
+                           palette.name = palette.name, ncolors = ncolors,
+                           zlim = zlim, heatkey = heatkey,
+                           keepMargins = keepMargins,
+                           heatkeywidth = heatkeywidth, shape = shape,
+                           border = border, ...))
 }
 
 
-### Overwrite the original plot.somgrid in the class library since
-### that leaves open an ugly space at the top of the plot in case of
-### hexagonal grids
-
-### Unchanged in version 2.0
-
 plot.somgrid <- function(x, xlim, ylim, ...)
 {
-  ## Following two lines leave equal amounts of space on both
+  ## The following two lines leave equal amounts of space on both
   ## sides of the plot if no xlim or ylim are given
   if (missing(xlim)) xlim <- c(0, max(x$pts[,1]) + min(x$pts[,1]))
   if (missing(ylim)) ylim <-  c(max(x$pts[,2]) + min(x$pts[,2]), 0)
@@ -113,8 +95,6 @@ plot.somgrid <- function(x, xlim, ylim, ...)
            type = "n", xlab = "", ylab = "", ...)
 }
 
-
-### Adapted for version 2.0: April 11.
 
 plot.kohmapping <- function(x, classif, main, labels, pchs, bgcol,
                             keepMargins, shape = c("round", "straight"),
@@ -170,6 +150,7 @@ plot.kohmapping <- function(x, classif, main, labels, pchs, bgcol,
                           fg = border, bg = bgcol)
          )
 
+  if (is.null(pchs)) pchs <- 1
   if (is.null(labels) & !is.null(pchs))
     points(x$grid$pts[classif, 1] + rnorm(length(classif), 0, 0.12),
            x$grid$pts[classif, 2] + rnorm(length(classif), 0, 0.12),
@@ -179,15 +160,12 @@ plot.kohmapping <- function(x, classif, main, labels, pchs, bgcol,
          x$grid$pts[classif, 2] + rnorm(length(classif), 0, 0.12),
          labels, ...)
 
-
   invisible()
 }
 
 
-### Adapted for version 2.0: April 11.
-
 plot.kohprop <- function(x, property, main, palette.name, ncolors,
-                         zlim, heatkey, contin, keepMargins,
+                         zlim, heatkey, keepMargins,
                          heatkeywidth, shape = c("round", "straight"),
                          border = "black", ...)
 {
@@ -214,30 +192,44 @@ plot.kohprop <- function(x, property, main, palette.name, ncolors,
          font = par("font.main"))
   }
 
-  if (is.null(zlim))
-    zlim <- range(property, finite = TRUE)
+  ## if contin, a pretty labelling of z colors will be used; if not,
+  ## all colours will have their own label. The latter only if
+  ## property is a factor, unless explicitly given.
+  ## if (missing(contin))
+  contin <- !is.factor(property)
+  if (is.null(zlim)) {
+    if (contin) {
+      zlim <- range(property, finite = TRUE)
+    } else {
+      zlim <- range(1:nlevels(property))
+    }
+  }
 
   if (missing(ncolors))
     ncolors <- min(length(unique(property[!is.na(property)])), 20)
   bgcol <- palette.name(ncolors)
 
   bgcolors <- rep("gray", nrow(x$grid$pts))
-  showcolors <- as.integer(cut(property,
-                               seq(zlim[1], zlim[2],
-                                   length = ncolors + 1),
-                               include.lowest = TRUE))
+  if (contin) {
+    showcolors <- as.integer(cut(property,
+                                 seq(zlim[1], zlim[2],
+                                     length = ncolors + 1),
+                                 include.lowest = TRUE))
+  } else {
+    showcolors <- as.integer(property)
+  }
   bgcolors[!is.na(showcolors)] <- bgcol[showcolors[!is.na(showcolors)]]
 
   # choose symbol to draw based on shape (round, square), and grid (rect, hex)
   shape <- match.arg(shape)
   sym <- ifelse(shape == 'round', 'circle',
-                ifelse(x$grid$topo == 'rectangular', 'square', 'hexagon'))
-
+         ifelse(x$grid$topo == 'rectangular', 'square', 'hexagon'))
+  
   switch(sym,
          circle = symbols(x$grid$pts[, 1], x$grid$pts[, 2],
-                         circles = rep(0.5, nrow(x$grid$pts)),
-                         inches = FALSE, add = TRUE,
-                         fg = border, bg = bgcolors),
+                          circles = rep(0.5, nrow(x$grid$pts)),
+                          inches = FALSE, add = TRUE,
+                          fg = border, bg = bgcolors),
          hexagon = hexagons(x$grid$pts[, 1], x$grid$pts[, 2],
                             unitcell = 1, col = bgcolors, border = border),
          square = symbols(x$grid$pts[, 1], x$grid$pts[, 2],
@@ -245,13 +237,7 @@ plot.kohprop <- function(x, property, main, palette.name, ncolors,
                           inches = FALSE, add = TRUE,
                           fg = border, bg = bgcolors)
          )
-
-  ## if contin, a pretty labelling of z colors will be used; if not,
-  ## all colours will have their own label. The latter only if
-  ## property is a factor, unless explicitly given.
-  if (missing(contin))
-    contin <- !is.factor(property)
-
+  
   if (heatkey) {
     if (length(unique(property)) < 10 & !contin) {
       plot.heatkey(x, zlim, bgcol, labels = levels(as.factor(property)),
@@ -266,16 +252,11 @@ plot.kohprop <- function(x, property, main, palette.name, ncolors,
 }
 
 
-### Adapted for version 2.0, April 11.
-### Whatmap argument left out because of trouble with indexing:
-### changes is a matrix with a number of columns that is equal to the
-### layers in whatmap; so there is no safe way to distinguish between,
-### say, a whatmap of c(1,2,4) and 2:4 in a six-layer map where only
-### the first four layers are used. Anyway.
-### Checked: April 13.
-
 plot.kohchanges <- function(x, main, keepMargins, ...)
 {
+  if (is.null(x$changes))
+    stop("No training info available (trained by knnSOM?)")
+  
   if (is.null(main)) main <- "Training progress"
 
   nmaps <- ncol(x$changes)
@@ -297,24 +278,40 @@ plot.kohchanges <- function(x, main, keepMargins, ...)
     }
     par(mar=c(5.1, 4.1, 4.1, 4.1)) # axis scale to the right as well
 
-    ## scale so that both have the same max value; assume only
+    rescale2 <- function(x) {
+      b <- diff(range(x[,1])) / diff(range(x[,2]))
+      x[,2] <- x[,2] * b
+      a <- max(x[,1]) - max(x[,2])
+      c(a, b)
+    }
+    ## scale so that both have the same range; assume only
     ## positive values.
     huhn <- x$changes
-    huhn[,2] <- max(x$changes[,1]) * huhn[,2] / max(x$changes[,2])
+    trafo <- rescale2(huhn)
+    huhn[,2] <- huhn[,2]*trafo[2] + trafo[1]
+    ##    huhn[,2] <- max(x$changes[,1]) * huhn[,2] / max(x$changes[,2])
     ticks <- pretty(x$changes[,2], length(axTicks(2)))
+    extraLabel <- "Mean"
   } else {
-    huhn <- x$changes
+    if (nmaps > 2) {
+      huhn <- 100*sweep(x$changes, 2, apply(x$changes, 2, max), FUN = "/")
+      extraLabel <- "Relative"
+    } else {
+      huhn <- x$changes
+      extraLabel <- "Mean"
+    }
   }
 
   ## plot the plot!
   matplot(huhn, type = "l", lty = 1, main = main,
-          ylab = "Mean distance to closest unit", xlab = "Iteration", ...)
+          ylab = paste(extraLabel, "distance to closest unit"),
+          xlab = "Iteration", ...)
   abline(h=0, col="gray")
 
   ## plot the second axis
   if (nmaps == 2)
-    axis(4, col.axis=2, at=ticks * max(x$changes[,1]) / max(x$changes[,2]),
-         labels=ticks)
+    axis(4, col.axis = 2, at = ticks * trafo[2] + trafo[1],
+         labels = ticks)
 
   ## plot the legend
   if (nmaps > 1)
@@ -323,9 +320,6 @@ plot.kohchanges <- function(x, main, keepMargins, ...)
   invisible()
 }
 
-
-### Adapted for version 2.0: April 11.
-### Checked: April 13.
 
 plot.kohcounts <- function(x, classif, main, palette.name, ncolors,
                            zlim, heatkey, keepMargins, heatkeywidth,
@@ -347,73 +341,47 @@ plot.kohcounts <- function(x, classif, main, palette.name, ncolors,
   huhn <- table(classif)
   counts[as.integer(names(huhn))] <- huhn
 
-  contin <- FALSE
-  if (max(counts, na.rm = TRUE) > 10) contin <- TRUE
+  if (max(counts, na.rm = TRUE) < 10) {
+    countsp <- factor(counts)
+  } else {
+    countsp <- counts
+  }
 
-  plot.kohprop(x, property = counts, main = main,
+  plot.kohprop(x, property = countsp, main = main,
                palette.name = palette.name, ncolors = ncolors,
-               zlim = zlim, heatkey = heatkey, contin = contin,
+               zlim = zlim, heatkey = heatkey, 
                keepMargins = keepMargins, heatkeywidth = heatkeywidth,
                shape = shape, border = border, ...)
 
   invisible(counts)
 }
 
-### Introduced for version 2.0.5: Jan 16, 2009
-
-plot.kohUmatrix <- function(x, classif, main, palette.name, ncolors,
-                            zlim, heatkey, keepMargins, heatkeywidth,
-                            shape, border, ...)
+plot.kohUmatrix <- function(x, classif, main, palette.name,
+                            ncolors, zlim, heatkey, keepMargins,
+                            heatkeywidth, shape, border, ...)
 {
-  if (x$method != "som" & x$method != "supersom")
-    stop("Neighbour distance plot only implemented for (super)som")
-
   if (is.null(main)) main <- "Neighbour distance plot"
   if (is.null(palette.name)) palette.name <- heat.colors
 
-  nhbrdist <- unit.distances(x$grid, x$toroidal)
-  nhbrdist[nhbrdist > 1.05] <- NA
-  if (x$method == "som") {
-    for (i in 2:nrow(nhbrdist)) {
-      for (j in 1:(i - 1)) {
-        if (!is.na(nhbrdist[i,j]))
-          nhbrdist[i,j] <- nhbrdist[j,i] <- dist(x$codes[c(i,j),])
-      }
-    }
-  } else {
-    if (x$method == "supersom") { # superfluous check, really
-      nhbrdist[!is.na(nhbrdist)] <- 0
-      for (k in 1:length(x$data)) {
-        for (i in 2:nrow(nhbrdist)) {
-          for (j in 1:(i - 1)) {
-            if (!is.na(nhbrdist[i,j]))
-              nhbrdist[i,j] <- nhbrdist[i,j] +
-                x$weights[k] * dist(x$codes[[k]][c(i,j),])
-          }
-        }
-
-        nhbrdist[j,i] <- nhbrdist[i,j]
-      }
-    }
-  }
-
-  neigh.dists <- colSums(nhbrdist, na.rm = TRUE)
+  nhbrdist <- unit.distances(x$grid)
+  cddist <- as.matrix(object.distances(x, type = "codes"))
+  cddist[abs(nhbrdist - 1) > .001] <- NA
+  
+  neigh.dists <- colMeans(cddist, na.rm = TRUE)
   plot.kohprop(x, property = neigh.dists, main = main,
                palette.name = palette.name, ncolors = ncolors,
-               zlim = zlim, heatkey = heatkey, contin = TRUE,
+               zlim = zlim, heatkey = heatkey,
                keepMargins = keepMargins, heatkeywidth = heatkeywidth,
                shape = shape, border = border, ...)
 
   invisible(neigh.dists)
 }
 
-### Newly written for version 2.0, August 30 2007.
-### Revised as a property plot: August 31 2007.
 
 plot.kohquality <- function(x, classif, main, palette.name, ncolors,
                             zlim, heatkey, keepMargins, shape, border, ...)
 {
-  if (is.null(main)) main <- "Distance plot"
+  if (is.null(main)) main <- "Quality plot"
   if (is.null(palette.name)) palette.name <- heat.colors
 
   distances <- NULL
@@ -437,24 +405,19 @@ plot.kohquality <- function(x, classif, main, palette.name, ncolors,
 
   plot.kohprop(x, property = similarities, main = main,
                palette.name = palette.name, ncolors = ncolors,
-               zlim = zlim, heatkey = heatkey, contin = TRUE,
+               zlim = zlim, heatkey = heatkey, 
                keepMargins = keepMargins, shape = shape, border = border, ...)
 
   invisible(similarities)
 }
 
-
-### Adapted for version 2.0: April 11.
-### Checked: April 13.
-### New elements: whatmap, codeRendering, keepMargins, legend
-### Added palette.name for version 2.0.6. Aug 3, 2010.
-
-plot.kohcodes <- function(x, main, palette.name, bgcol, whatmap,
-                          codeRendering, keepMargins, shape = c("round", "straight"),
+plot.kohcodes <- function(x, whatmap, main, palette.name, bgcol,
+                          codeRendering, keepMargins,
+                          shape = c("round", "straight"),
                           border = "black", ...)
 {
   if (!keepMargins) {
-    opar <- par(c("mar", "ask"))
+    opar <- par(c("mar"))
     on.exit(par(opar))
   }
 
@@ -466,12 +429,10 @@ plot.kohcodes <- function(x, main, palette.name, bgcol, whatmap,
   ## check if x$codes is a list; if so, call this function for every
   ## list element separately.
   if (is.list(x$codes)) {
-    if (prod(par("mfrow")) < nmaps) par(ask = TRUE)
-
     for (i in 1:nmaps) {
       ## make a new object that only has one set of codebook vectors
-      huhn <- x
-      huhn$codes <- huhn$codes[[whatmap[i]]]
+      huhn <- list(whatmap = 1, grid = x$grid)
+      huhn$codes <- getCodes(x, whatmap[i])
 
       ## allow a different title for every plot
       if (length(main) == length(x$codes)) {
@@ -515,6 +476,17 @@ plot.kohcodes <- function(x, main, palette.name, bgcol, whatmap,
     nvars <- ncol(codes)
 
     maxlegendcols <- 3  ## nr of columns for the legend
+    if (nvars > maxlegendcols) {
+      ## sometimes the last column is empty, then we should set ncols
+      ## two maxlegendcols - 1
+      if (nvars %% (maxlegendcols - 1) == 0) {
+        ncols <- maxlegendcols - 1
+      } else {
+      ncols <- maxlegendcols
+      }        
+    } else {
+      ncols <- nvars
+    }
     if (is.null(codeRendering))  ## use default
       codeRendering <- ifelse(nvars < 15, "segments", "lines")
 
@@ -535,23 +507,23 @@ plot.kohcodes <- function(x, main, palette.name, bgcol, whatmap,
       leg.result <- legend(x = mean(x$grid$pts[,1]), xjust = 0.5,
                            y = 0, yjust = 1,
                            legend = colnames(codes),
-                           cex=cex, plot=FALSE,
-                           ncol = min(maxlegendcols, nvars),
+                           cex = cex, plot=FALSE,
+                           ncol = ncols,
                            fill = palette.name(nvars))
       while (leg.result$rect$w > plot.width) {
         cex <- cex*0.9 # if too large, decrease text size
         leg.result <- legend(x = mean(x$grid$pts[,1]), xjust = 0.5,
                              y = 0, yjust = 1,
                              legend = colnames(codes),
-                             cex=cex, plot=FALSE,
-                             ncol = min(maxlegendcols, nvars),
+                             cex = cex, plot=FALSE,
+                             ncol = ncols,
                              fill = palette.name(nvars))
       } # until it fits!
 
       leg.result <- legend(x = mean(x$grid$pts[,1]), xjust = 0.5,
                            y = 0, yjust = 1, cex=cex,
                            legend = colnames(codes), plot=FALSE,
-                           ncol = min(maxlegendcols, nvars),
+                           ncol = ncols,
                            fill = palette.name(nvars), ...)
 
       par(mfg = current.plot)
@@ -562,7 +534,7 @@ plot.kohcodes <- function(x, main, palette.name, bgcol, whatmap,
       legend(x = mean(x$grid$pts[,1]), xjust = 0.5,
              y = 0, yjust = 1, cex=cex, plot = TRUE,
              legend = colnames(codes),
-             ncol = min(maxlegendcols, nvars),
+             ncol = ncols,
              fill = palette.name(nvars), ...)
     } else {
       plot(x$grid, ...)
@@ -697,7 +669,7 @@ plot.heatkey <- function (x, zlim, bgcol, labels, contin, heatkeywidth, ...)
 add.cluster.boundaries <- function(x, clustering, lwd = 5, ...)
 {
   grd <- x$grid
-  if (x$toroidal) {
+  if (grd$toroidal) {
     ydiff <- diff(grd$pts[1 + c(0, grd$xdim),2])
 
     botrow <- 1:grd$xdim
@@ -739,7 +711,7 @@ add.cluster.boundaries <- function(x, clustering, lwd = 5, ...)
   neighbours <- neighbours[diffclass.idx,]
   ## final step: remove rows in neighbours that are completely outside the
   ## original grid (only relevant for the toroidal case)
-  if (x$toroidal) {
+  if (grd$toroidal) {
     idx <- apply(neighbours, 1, function(x) all(x > grd$xdim*grd$ydim))
     neighbours <- neighbours[!idx,]
   }

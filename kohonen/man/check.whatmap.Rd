@@ -6,14 +6,16 @@
 check.whatmap(x, whatmap)
 }
 \arguments{
-  \item{x}{Either a \code{kohonen} object from \code{supersom}, or a
-    list of data matrices that can be used as input data for \code{supersom}.}
+  \item{x}{A \code{kohonen} object, or a
+    list of data matrices that can be used as input data for SOM functions.}
   \item{whatmap}{An indication of a subset of the data; either by naming
-    the elements, or giving indices. If \code{whatmap} equals NULL, no
-    selection is performed.}
+    the elements, or giving indices. If \code{whatmap} equals NULL, the
+    selection of \code{x} is used if \code{x} is a \code{kohonen}
+    object, or else no selection is performed.}
 }
 \value{
-  Returns a numerical vector with the indices of the selected layers.
+  Returns a numerical vector with the indices of the selected layers. An
+  invalid selection leads to an error.
 }
 \author{Ron Wehrens}
 \keyword{classif}

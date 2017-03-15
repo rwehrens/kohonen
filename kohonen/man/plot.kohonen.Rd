@@ -4,24 +4,28 @@
 \alias{add.cluster.boundaries}
 \title{Plot kohonen object}
 \description{
-  Plot self-organising map, obtained from function kohonen. Several types
+  Plot objects of class \code{kohonen}. Several types
   of plots are supported.
 }
 \usage{
 \method{plot}{kohonen}(x, type = c("codes", "changes", "counts",
-                 "dist.neighbours", "mapping", "property", "quality"),
-     classif = NULL, labels = NULL, pchs = NULL, main = NULL,
-     palette.name = NULL, ncolors, bgcol = NULL,
-     zlim = NULL, heatkey = TRUE, property, contin,
-     whatmap = NULL, codeRendering = NULL, keepMargins = FALSE,
-     heatkeywidth = .2, shape = c("round", "straight"),
-     border = "black", \dots)
+                       "dist.neighbours", "mapping", "property", "quality"),
+                       whatmap = NULL, classif = NULL, labels = NULL,
+                       pchs = NULL, main = NULL, palette.name = NULL,
+                       ncolors, bgcol = NULL, zlim = NULL,
+                       heatkey = TRUE, property, codeRendering = NULL,
+                       keepMargins = FALSE, heatkeywidth = .2,
+                       shape = c("round", "straight"), border = "black",
+                       \dots)
 \method{identify}{kohonen}(x, \dots)
 add.cluster.boundaries(x, clustering, lwd = 5, ...)
 }
 \arguments{
   \item{x}{kohonen object.}
   \item{type}{type of plot. (Wow!)}
+  \item{whatmap}{For a "codes" plot: what maps
+    to show; for the "dist.neighbours" plot: what maps to take into
+    account when calculating distances to neighbouring units.}
   \item{classif}{classification object, as returned by
     \code{predict.kohonen}, or vector of unit numbers.
     Only needed if \code{type} equals "mapping" and
@@ -44,13 +48,6 @@ add.cluster.boundaries(x, clustering, lwd = 5, ...)
     of the plot in the "property" and "counts" plotting types.}
   \item{property}{values to use with the "property" plotting
     type.}
-  \item{contin}{whether or not the data should be seen as discrete
-    (i.e. classes) or continuous in nature. Only relevant for the colour
-    keys of plots of supervised networks. Note that this is different
-    from the \code{contin} argument in the \code{xyf}, \code{bdk} and
-    \code{supersom} functions.}
-  \item{whatmap}{For \code{supersom} maps and a "codes" plot: what maps
-    to show.}
   \item{codeRendering}{How to show the codes. Possible choices:
     "segments", "stars" and "lines".}
   \item{keepMargins}{if \code{FALSE} (the default), restore the original
@@ -61,9 +58,10 @@ add.cluster.boundaries(x, clustering, lwd = 5, ...)
     work in most cases but in some cases, e.g. when plotting multiple
     figures, it may need to be adjusted.}
   \item{shape}{kind shape to be drawn: "round" (circle) or "straight".
-    Choosing "straight" produces a map of squares when the grid is "rectangular",
-    and produces a map of hexagons when the grid is "hexagonal".}
-  \item{border}{color of the shapes's border.}
+    Choosing "straight" produces a map of squares when the grid is
+    "rectangular", and produces a map of hexagons when the grid is
+    "hexagonal".}
+  \item{border}{color of the shape's border.}
   \item{lwd, \dots}{other graphical parameters.}
   \item{clustering}{cluster labels of the map units.}
 }
@@ -103,46 +101,51 @@ add.cluster.boundaries(x, clustering, lwd = 5, ...)
   together. In toroidal maps, boundaries at the edges will only be shown
   on the top and right sides to avoid double boundaries.
 }
-
+\value{Several types of plots return useful values (invisibly): the
+  \code{"counts"}, \code{"dist.neighbours"}, and \code{"quality"} return
+  vectors corresponding to the information visualized in the plot (unit
+  background colours and heatkey).
+}
 \author{Ron Wehrens}
-\seealso{\code{\link{som}}, \code{\link{bdk}}, \code{\link{xyf}}}
+\seealso{\code{\link{som}}, \code{\link{supersom}}, \code{\link{xyf}},
+  \code{\link{predict.kohonen}}}
 
 \examples{
 data(wines)
 set.seed(7)
 
-kohmap <- xyf(scale(wines), classvec2classmat(wine.classes),
+kohmap <- xyf(scale(wines), vintages,
               grid = somgrid(5, 5, "hexagonal"), rlen=100)
 plot(kohmap, type="changes")
-plot(kohmap, type="codes", main = c("Codes X", "Codes Y"))
-plot(kohmap, type="counts", shape = "straight")
+counts <- plot(kohmap, type="counts", shape = "straight")
 
-## palette suggested by Leo Lopes
-coolBlueHotRed <- function(n, alpha = 1) {
-  rainbow(n, end=4/6, alpha=alpha)[n:1]
-}
-plot(kohmap, type="quality", palette.name = coolBlueHotRed)
+## show both sets of codebook vectors in the map
+par(mfrow = c(1,2))
+plot(kohmap, type="codes", main = c("Codes X", "Codes Y"))
+
+par(mfrow = c(1,1))
+similarities <- plot(kohmap, type="quality", palette.name = terrain.colors)
 plot(kohmap, type="mapping",
-     labels = wine.classes, col = wine.classes+1,
+     labels = as.integer(vintages), col = as.integer(vintages),
      main = "mapping plot")
 
 ## add background colors to units according to their predicted class labels
-xyfpredictions <- classmat2classvec(predict(kohmap)$unit.predictions)
+xyfpredictions <- classmat2classvec(getCodes(kohmap, 2))
 bgcols <- c("gray", "pink", "lightgreen")
-plot(kohmap, type="mapping", col = wine.classes+1,
-     pchs = wine.classes, bgcol = bgcols[as.integer(xyfpredictions)],
+plot(kohmap, type="mapping", col = as.integer(vintages),
+     pchs = as.integer(vintages), bgcol = bgcols[as.integer(xyfpredictions)],
      main = "another mapping plot", shape = "straight", border = NA)
 
 ## Show 'component planes'
 set.seed(7)
 sommap <- som(scale(wines), grid = somgrid(6, 4, "hexagonal"))
-plot(sommap, type = "property", property = sommap$codes[,1],
-     main = colnames(sommap$codes)[1])
+plot(sommap, type = "property", property = getCodes(sommap, 1)[,1],
+     main = colnames(getCodes(sommap, 1))[1])
 
-## Another way to show clustering information
-plot(sommap, type="dist.neighbours", main = "SOM neighbour distances")
+## Show the U matrix
+Umat <- plot(sommap, type="dist.neighbours", main = "SOM neighbour distances")
 ## use hierarchical clustering to cluster the codebook vectors
-som.hc <- cutree(hclust(dist(sommap$codes)), 5)
+som.hc <- cutree(hclust(object.distances(sommap, "codes")), 5)
 add.cluster.boundaries(sommap, som.hc)
 
 ## and the same for rectangular maps
@@ -150,7 +153,7 @@ set.seed(7)
 sommap <- som(scale(wines),grid = somgrid(6, 4, "rectangular"))
 plot(sommap, type="dist.neighbours", main = "SOM neighbour distances")
 ## use hierarchical clustering to cluster the codebook vectors
-som.hc <- cutree(hclust(dist(sommap$codes)), 5)
+som.hc <- cutree(hclust(object.distances(sommap, "codes")), 5)
 add.cluster.boundaries(sommap, som.hc)
 }
 \keyword{classif}
