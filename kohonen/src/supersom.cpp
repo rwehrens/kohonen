@@ -24,6 +24,7 @@
 #include <Rcpp.h>
 #include <Rmath.h>
 
+#include "kohonen.h"
 #include "distance-functions.h"
 #include "neighbourhood-functions.h"
 
@@ -31,9 +32,6 @@
 #define RANDOUT PutRNGstate()
 #define UNIF unif_rand()
 
-using namespace Rcpp;
-
-// [[Rcpp::export]]
 Rcpp::List RcppSupersom(
   Rcpp::NumericMatrix data,
   Rcpp::NumericMatrix codes,
@@ -62,8 +60,8 @@ Rcpp::List RcppSupersom(
     nearest, totalIters, curIter = 0;
   double distance, tmp, threshold, alpha;
 
-  IntegerVector offsets(numLayers);
-  NumericMatrix changes(numLayers, numEpochs);
+  Rcpp::IntegerVector offsets(numLayers);
+  Rcpp::NumericMatrix changes(numLayers, numEpochs);
 
   double
     *pCodes = REAL(codes),

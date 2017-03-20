@@ -9,11 +9,9 @@
 
 #include <Rcpp.h>
 
+#include "kohonen.h"
 #include "distance-functions.h"
 
-using namespace Rcpp;
-
-// [[Rcpp::export]]
 Rcpp::List RcppMap(
     Rcpp::NumericMatrix data,   /* objects to be mapped */
     Rcpp::IntegerVector numVars,
@@ -28,13 +26,17 @@ Rcpp::List RcppMap(
     numCodes = codes.ncol(),      /* number of units in the map */
     totalVars = data.nrow(),      /* total number of variables sum(numVars) */
     i, l, nearest;
+
   double distance;
-  IntegerVector offsets(numLayers);
-  IntegerVector winners(numObjects);
-  NumericVector unitDistances(numObjects);
+
+  Rcpp::IntegerVector offsets(numLayers);
+  Rcpp::IntegerVector winners(numObjects);
+  Rcpp::NumericVector unitDistances(numObjects);
+
   double
     *pCodes = REAL(codes),
     *pWeights = REAL(weights);
+
   int
     *pNumVars = INTEGER(numVars),
     *pOffsets = INTEGER(offsets);

@@ -6,6 +6,7 @@
 #include <Rcpp.h>
 #include <Rmath.h>
 
+#include "kohonen.h"
 #include "distance-functions.h"
 #include "neighbourhood-functions.h"
 
@@ -13,10 +14,7 @@
 #define RANDOUT PutRNGstate()
 #define UNIF unif_rand()
 
-using namespace Rcpp;
-
-// [[Rcpp::export]]
-List RcppBatchSupersom(
+Rcpp::List RcppBatchSupersom(
   Rcpp::NumericMatrix data,
   Rcpp::NumericMatrix codes,
   Rcpp::IntegerVector numVars,
@@ -41,10 +39,10 @@ List RcppBatchSupersom(
     nearest;
   double dist, tmp, radius;
 
-  IntegerVector offsets(numLayers);
-  NumericMatrix changes(numLayers, numEpochs);
-  NumericMatrix codeSums(totalVars, numCodes);
-  NumericVector codeWeights(numCodes);
+  Rcpp::IntegerVector offsets(numLayers);
+  Rcpp::NumericMatrix changes(numLayers, numEpochs);
+  Rcpp::NumericMatrix codeSums(totalVars, numCodes);
+  Rcpp::NumericVector codeWeights(numCodes);
 
   double
     *pCodes = REAL(codes),
@@ -60,7 +58,8 @@ List RcppBatchSupersom(
     *pNumVars = INTEGER(numVars),
     *pNumNAs = INTEGER(numNAs);
 
-  std::vector<DistanceFunctionPtr> distanceFunctionPtrs = GetDistanceFunctions(distanceFunctions);
+  std::vector<DistanceFunctionPtr> distanceFunctionPtrs =
+    GetDistanceFunctions(distanceFunctions);
   
   /* Create the neighborhood influence function pointer. */
   NeighbourhoodFunctionPtr neighbourhoodFunctionPtr =
@@ -131,7 +130,8 @@ List RcppBatchSupersom(
 
       /* Accumulate sums and weights */
       for (cd = 0; cd < numCodes; cd++) {
-        tmp = neighbourhoodFunctionPtr(pNeighbourhoodDistances[numCodes * nearest + cd], radius);
+        tmp = neighbourhoodFunctionPtr(
+          pNeighbourhoodDistances[numCodes * nearest + cd], radius);
         if (tmp > 0) {
           for (j = 0; j < totalVars; j++) {
             if (!std::isnan(data[i * totalVars + j])) {

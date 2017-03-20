@@ -6,8 +6,11 @@
 #include <Rcpp.h>
 #include <Rmath.h>
 
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 
+#include "kohonen.h"
 #include "distance-functions.h"
 #include "neighbourhood-functions.h"
 
@@ -15,12 +18,10 @@
 #define RANDOUT PutRNGstate()
 #define UNIF unif_rand()
 
-using namespace Rcpp;
-
+#ifdef _OPENMP
 // [[Rcpp::plugins(openmp)]]
-
-// [[Rcpp::export]]
-List RcppParallelBatchSupersom(
+#endif
+Rcpp::List RcppParallelBatchSupersom(
   Rcpp::NumericMatrix data,
   Rcpp::NumericMatrix codes,
   Rcpp::IntegerVector numVars,
@@ -34,6 +35,8 @@ List RcppParallelBatchSupersom(
   int numCores
   )
 {
+  #ifdef _OPENMP
+
   int numObjects = data.ncol(),   /* number of objects */
     numLayers = numVars.size(),   /* number of layers */
     numCodes = codes.ncol(),      /* number of units in the map */
@@ -46,10 +49,10 @@ List RcppParallelBatchSupersom(
     nearest;
   double dist, tmp, radius;
 
-  IntegerVector offsets(numLayers);
-  NumericMatrix changes(numLayers, numEpochs);
-  NumericMatrix codeSums(totalVars, numCodes);
-  NumericVector codeWeights(numCodes);
+  Rcpp::IntegerVector offsets(numLayers);
+  Rcpp::NumericMatrix changes(numLayers, numEpochs);
+  Rcpp::NumericMatrix codeSums(totalVars, numCodes);
+  Rcpp::NumericVector codeWeights(numCodes);
 
   double
     *pCodes = REAL(codes),
@@ -65,7 +68,8 @@ List RcppParallelBatchSupersom(
     *pNumVars = INTEGER(numVars),
     *pNumNAs = INTEGER(numNAs);
 
-  std::vector<DistanceFunctionPtr> distanceFunctionPtrs = GetDistanceFunctions(distanceFunctions);
+  std::vector<DistanceFunctionPtr> distanceFunctionPtrs =
+    GetDistanceFunctions(distanceFunctions);
 
   /* Create the neighborhood influence function pointer. */
   NeighbourhoodFunctionPtr neighbourhoodFunctionPtr =
@@ -82,8 +86,8 @@ List RcppParallelBatchSupersom(
   int availablecores = omp_get_num_procs();
   if (numCores <= 0 || numCores > availablecores) {
      numCores = availablecores;
-   }
-   omp_set_num_threads(numCores);
+  }
+  omp_set_num_threads(numCores);
 
   RANDIN;
 
@@ -104,7 +108,8 @@ List RcppParallelBatchSupersom(
       #pragma omp single
       {
         /* Linear decays for radius */
-        radius = radii[0] - (radii[0] - radii[1]) * ((double)m / (double)numEpochs);
+        radius =
+          radii[0] - (radii[0] - radii[1]) * ((double)m / (double)numEpochs);
         if (radius < EPS) {
           radius = EPS;
         }
@@ -162,12 +167,14 @@ List RcppParallelBatchSupersom(
 
         /* Accumulate sums and weights */
         for (cd = 0; cd < numCodes; cd++) {
-          tmp = neighbourhoodFunctionPtr(pNeighbourhoodDistances[numCodes * nearest + cd], radius);
+          tmp = neighbourhoodFunctionPtr(
+            pNeighbourhoodDistances[numCodes * nearest + cd], radius);
           if (tmp > 0) {
             threadCodeWeights[cd] += tmp;
             for (j = 0; j < totalVars; j++) {
               if (!std::isnan(data[i * totalVars + j])) {
-                threadCodeSums[cd * totalVars + j] += tmp * data[i * totalVars + j];
+                threadCodeSums[cd * totalVars + j] +=
+                  tmp * data[i * totalVars + j];
               }
             }
           }
@@ -180,7 +187,8 @@ List RcppParallelBatchSupersom(
           if (threadCodeWeights[cd] > 0) {
             codeWeights[cd] += threadCodeWeights[cd];
             for (j = 0; j < totalVars; j++) {
-              pCodeSums[cd * totalVars + j] += threadCodeSums[cd * totalVars + j];
+              pCodeSums[cd * totalVars + j] +=
+                threadCodeSums[cd * totalVars + j];
             }
           }
         }
@@ -196,14 +204,16 @@ List RcppParallelBatchSupersom(
         for (cd = 0; cd < numCodes; cd++) {
           if (codeWeights[cd] > 0) {
             for (j = 0; j < totalVars; j++) {
-              pCodes[cd * totalVars + j] = pCodeSums[cd * totalVars + j] / pCodeWeights[cd];
+              pCodes[cd * totalVars + j] =
+                pCodeSums[cd * totalVars + j] / pCodeWeights[cd];
             }
           }
         }
 
         /* Mean of the nearest layer distances of this iteration */
         for (l = 0; l < numLayers; l++) {
-          pChanges[m * numLayers + l] = sqrt(pChanges[m * numLayers + l] / numVars[l]) / numObjects;
+          pChanges[m * numLayers + l] =
+            sqrt(pChanges[m * numLayers + l] / numVars[l]) / numObjects;
         }
 
         m++;
@@ -216,4 +226,10 @@ List RcppParallelBatchSupersom(
     Rcpp::Named("changes") = changes);
 
   RANDOUT;
+  
+  #else
+    ::Rf_warning("OpenMP not available: cannot run in parallel mode");
+    return RcppBatchSupersom(data, codes, numVars, weights, distanceFunctions,
+      numNAs, neighbourhoodDistances, neighbourhoodFct, radii, numEpochs)
+  #endif
 }
