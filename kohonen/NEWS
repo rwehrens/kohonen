@@ -128,7 +128,7 @@ Changes in version 2.0.20:
   - added support for hexagonal and square units in plotting maps
     (contribution by Romain Bossart)
 
-Changes in version 2.9.99 (beta version leading up to 3.0):
+Changes in version 3.0:
   - som and xyf training methods are now considered to be special
     cases of supersom
   - C engine replaced by C++
@@ -139,3 +139,8 @@ Changes in version 2.9.99 (beta version leading up to 3.0):
   - many performance improvements, in particular reducing memory
   consumption
   - much more consistent syntax for the predict function 
+
+Changes in version 3.1:
+  - added correct OpenMP headers
+  - removed wine.classes from the wines data set; this is simply
+    as.integer(vintages)

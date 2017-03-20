@@ -230,6 +230,7 @@ Rcpp::List RcppParallelBatchSupersom(
   #else
     ::Rf_warning("OpenMP not available: cannot run in parallel mode");
     return RcppBatchSupersom(data, codes, numVars, weights, distanceFunctions,
-      numNAs, neighbourhoodDistances, neighbourhoodFct, radii, numEpochs)
+			     numNAs, neighbourhoodDistances, neighbourhoodFct,
+			     radii, numEpochs);  
   #endif
 }
