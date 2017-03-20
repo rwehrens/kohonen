@@ -1,0 +1,8 @@
+# R history and RData files
+*.Rhistory
+*.RData
+
+# C/C++ object files and compiled libraries
+*.o
+*.so
+*.dll
