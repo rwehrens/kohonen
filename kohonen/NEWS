@@ -128,19 +128,26 @@ Changes in version 2.0.20:
   - added support for hexagonal and square units in plotting maps
     (contribution by Romain Bossart)
 
-Changes in version 3.0:
+Changes in version 3.0.0:
   - som and xyf training methods are now considered to be special
     cases of supersom
+  - function bdk is deprecated
   - C engine replaced by C++
   - several new distance functions have been added, including the
     possibility to provide user-defined distances (function pointers,
     made possible by the Rcpp package)
   - distances may now be defined per layer
   - many performance improvements, in particular reducing memory
-  consumption
+    consumption
   - much more consistent syntax for the predict function 
 
-Changes in version 3.1:
+Changes in version 3.0.1:
   - added correct OpenMP headers
   - removed wine.classes from the wines data set; this is simply
     as.integer(vintages)
+
+Changes in version 3.0.2:
+  - added checks for the presence of openMP headers
+
+Changes in version 3.0.3:
+  - improved manual pages

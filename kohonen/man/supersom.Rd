@@ -1,6 +1,7 @@
 \name{supersom}
 \alias{som}
 \alias{xyf}
+\alias{bdk}
 \alias{supersom}
 \title{Self- and super-organising maps}
 \description{
@@ -10,7 +11,7 @@
   weighted distance over all layers is calculated to determine the
   winning units during training.
   Functions \code{som} and \code{xyf} are simply wrappers for supersoms
-  with one and two layers, respectively.
+  with one and two layers, respectively. Function \code{bdk} is deprecated.
 }
 
 \usage{
@@ -43,7 +44,8 @@ supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
     value that covers 2/3 of all unit-to-unit distances.}
   \item{whatmap}{What data layers to use. If unspecified all layers are used.}
   \item{user.weights}{the weights given to individual layers. The default is
-    to give all layers equal weight.}
+    to give all layers equal weight. In xyf maps, this argument replaces the
+    \code{xweight} argument that was used prior to version 3.0.}
   \item{maxNA.fraction}{the maximal fraction of values that may be NA to
     prevent the row or column to be removed.}
   \item{keep.data}{if TRUE, return original data and mapping
