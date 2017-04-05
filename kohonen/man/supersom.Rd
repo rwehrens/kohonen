@@ -43,8 +43,11 @@ supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
     one only the winning unit will be updated. The default is to start with a
     value that covers 2/3 of all unit-to-unit distances.}
   \item{whatmap}{What data layers to use. If unspecified all layers are used.}
-  \item{user.weights}{the weights given to individual layers. The default is
-    to give all layers equal weight. In xyf maps, this argument replaces the
+  \item{user.weights}{the weights given to individual layers. This can
+    be a single number (all layers have the same weight, the default), a
+    vector of the same length as the \code{whatmap} argument, or a vector
+    of the same length as the \code{data} argument. In xyf maps, this
+    argument provides the same functionality as the now-deprecated
     \code{xweight} argument that was used prior to version 3.0.}
   \item{maxNA.fraction}{the maximal fraction of values that may be NA to
     prevent the row or column to be removed.}

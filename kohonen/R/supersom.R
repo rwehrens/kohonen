@@ -167,9 +167,10 @@ supersom <- function(data,
                                        maxNA.fraction = maxNA.fraction,
                                        dist.fcts = dist.fcts[ii]),
                                   type = "data"))
-      ## The distance weights are then the reciprocal values of the median
-      ## distances per layer
-      distance.weights[whatmap] <- 1 / sapply(meanDistances, median)
+      ## The distance weights are then the reciprocal values of the mean
+      ## distances per layer. We no longer use median distances since
+      ## there is a real chance that for factor data the median equals zero
+      distance.weights[whatmap] <- 1 / sapply(meanDistances, mean)
     } else {
       distance.weights <- rep(1, length(data))
     }
