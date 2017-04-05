@@ -167,6 +167,10 @@ supersom <- function(data,
                                        maxNA.fraction = maxNA.fraction,
                                        dist.fcts = dist.fcts[ii]),
                                   type = "data"))
+
+      if (any(meanDistances < .Machine$double.eps))
+        stop("Non-informative layers present: mean distance between objects zero")
+      
       ## The distance weights are then the reciprocal values of the mean
       ## distances per layer. We no longer use median distances since
       ## there is a real chance that for factor data the median equals zero
