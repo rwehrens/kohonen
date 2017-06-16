@@ -168,7 +168,7 @@ supersom <- function(data,
                                        dist.fcts = dist.fcts[ii]),
                                   type = "data"))
 
-      if (any(meanDistances < .Machine$double.eps))
+      if (any(sapply(meanDistances, mean) < .Machine$double.eps))
         stop("Non-informative layers present: mean distance between objects zero")
       
       ## The distance weights are then the reciprocal values of the mean
@@ -237,6 +237,7 @@ supersom <- function(data,
   layerID <- rep(1:nmap, nvar)
   mycodes2 <- split(as.data.frame(mycodes), layerID)
   mycodes3 <- lapply(mycodes2, function(x) t(as.matrix(x)))
+
   codes <- vector(length(orig.data), mode = "list")
   names(codes) <- names(orig.data)
   codes[whatmap] <- mycodes3

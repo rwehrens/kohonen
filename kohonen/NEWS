@@ -151,3 +151,8 @@ Changes in version 3.0.2:
 
 Changes in version 3.0.3:
   - improved manual pages
+  - fixed a bug in checking whether meanDistances contain zeros
+  - if whatmap is used during training, some of the codebook layers
+    will be NULL. In version 3.0.2 this led to errors in
+    predict.kohonen, which now explicitly only checks codebook layers
+    in whatmap.

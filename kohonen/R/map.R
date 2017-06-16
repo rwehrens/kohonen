@@ -30,21 +30,20 @@ map.kohonen <- function(x,
   dist.ptrs <- getDistancePointers(x$dist.fcts, maxNA.fraction = maxNA.fraction)
 
   ## ##########################################################################
-  ## Check data
-  newdata <- check.data(newdata)
-  nachecks <- check.data.na(newdata, maxNA.fraction = maxNA.fraction)
-  newdata <- remove.data.na(newdata, nachecks)
-                            
-  ## ##########################################################################
   ## Check whatmap
   whatmap <- check.whatmap(newdata, whatmap)
 
+  ## ##########################################################################
+  ## Check data and apply whatmap
+  newdata <- check.data(newdata[whatmap])
+  nachecks <- check.data.na(newdata[whatmap], maxNA.fraction = maxNA.fraction)
+  newdata <- remove.data.na(newdata[whatmap], nachecks)
+                            
   if (useTrainingWeights & any(user.weights[whatmap] < 1e-8))
     warning("Mapping new data using data layers not involved in training")
 
   ## ##########################################################################
-  ## Apply whatmap
-  newdata <- newdata[whatmap]
+  ## Apply whatmap to other objects
   dist.ptrs <- dist.ptrs[whatmap]
   codes <- codes[whatmap]
   user.weights.orig <- user.weights
