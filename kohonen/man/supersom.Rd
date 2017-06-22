@@ -106,9 +106,19 @@ supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
   500 is used to calculate the mean distances in each data layer. If
   \code{normalizeDataLayers == FALSE} the user weights are applied
   directly to the data (\code{distance.weights} are set to 1).
+
+  Various definitions of the Tanimoto distance exist in the
+  literature. The implementation here returns (for two binary vectors of
+  length n) the fraction of cases in which the two vectors
+  disagree. This is basically the Hamming distance divided by n - the
+  incorrect naming is retained (for the moment) to guarantee backwards
+  compatibility. If the vectors are not binary, they will be
+  converted to binary strings (with 0.5 as the class boundary). This
+  measure should not be used when variables are outside the range [0-1];
+  a check is done to make sure this is the case.
 }
 \references{R. Wehrens and L.M.C. Buydens, J. Stat. Softw. 21 (5), 2007;
-R. Wehrens and J. Kruisselbrink, in preparation.}
+R. Wehrens and J. Kruisselbrink, submitted, 2017.}
 \author{Ron Wehrens and Johannes Kruisselbrink}
 
 \seealso{\code{somgrid}, \code{\link{plot.kohonen}},

@@ -19,7 +19,7 @@ object.distances(kohobj, type = c("data", "codes"), whatmap)
 }
 \value{An object of class \code{dist}, which can be directly fed into
   (e.g.) a hierarchical clustering.}
-\references{R. Wehrens and J. Kruisselbrink, in preparation.}
+\references{R. Wehrens and J. Kruisselbrink, submitted, 2017.}
 \author{Ron Wehrens}
 \seealso{
   \code{\link{unit.distances}}, \code{\link{supersom}}

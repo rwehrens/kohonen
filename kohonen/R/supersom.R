@@ -78,6 +78,15 @@ supersom <- function(data,
         } else {
           stop("Wrong number of distances defined")
         }}}}
+
+  ## check for data outside the range [0-1] for any layers (in
+  ## whatmap) using the tanimoto distance.
+  if (any(tanidists <- dist.fcts == "tanimoto")) {
+    minvals <- sapply(data[which(tanidists)], min, na.rm = TRUE)
+    maxvals <- sapply(data[which(tanidists)], max, na.rm = TRUE)
+    if (any(minvals < 0 | maxvals < 0))
+      stop("Layers for which the Tanimoto distance is used should have data within the [0,1] range") 
+  }
   
   dist.ptrs <- getDistancePointers(dist.fcts,
                                    maxNA.fraction = maxNA.fraction)
