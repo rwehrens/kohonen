@@ -38,6 +38,10 @@ map.kohonen <- function(x,
   newdata <- check.data(newdata[whatmap])
   nachecks <- check.data.na(newdata, maxNA.fraction = maxNA.fraction)
   newdata <- remove.data.na(newdata, nachecks)
+  ## Here we need a check to see if there are any empty data layers
+  ## because of the maxNA.fraction
+  if (0 %in% c(sapply(newdata, dim)))
+    stop("Empty newdata layer - check maxNA.fraction argument")
                             
   if (useTrainingWeights & any(user.weights[whatmap] < 1e-8))
     warning("Mapping new data using data layers not involved in training")

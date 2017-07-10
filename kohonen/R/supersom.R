@@ -35,6 +35,11 @@ supersom <- function(data,
   whatmap <- check.whatmap(data, whatmap)
   nmap <- length(whatmap)
   data <- data[whatmap]
+  ## Here we need a check to see if there are any empty data layers
+  ## because of the maxNA.fraction
+  if (0 %in% c(sapply(data, dim)))
+    stop("Empty data layer - check maxNA.fraction argument")
+
   nobjects <- nrow(data[[1]])
   nvar <- sapply(data, ncol)
   data.matrix <- matrix(unlist(data), ncol = nobjects, byrow = TRUE)
