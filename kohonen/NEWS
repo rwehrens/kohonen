@@ -160,3 +160,5 @@ Changes in version 3.0.3:
     the Tanimoto distance.
   - Added a check in supersom to make sure the Tanimoto distance is
     not used for data outside the range [0-1].
+  - Added extra checks in the map and supersom functions for empty
+    data layers after the maxNA.fraction check (pointed out by Xu Kai)
