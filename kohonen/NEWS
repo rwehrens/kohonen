@@ -162,3 +162,5 @@ Changes in version 3.0.3:
     not used for data outside the range [0-1].
   - Added extra checks in the map and supersom functions for empty
     data layers after the maxNA.fraction check (pointed out by Xu Kai)
+  - Added pepper image (incl man file) used in JSS software description
+
