@@ -16,4 +16,4 @@ double brayCurtisDissim(double *data, double *codes, int n, int nNA) {
 // [[Rcpp::export]]
 Rcpp::XPtr<DistanceFunctionPtr> BrayCurtis() {
   return Rcpp::XPtr<DistanceFunctionPtr>(new DistanceFunctionPtr(&brayCurtisDissim));
-  
+}
