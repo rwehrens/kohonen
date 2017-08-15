@@ -1,7 +1,7 @@
 \name{peppaPic}
 \alias{peppaPic}
 \docType{data}
-\title{Synthetic image of a pepper plant with peppers.}
+\title{Synthetic image of a pepper plant with peppers}
 \description{A data matrix with four columns representing a 600 by 800
   image of a pepper plant. Each row is a pixel in the image. The first
   column is the class label; the other columns contain the RGB values.
