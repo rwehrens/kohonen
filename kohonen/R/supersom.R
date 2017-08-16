@@ -19,6 +19,11 @@ supersom <- function(data,
     data <- list(data)
   orig.data <- data
   nmat <- length(data)
+
+  data <- check.data(data, maxNA.fraction = maxNA.fraction)
+  nachecks <- check.data.na(data, maxNA.fraction = maxNA.fraction)
+  data <- remove.data.na(data, nachecks)
+
   
   ## ##########################################################################
   ## Check radius update parameters
@@ -31,7 +36,6 @@ supersom <- function(data,
   whatmap <- check.whatmap(data, whatmap)
   nmap <- length(whatmap)
   data <- data[whatmap]
-  data <- check.data(data, maxNA.fraction = maxNA.fraction)
 
   nobjects <- nrow(data[[1]])
   nvar <- sapply(data, ncol)

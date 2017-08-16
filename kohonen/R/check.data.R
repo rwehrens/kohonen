@@ -23,8 +23,7 @@ check.data <- function(data, maxNA.fraction) {
   if (length(nobjects) > 1)
     stop("Unequal numbers of objects in data list")
 
-  nachecks <- check.data.na(data, maxNA.fraction = maxNA.fraction)
-  remove.data.na(data, nachecks)
+  data
 }
 
 ## Objective: identify rows and columns with too many NA values. Data
