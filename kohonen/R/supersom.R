@@ -20,10 +20,6 @@ supersom <- function(data,
   orig.data <- data
   nmat <- length(data)
   
-  data <- check.data(data)
-  nachecks <- check.data.na(data, maxNA.fraction = maxNA.fraction)
-  data <- remove.data.na(data, nachecks)
-  
   ## ##########################################################################
   ## Check radius update parameters
   nhbrdist <- unit.distances(grid)
@@ -35,10 +31,7 @@ supersom <- function(data,
   whatmap <- check.whatmap(data, whatmap)
   nmap <- length(whatmap)
   data <- data[whatmap]
-  ## Here we need a check to see if there are any empty data layers
-  ## because of the maxNA.fraction
-  if (0 %in% c(sapply(data, dim)))
-    stop("Empty data layer - check maxNA.fraction argument")
+  data <- check.data(data, maxNA.fraction = maxNA.fraction)
 
   nobjects <- nrow(data[[1]])
   nvar <- sapply(data, ncol)

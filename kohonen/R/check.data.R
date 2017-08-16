@@ -22,8 +22,9 @@ check.data <- function(data, maxNA.fraction) {
   nobjects <- unique(sapply(data, nrow))
   if (length(nobjects) > 1)
     stop("Unequal numbers of objects in data list")
-  
-  data
+
+  nachecks <- check.data.na(data, maxNA.fraction = maxNA.fraction)
+  remove.data.na(data, nachecks)
 }
 
 ## Objective: identify rows and columns with too many NA values. Data
@@ -57,7 +58,12 @@ remove.data.na <- function(data, nachecks) {
     if (length(nacols[[i]]) > 0) 
       data[[i]] <- data[[i]][, -nacols[[i]], drop=FALSE]
   }
-  
+   
+  ## check to see if there are any empty data layers
+  ## because of the maxNA.fraction
+  if (0 %in% c(sapply(data, dim)))
+    stop("Empty data layer - check maxNA.fraction argument")
+
   data
 }
 
