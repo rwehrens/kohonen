@@ -18,7 +18,7 @@
 som(X, ...)
 xyf(X, Y, ...)
 supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
-         radius = quantile(nhbrdist, 0.67), 
+         radius = quantile(nhbrdist, 2/3), 
          whatmap = NULL, user.weights = 1, maxNA.fraction = 0L,
          keep.data = TRUE, dist.fcts = NULL,
          mode = c("online", "batch", "pbatch"), cores = -1, init,
@@ -38,10 +38,12 @@ supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
     over \code{rlen} updates. Not used for the batch algorithm.}
   \item{radius}{the radius of the neighbourhood, either given as a
     single number or a vector (start, stop). If it is given as a single
-    number the radius will run from the given number to the negative
-    value of that number; as soon as the neighbourhood gets smaller than
-    one only the winning unit will be updated. The default is to start with a
-    value that covers 2/3 of all unit-to-unit distances.}
+    number the radius will change linearly from \code{radius} to zero; as
+    soon as the neighbourhood gets smaller than one only the winning unit
+    will be updated. Note that the default before version 3.0 was to run
+    from \code{radius} to \code{-radius}. If nothing is supplied, the
+    default is to start with a value that covers 2/3 of all unit-to-unit
+    distances.} 
   \item{whatmap}{What data layers to use. If unspecified all layers are used.}
   \item{user.weights}{the weights given to individual layers. This can
     be a single number (all layers have the same weight, the default), a
