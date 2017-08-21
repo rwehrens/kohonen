@@ -13,10 +13,11 @@ mydata <- list(patterns = degelder$patterns,
 par(mfrow = c(2,1))
 matplot(degelder$thetas, t(degelder$patterns[c(66, 67),]),
         main = "Spacegroup C2",
-        type = "l", lty = 1, ylab = "response", xlab = expression(2 theta))
+        type = "l", lty = 1, ylab = "response",
+        xlab = expression(paste("2", theta)))
 matplot(degelder$thetas, t(degelder$patterns[c(89, 91),]),
         main = "Spacegroup P-1", ylab = "response",
-        xlab = expression(2 theta),
+        xlab = expression(paste("2", theta)),
         type = "l", lty = 1)
 
 ## compile the function definition of the WCCd dissimilarity function
