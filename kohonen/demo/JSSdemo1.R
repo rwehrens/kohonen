@@ -12,19 +12,19 @@ plot.picture <- function(dmat, what = c("col", "truth"),
   what <- match.arg(what)
 
   if (what == "truth") { # dmat is a factor
+    require(lattice)    
     if (missing(mycols)) {
-      require(lattice)    
       mycols <- brewer.pal(nlevels(dmat), "Set1")
     }
     myat <- 0:nlevels(dmat) + .5
     immat <- matrix(as.numeric(dmat), image.dims[1], image.dims[2])
-    levelplot(t(immat)[,nrow(immat):1], at = myat,
-              colorkey = list(at = myat,
-                              space = "top",
-                              col = mycols,
-                              labels = list(at = myat[-1] - .5,
-                                            labels = levels(dmat))),
-              col.regions = mycols, xlab = "", ylab = "", ...)
+    print(levelplot(t(immat)[,nrow(immat):1], at = myat,
+                    colorkey = list(at = myat,
+                                    space = "top",
+                                    col = mycols,
+                                    labels = list(at = myat[-1] - .5,
+                                                  labels = levels(dmat))),
+                    col.regions = mycols, xlab = "", ylab = "", ...))
    } else { # dmat is a matrix with columns "red", "green" and "blue"
     require("grid")
     immat <- rgb(dmat[,"red"], dmat[,"green"], dmat[,"blue"],
@@ -67,7 +67,7 @@ plot.picture(X32, x = unit(.525, "npc"),
 ## find class predictions for map units, concentrate only on peppers
 ## and leaves
 truthpredictions <-
-  classmat2classvec(predictions$unit.predictions$truth)
+  classmat2classvec(reconstrIm$unit.predictions$truth)
 trclasses <- levels(truthpredictions)
 trclasses[!(trclasses %in% c("leaves", "peppers"))] <- "other"
 levels(truthpredictions) <- trclasses
@@ -111,9 +111,12 @@ box()
 dev.new()
 oneclass <- rep("background", 480000)
 for (ii in seq(along = pepperunits))
-  oneclass[predictions$unit.classif == pepperunits[ii]] <-
+  oneclass[reconstrIm$unit.classif == pepperunits[ii]] <-
     paste("unit", pepperunits[ii])
-classcols <- c("lightgray", brewer.pal(length(pepperunits), "Set1"))
-plot.picture(factor(oneclass), what = "truth", mycols = classcols,
+oneclass <- factor(oneclass)
+nregions <- nlevels(oneclass)
+classcols <- c("lightgray", brewer.pal(max(3, nregions), "Set1"))
+plot.picture(oneclass, what = "truth",
+             mycols = classcols[1:(nregions + 1)],
              scales = list(draw = FALSE))
 
