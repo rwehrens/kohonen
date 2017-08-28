@@ -1,4 +1,4 @@
 JSSdemo1	Image analysis example from the 2017 JSS paper.
 JSSdemo2	Ecological example from the 2017 JSS paper.
 JSSdemo3	XRF example from the 2017 JSS paper.
-RGBdemo   Demo of training a SOM on the RGB colorspace.
+RGBdemo   	Demo of training a SOM on the RGB colorspace.
