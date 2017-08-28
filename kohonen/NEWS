@@ -1,25 +1,28 @@
 The kohonen package version 3.0.3 is described in 
 R. Wehrens and J. Kruisselbrink, J. Stat. Softw. 2017 (to appear)
 
-Changes in version 3.0.3:
-  - improved manual pages
-  - fixed a bug in checking whether meanDistances contain zeros
+Changes in version 3.0.4:
   - if whatmap is used during training, some of the codebook layers
     will be NULL. In version 3.0.2 this led to errors in
     predict.kohonen, which now explicitly only checks codebook layers
     in whatmap.
   - Added text in the supersom man page about the incorrect naming of
-    the Tanimoto distance.
+    the Tanimoto distance (noted by Pau Carrió Gaspar).
   - Added a check in supersom to make sure the Tanimoto distance is
     not used for data outside the range [0-1].
   - Added extra check in the remove.data.na function for empty
     data layers after the maxNA.fraction check (pointed out by Xu Kai)
   - Added pepper image (incl man file) used in JSS software
-    description
+    description: peppaPic
   - added BC.cpp and wcc.cpp to inst/Distances directory
-  - added JSSdemo2017.R to demo directory
+  - added JSSdemo1.R, JSSdemo2.R, JSSdemo3.R to demo directory
   - added kohonen-package.Rd to man pages
   - reordered NEWS contents to list most recent entry first
+
+
+Changes in version 3.0.3:
+  - improved manual pages
+  - fixed a bug in checking whether meanDistances contain zeros
 
 Changes in version 3.0.2:
   - added checks for the presence of openMP headers
