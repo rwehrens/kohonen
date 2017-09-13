@@ -28,6 +28,7 @@ check.data <- function(data, maxNA.fraction) {
 
 ## Objective: identify rows and columns with too many NA values. Data
 ## is a list of matrices.
+
 check.data.na <- function(data, maxNA.fraction) {
   nacols <-
     lapply(data,
@@ -46,6 +47,11 @@ check.data.na <- function(data, maxNA.fraction) {
   list(narows, nacols)
 }
 
+
+## potential problem: removing columns may lead to matching the wrong
+## column numbers... In this version commented out. If we accept this,
+## we can simplify the check.data.na code as well.
+
 remove.data.na <- function(data, nachecks) {
   narows <- nachecks[[1]]
   nacols <- nachecks[[2]]
@@ -54,8 +60,8 @@ remove.data.na <- function(data, nachecks) {
     if (length(narows) > 0) 
       data[[i]] <- data[[i]][-narows, , drop=FALSE]
 
-    if (length(nacols[[i]]) > 0) 
-      data[[i]] <- data[[i]][, -nacols[[i]], drop=FALSE]
+##    if (length(nacols[[i]]) > 0) 
+##      data[[i]] <- data[[i]][, -nacols[[i]], drop=FALSE]
   }
    
   ## check to see if there are any empty data layers
