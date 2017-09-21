@@ -34,7 +34,8 @@ map.kohonen <- function(x,
   whatmap <- check.whatmap(newdata, whatmap)
 
   ## ##########################################################################
-  ## Check data and apply whatmap
+  ## Check data and apply whatmap. Here we only keep the layers that
+  ## are present in whatmap.
   newdata <- check.data(newdata[whatmap])
   nachecks <- check.data.na(newdata, maxNA.fraction = maxNA.fraction)
   newdata <- remove.data.na(newdata, nachecks)

@@ -12,7 +12,9 @@ predict.kohonen <- function(object,
                             unit.predictions = NULL,
                             trainingdata = NULL,
                             whatmap = NULL,
-                            threshold = 0, ...)
+                            threshold = 0,
+                            maxNA.fraction = object$maxNA.fraction,
+                            ...)
 {
   codeNcols <- sapply(object$codes, ncol)
   ncodes <- nrow(object$codes[[object$whatmap[1]]])
@@ -32,26 +34,35 @@ predict.kohonen <- function(object,
         lapply(unit.predictions[isFactorPred], classvec2classmat)
   } else {
     ## calculate unit.predictions from mapping the trainingdata
-    if (is.null(trainingdata))
+    if (is.null(trainingdata)) 
       trainingdata <- object$data
-    
-    if (any(factorY <- sapply(trainingdata, is.factor)))
-      trainingdata[factorY] <- lapply(trainingdata[factorY], classvec2classmat)
+    if (is.null(trainingdata))
+      stop("Missing trainingdata argument, no data available in kohonen object either")
     
     whatmap.tr <- check.whatmap(trainingdata, whatmap)
     if (!all(whatmap.tr == whatmap))
       stop("Data layer mismatch between map and trainingdata")
+
+    ## check only the whatmap layers but keep the whole object; remove
+    ## rows in all data layers, not just in whatmap layers. Similar to
+    ## the supersom function (and different from the map function).
+    trainingdata[whatmap] <- check.data(trainingdata[whatmap])
+    narows <- check.data.na(trainingdata[whatmap], maxNA.fraction)
+    trainingdata <- remove.data.na(trainingdata, narows)
     
     if (any(is.null(object$codes[whatmap])))
-      stop("Attempt to map training data on the basis of unused data layers")
+      stop("Attempt to map training data on the basis of data layers not present in the SOM")
     
     if (!checkListVariables(trainingdata[whatmap], codeNcols[whatmap]))
       stop("Number of columns of trainingdata do not match ",
            "codebook vectors")
-  
     
-    mappingX <- map(object, trainingdata, whatmap, ...)$unit.classif
-
+    mappingX <- map(object,
+                    newdata = trainingdata,
+                    whatmap = whatmap,
+                    maxNA.fraction = maxNA.fraction,
+                    ...)$unit.classif
+    
     ## now calculate unit averages for ALL layers in the training data
     unit.predictions.tmp <-
       lapply(trainingdata,
@@ -101,8 +112,11 @@ predict.kohonen <- function(object,
     if (!checkListVariables(newdata[whatmap.new], codeNcols[whatmap.new]))
       stop("Number of columns of newdata do not match codebook vectors")
 
-    newdata <- check.data(newdata[whatmap.new])
-    narows <- check.data.na(newdata, maxNA.fraction = maxNA.fraction)
+    ## check only the whatmap layers but keep the whole object; remove
+    ## rows in all data layers, not just in whatmap layers. Similar to
+    ## the supersom function (and different from the map function).
+    newdata[whatmap] <- check.data(newdata[whatmap])
+    narows <- check.data.na(newdata[whatmap], maxNA.fraction = maxNA.fraction)
     newdata <- remove.data.na(newdata, narows)
     
     ## finally: calculate mapping of new data

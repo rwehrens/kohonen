@@ -20,8 +20,11 @@ supersom <- function(data,
   orig.data <- data
   nmat <- length(data)
 
-  data <- check.data(data)
-  narows <- check.data.na(data, maxNA.fraction = maxNA.fraction)
+  ## we check only the data in the whatmap layers but keep the whole
+  ## list object. Removal of rows will take place in the whole object,
+  ## not just in the whatmap layers.
+  data[whatmap] <- check.data(data[whatmap])
+  narows <- check.data.na(data[whatmap], maxNA.fraction = maxNA.fraction)
   data <- remove.data.na(data, narows)
   
   ## ##########################################################################

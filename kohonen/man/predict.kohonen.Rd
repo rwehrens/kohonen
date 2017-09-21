@@ -41,7 +41,7 @@
   \item{threshold}{Used in converting class predictions back into
     factors; see \code{\link{classmat2classvec}}.}
   \item{\dots}{Further arguments to be passed to \code{map.kohonen}, in
-    particular \code{maxNA.fraction} and \code{weights}. If not provided
+    particular \code{user.weights}. If not provided
     they will be taken from \code{object}.} 
 }
 \value{
