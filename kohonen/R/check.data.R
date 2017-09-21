@@ -1,6 +1,6 @@
 ## several checks for input data of the supersom and map functions
 
-check.data <- function(data) {
+check.data <- function(data, maxNA.fraction) {
   ## Check whether data is a list of data matrices or factors
   if (!is.list(data) |
       !all(sapply(data, class) %in% c("numeric", "matrix", "factor")))
@@ -23,7 +23,7 @@ check.data <- function(data) {
   if (length(nobjects) > 1)
     stop("Unequal numbers of objects in data list")
 
-  data
+  check.data.na(data, maxNA.fraction)
 }
 
 ## Objective: identify rows with too many NA values in individual data
@@ -37,11 +37,8 @@ check.data.na <- function(data, maxNA.fraction) {
                          function(y)
                          (sum(is.na(y)) / length(y)) > maxNA.fraction)))
 
-  unique(unlist(narows))
-}
+  narows <- unique(unlist(narows))
 
-
-remove.data.na <- function(data, narows) {
   for (i in seq(along = data)) {
     if (length(narows) > 0) 
       data[[i]] <- data[[i]][-narows, , drop=FALSE]
@@ -51,7 +48,7 @@ remove.data.na <- function(data, narows) {
   ## because of the maxNA.fraction
   if (0 %in% c(sapply(data, dim)))
     stop("Empty data layer - check maxNA.fraction argument")
-
+  
   data
 }
 

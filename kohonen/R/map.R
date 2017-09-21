@@ -35,9 +35,7 @@ map.kohonen <- function(x,
 
   ## ##########################################################################
   ## Check data and apply whatmap
-  newdata <- check.data(newdata[whatmap])
-  nachecks <- check.data.na(newdata, maxNA.fraction = maxNA.fraction)
-  newdata <- remove.data.na(newdata, nachecks)
+  newdata <- check.data(newdata[whatmap], maxNA.fraction = maxNA.fraction)
             
   if (useTrainingWeights & any(user.weights[whatmap] < 1e-8))
     warning("Mapping new data using data layers not involved in training")
