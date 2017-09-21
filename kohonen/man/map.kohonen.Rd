@@ -7,7 +7,7 @@
 }
 \usage{
 \method{map}{kohonen}(x, newdata, whatmap = NULL, user.weights = NULL,
-                      maxNA.fraction = NULL, ...)
+                      maxNA.fraction = x$maxNA.fraction, ...)
 }
 \arguments{
   \item{x}{An object of class \code{kohonen}.}

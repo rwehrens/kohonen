@@ -7,7 +7,7 @@ map.kohonen <- function(x,
                         newdata,
                         whatmap = NULL,
                         user.weights = NULL,
-                        maxNA.fraction = NULL, ...)
+                        maxNA.fraction = x$maxNA.fraction, ...)
 {
   ## ##########################################################################
   ## Get relevant info from kohonen object
@@ -25,17 +25,17 @@ map.kohonen <- function(x,
   }
   if (length(user.weights) == 1) user.weights <- rep(1, nlayers)
   if (is.null(whatmap)) whatmap <- x$whatmap
-  if (is.null(maxNA.fraction)) maxNA.fraction <- x$maxNA.fraction
-
-  dist.ptrs <- getDistancePointers(x$dist.fcts, maxNA.fraction = maxNA.fraction)
+ 
+  dist.ptrs <- getDistancePointers(x$dist.fcts,
+                                   maxNA.fraction = maxNA.fraction)
 
   ## ##########################################################################
   ## Check whatmap
   whatmap <- check.whatmap(newdata, whatmap)
 
   ## ##########################################################################
-  ## Check data and apply whatmap. Here we only keep the layers that
-  ## are present in whatmap.
+  ## Apply whatmap and check the data in the chosen layers. These are
+  ## the only ones kept.
   newdata <- check.data(newdata[whatmap])
   nachecks <- check.data.na(newdata, maxNA.fraction = maxNA.fraction)
   newdata <- remove.data.na(newdata, nachecks)

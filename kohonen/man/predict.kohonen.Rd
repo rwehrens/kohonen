@@ -17,7 +17,9 @@
                           unit.predictions = NULL,
                           trainingdata = NULL,
                           whatmap = NULL,
-                          threshold = 0, ...)
+                          threshold = 0,
+                          maxNA.fraction = object$maxNA.fraction,
+                          ...)
 }
 \arguments{
   \item{object}{Trained network, containing one or more information layers.}
@@ -32,17 +34,14 @@
     determining the mapping of the training data. Normally, data stored
     in the \code{kohonen} object will be used for this, but one can also
     specify this argument explicitly. Layers should match the trained map.}
-  \item{whatmap}{What layers to use in the mapping. If not provided the
-    intersection of the names of the newdata, the trainingdata, and the
-    codebook vectors in the \code{kohonen} object will be used. If no
-    names are present in the data layers, or if whatmap is in numerical
-    form, the data layers in the different data objects should match
-    exactly.}
+  \item{whatmap, maxNA.fraction}{parameters that usually will
+    be taken from the \code{x} object, but can be supplied by the user
+    as well. See \code{\link{supersom}} for more information.}
   \item{threshold}{Used in converting class predictions back into
     factors; see \code{\link{classmat2classvec}}.}
   \item{\dots}{Further arguments to be passed to \code{map.kohonen}, in
-    particular \code{user.weights}. If not provided
-    they will be taken from \code{object}.} 
+    particular \code{user.weights}. If not provided will be taken from
+    \code{object}.}
 }
 \value{
   Returns a list with components

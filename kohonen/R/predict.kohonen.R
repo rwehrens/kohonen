@@ -43,10 +43,9 @@ predict.kohonen <- function(object,
     if (!all(whatmap.tr == whatmap))
       stop("Data layer mismatch between map and trainingdata")
 
-    ## check only the whatmap layers but keep the whole object; remove
-    ## rows in all data layers, not just in whatmap layers. Similar to
-    ## the supersom function (and different from the map function).
-    trainingdata[whatmap] <- check.data(trainingdata[whatmap])
+    ## check all data layers; remove only rows that contain too many
+    ## NAs in the whatmap layers. 
+    trainingdata <- check.data(trainingdata)
     narows <- check.data.na(trainingdata[whatmap], maxNA.fraction)
     trainingdata <- remove.data.na(trainingdata, narows)
     
@@ -89,6 +88,11 @@ predict.kohonen <- function(object,
     newdata <- object$data
     if (is.null(newdata))
       stop("Missing newdata argument, no data available in kohonen object either")
+    
+    newrownames <- rownames(newdata[[1]])
+    if (is.null(newrownames)) newrownames <- 1:nrow(newdata[[1]])
+    nnewrows <- length(newrownames)
+
     newmapping <- object$unit.classif
 
     if (any(factorNew <- sapply(newdata, is.factor)))
@@ -112,29 +116,39 @@ predict.kohonen <- function(object,
     if (!checkListVariables(newdata[whatmap.new], codeNcols[whatmap.new]))
       stop("Number of columns of newdata do not match codebook vectors")
 
-    ## check only the whatmap layers but keep the whole object; remove
-    ## rows in all data layers, not just in whatmap layers. Similar to
-    ## the supersom function (and different from the map function).
-    newdata[whatmap] <- check.data(newdata[whatmap])
-    narows <- check.data.na(newdata[whatmap], maxNA.fraction = maxNA.fraction)
+    ## check all layers but only remove records from whatmap layers
+    newdata <- check.data(newdata)
+
+    newrownames <- rownames(newdata[[1]])
+    if (is.null(newrownames)) newrownames <- 1:nrow(newdata[[1]])
+    nnewrows <- length(newrownames)
+
+    narows <- check.data.na(newdata[whatmap.new],
+                            maxNA.fraction = maxNA.fraction)
     newdata <- remove.data.na(newdata, narows)
     
     ## finally: calculate mapping of new data
     newmapping <- map(object,
                       newdata = newdata,
-                      whatmap = whatmap.new, ...)$unit.classif
+                      whatmap = whatmap.new,
+                      ...)$unit.classif
   }
-  
-  nonNA <- which(!is.na(newmapping))
+
+  if (length(narows) > 0) {
+    rowidx <- (1:nnewrows)[-narows]
+  } else {
+    rowidx <- 1:nnewrows
+  }
+  nonNA <- rowidx[which(!is.na(newmapping))]
   predictions <- lapply(unit.predictions,
                         function(x) {
-                          pred <- matrix(NA, length(newmapping), ncol(x))
+                          pred <- matrix(NA, nnewrows, ncol(x))
                           pred[nonNA,] <-
                             x[newmapping[nonNA],,drop=FALSE]
                           pred
                           })
   for (i in seq(along = predictions))
-    dimnames(predictions[[i]]) <- list(rownames(newdata[[1]]),
+    dimnames(predictions[[i]]) <- list(newrownames,
                                        colnames(unit.predictions[[i]]))
 
   ## codebooks are always matrices, also when they really signify

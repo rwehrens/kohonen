@@ -17,27 +17,29 @@ supersom <- function(data,
   ## Check data
   if (!is.list(data) & (is.vector(data) | is.factor(data) | is.matrix(data)))
     data <- list(data)
-  orig.data <- data
-  nmat <- length(data)
 
-  ## we check only the data in the whatmap layers but keep the whole
-  ## list object. Removal of rows will take place in the whole object,
-  ## not just in the whatmap layers.
-  data[whatmap] <- check.data(data[whatmap])
-  narows <- check.data.na(data[whatmap], maxNA.fraction = maxNA.fraction)
+  ## here we check all layers, also the ones that we do not use, since
+  ## they may be used for mapping lateron.
+  data <- check.data(data)
+  narows <- check.data.na(data, maxNA.fraction = maxNA.fraction)
   data <- remove.data.na(data, narows)
+
+  ## full data is the complete list, but with rows removed that
+  ## contain too many NAs
+  full.data <- data
+  nmat <- length(data)
+  
+  ## ##########################################################################
+  ## Whatmap
+  whatmap <- check.whatmap(data, whatmap)
+  nmap <- length(whatmap)
+  data <- data[whatmap]
   
   ## ##########################################################################
   ## Check radius update parameters
   nhbrdist <- unit.distances(grid)
   if (length(radius) == 1)
     radius <- c(radius, 0)
-
-  ## ##########################################################################
-  ## Whatmap
-  whatmap <- check.whatmap(data, whatmap)
-  nmap <- length(whatmap)
-  data <- data[whatmap]
 
   nobjects <- nrow(data[[1]])
   nvar <- sapply(data, ncol)
@@ -54,21 +56,21 @@ supersom <- function(data,
   ##   according to whatmap
   ## - distances defined for only the whatmap layers: substitute the
   ##   missing ones by default distances
-  if (length(dist.fcts) == length(orig.data)) {
+  if (length(dist.fcts) == length(full.data)) {
     orig.dist.fcts <- dist.fcts
     dist.fcts <- dist.fcts[whatmap]
   } else {
     if (length(dist.fcts) == 1) {
-      orig.dist.fcts <- rep(dist.fcts, length(orig.data))
+      orig.dist.fcts <- rep(dist.fcts, length(full.data))
       dist.fcts <- orig.dist.fcts[whatmap]
     } else {
       defaultDist <- "sumofsquares"
       defaultClassDist <- "tanimoto"
-      factorLayers <- sapply(orig.data,
+      factorLayers <- sapply(full.data,
                              function(datamat)
                                is.factor(datamat) ||
                                is.factor.matrix(datamat))
-      default.dist.fcts <- rep(defaultDist, length(orig.data))
+      default.dist.fcts <- rep(defaultDist, length(full.data))
       if (any(factorLayers))
         default.dist.fcts[which(factorLayers)] <- defaultClassDist
       
@@ -251,8 +253,8 @@ supersom <- function(data,
   mycodes2 <- split(as.data.frame(mycodes), layerID)
   mycodes3 <- lapply(mycodes2, function(x) t(as.matrix(x)))
 
-  codes <- vector(length(orig.data), mode = "list")
-  names(codes) <- names(orig.data)
+  codes <- vector(length(full.data), mode = "list")
+  names(codes) <- names(full.data)
   codes[whatmap] <- mycodes3
   for (ii in seq(along = whatmap))
     colnames(codes[[ whatmap[ii] ]]) <- colnames(data[[ii]])
@@ -263,11 +265,11 @@ supersom <- function(data,
     mapping <- map.kohonen(list(codes = codes,
                                 distance.weights = distance.weights,
                                 dist.fcts = orig.dist.fcts),
-                           newdata = orig.data,
+                           newdata = full.data,
                            whatmap = whatmap,
                            user.weights = orig.user.weights,
                            maxNA.fraction = maxNA.fraction)
-    structure(list(data = orig.data,
+    structure(list(data = full.data,
                    unit.classif = mapping$unit.classif,
                    distances = mapping$distances,
                    grid = grid,
