@@ -101,9 +101,10 @@ predict.kohonen <- function(object,
     if (!checkListVariables(newdata[whatmap.new], codeNcols[whatmap.new]))
       stop("Number of columns of newdata do not match codebook vectors")
 
-    newdata <- check.data(newdata[whatmap.new],
-                          maxNA.fraction = maxNA.fraction)
-
+    newdata <- check.data(newdata[whatmap.new])
+    narows <- check.data.na(newdata, maxNA.fraction = maxNA.fraction)
+    newdata <- remove.data.na(newdata, narows)
+    
     ## finally: calculate mapping of new data
     newmapping <- map(object,
                       newdata = newdata,

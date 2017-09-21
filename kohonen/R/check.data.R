@@ -1,6 +1,6 @@
 ## several checks for input data of the supersom and map functions
 
-check.data <- function(data, maxNA.fraction) {
+check.data <- function(data) {
   ## Check whether data is a list of data matrices or factors
   if (!is.list(data) |
       !all(sapply(data, class) %in% c("numeric", "matrix", "factor")))
@@ -23,11 +23,13 @@ check.data <- function(data, maxNA.fraction) {
   if (length(nobjects) > 1)
     stop("Unequal numbers of objects in data list")
 
-  check.data.na(data, maxNA.fraction)
+  data
 }
 
 ## Objective: identify rows with too many NA values in individual data
-## layers. Data is a list of matrices.
+## layers. Data is a list of matrices. We cannot incorporate this in
+## check.data because in the map.kohonen function we need to keep track of the
+## records that have been removed, so narows is essential information.
 
 check.data.na <- function(data, maxNA.fraction) {
   narows <-
@@ -37,8 +39,10 @@ check.data.na <- function(data, maxNA.fraction) {
                          function(y)
                          (sum(is.na(y)) / length(y)) > maxNA.fraction)))
 
-  narows <- unique(unlist(narows))
+  unique(unlist(narows))
+}
 
+remove.data.na <- function(data, narows) {
   for (i in seq(along = data)) {
     if (length(narows) > 0) 
       data[[i]] <- data[[i]][-narows, , drop=FALSE]
