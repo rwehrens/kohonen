@@ -35,7 +35,7 @@ map.kohonen <- function(x,
 
   ## ##########################################################################
   ## Check data and apply whatmap
-  newdata <- check.data(newdata[whatmap], maxNA.fraction = maxNA.fraction)
+  newdata <- check.data(newdata[whatmap])
   nachecks <- check.data.na(newdata, maxNA.fraction = maxNA.fraction)
   newdata <- remove.data.na(newdata, nachecks)
             

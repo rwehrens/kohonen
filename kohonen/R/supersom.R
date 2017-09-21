@@ -20,10 +20,9 @@ supersom <- function(data,
   orig.data <- data
   nmat <- length(data)
 
-  data <- check.data(data, maxNA.fraction = maxNA.fraction)
+  data <- check.data(data)
   nachecks <- check.data.na(data, maxNA.fraction = maxNA.fraction)
   data <- remove.data.na(data, nachecks)
-
   
   ## ##########################################################################
   ## Check radius update parameters

@@ -6,6 +6,7 @@
 ## else check unit.predictions
 ## check newdata with unit.predictions
 ## map newdata
+
 predict.kohonen <- function(object,
                             newdata = NULL,
                             unit.predictions = NULL,
@@ -83,6 +84,7 @@ predict.kohonen <- function(object,
       newdata[factorNew] <- lapply(newdata[factorNew], classvec2classmat)
   } else {
     if (is.matrix(newdata)) newdata <- list(newdata)
+
     ## check data layers for newdata. Data layers of newdata may be a
     ## subset of whatmap, but only it the names agree.
     if (is.null(newnames <- names(newdata))) {
@@ -98,9 +100,8 @@ predict.kohonen <- function(object,
     ## assume the layers are in the same order.
     if (!checkListVariables(newdata[whatmap.new], codeNcols[whatmap.new]))
       stop("Number of columns of newdata do not match codebook vectors")
-    
-    if (any(factorNew <- sapply(newdata, is.factor)))
-      newdata[factorNew] <- lapply(newdata[factorNew], classvec2classmat)
+
+    newdata <- check.data(newdata[whatmap.new])
 
     ## finally: calculate mapping of new data
     newmapping <- map(object,

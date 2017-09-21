@@ -1,6 +1,15 @@
 The kohonen package version 3.0.3 is described in 
 R. Wehrens and J. Kruisselbrink, J. Stat. Softw. 2017 (to appear)
 
+Changes in version 3.0.5:
+  - columns with too many NA values are no longer removed; it is
+    virtually impossible to guarantee that the right columns are
+    matched when new data are submitted to the map.
+  - predict.kohonen now calls check.data to avoid illegitimate
+    arguments: presenting a data.frame led to a segfault (noticed by
+    @miranska)
+  - removed superfluous argument maxNA.fraction from check.data 
+
 Changes in version 3.0.4:
   - if whatmap is used during training, some of the codebook layers
     will be NULL. In version 3.0.2 this led to errors in
@@ -18,7 +27,6 @@ Changes in version 3.0.4:
   - added JSSdemo1.R, JSSdemo2.R, JSSdemo3.R to demo directory
   - added kohonen-package.Rd to man pages
   - reordered NEWS contents to list most recent entry first
-
 
 Changes in version 3.0.3:
   - improved manual pages

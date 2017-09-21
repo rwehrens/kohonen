@@ -1,6 +1,6 @@
 ## several checks for input data of the supersom and map functions
 
-check.data <- function(data, maxNA.fraction) {
+check.data <- function(data) {
   ## Check whether data is a list of data matrices or factors
   if (!is.list(data) |
       !all(sapply(data, class) %in% c("numeric", "matrix", "factor")))
@@ -26,44 +26,27 @@ check.data <- function(data, maxNA.fraction) {
   data
 }
 
-## Objective: identify rows and columns with too many NA values. Data
-## is a list of matrices.
+## Objective: identify rows with too many NA values in individual data
+## layers. Data is a list of matrices.
 
 check.data.na <- function(data, maxNA.fraction) {
-  nacols <-
-    lapply(data,
-           function(x)
-             which(apply(x, 2,
-                         function(y)
-                         (sum(is.na(y)) / length(y)) > maxNA.fraction)))
   narows <-
     lapply(data,
            function(x)
              which(apply(x, 1,
                          function(y)
                          (sum(is.na(y)) / length(y)) > maxNA.fraction)))
-  narows <- unique(unlist(narows))
 
-  list(narows, nacols)
+  unique(unlist(narows))
 }
 
 
-## potential problem: removing columns may lead to matching the wrong
-## column numbers... In this version commented out. If we accept this,
-## we can simplify the check.data.na code as well.
-
-remove.data.na <- function(data, nachecks) {
-  narows <- nachecks[[1]]
-  nacols <- nachecks[[2]]
-  
+remove.data.na <- function(data, narows) {
   for (i in seq(along = data)) {
     if (length(narows) > 0) 
       data[[i]] <- data[[i]][-narows, , drop=FALSE]
-
-##    if (length(nacols[[i]]) > 0) 
-##      data[[i]] <- data[[i]][, -nacols[[i]], drop=FALSE]
   }
-   
+  
   ## check to see if there are any empty data layers
   ## because of the maxNA.fraction
   if (0 %in% c(sapply(data, dim)))
