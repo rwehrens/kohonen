@@ -15,11 +15,6 @@ supersom <- function(data,
 {
   ## ##########################################################################
   ## Check data
-  if (!is.list(data) & (is.vector(data) | is.factor(data) | is.matrix(data)))
-    data <- list(data)
-
-  ## here we check all layers, also the ones that we do not use, since
-  ## they may be used for mapping lateron.
   data <- check.data(data)
   narows <- check.data.na(data, maxNA.fraction = maxNA.fraction)
   data <- remove.data.na(data, narows)
@@ -264,8 +259,8 @@ supersom <- function(data,
   if (keep.data) {
     mapping <- map.kohonen(list(codes = codes,
                                 distance.weights = distance.weights,
-                                dist.fcts = orig.dist.fcts),
-                           newdata = full.data,
+                                dist.fcts = orig.dist.fcts,
+                                data = full.data),
                            whatmap = whatmap,
                            user.weights = orig.user.weights,
                            maxNA.fraction = maxNA.fraction)

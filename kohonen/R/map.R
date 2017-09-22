@@ -14,8 +14,11 @@ map.kohonen <- function(x,
   codes <- x$codes
   nlayers <- length(codes)
   
-  if (missing(newdata) & !is.null(x$data)) newdata <- x$data
-  if (is.matrix(newdata)) newdata <- list(newdata) ## service to the user
+  if (missing(newdata) & !is.null(x$data)) {
+    newdata <- x$data
+  } else {
+    newdata <- check.data(newdata)
+  }
   
   if (is.null(user.weights)) {
     user.weights <- x$user.weights
@@ -34,9 +37,8 @@ map.kohonen <- function(x,
   whatmap <- check.whatmap(newdata, whatmap)
 
   ## ##########################################################################
-  ## Apply whatmap and check the data in the chosen layers. These are
-  ## the only ones kept.
-  newdata <- check.data(newdata[whatmap])
+  ## Apply whatmap.
+  newdata <- newdata[whatmap]
   nachecks <- check.data.na(newdata, maxNA.fraction = maxNA.fraction)
   newdata <- remove.data.na(newdata, nachecks)
             

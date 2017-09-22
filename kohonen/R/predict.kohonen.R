@@ -34,18 +34,19 @@ predict.kohonen <- function(object,
         lapply(unit.predictions[isFactorPred], classvec2classmat)
   } else {
     ## calculate unit.predictions from mapping the trainingdata
-    if (is.null(trainingdata)) 
+    if (is.null(trainingdata)) {
       trainingdata <- object$data
-    if (is.null(trainingdata))
-      stop("Missing trainingdata argument, no data available in kohonen object either")
+    } else {
+      if (is.null(trainingdata))
+        stop("Missing trainingdata argument, no data available in kohonen object either")
+      trainingdata <- check.data(trainingdata)
+    }
     
     whatmap.tr <- check.whatmap(trainingdata, whatmap)
     if (!all(whatmap.tr == whatmap))
       stop("Data layer mismatch between map and trainingdata")
 
-    ## check all data layers; remove only rows that contain too many
-    ## NAs in the whatmap layers. 
-    trainingdata <- check.data(trainingdata)
+    ## remove only rows that contain too many NAs in the whatmap layers. 
     narows <- check.data.na(trainingdata[whatmap], maxNA.fraction)
     trainingdata <- remove.data.na(trainingdata, narows)
     
@@ -55,9 +56,9 @@ predict.kohonen <- function(object,
     if (!checkListVariables(trainingdata[whatmap], codeNcols[whatmap]))
       stop("Number of columns of trainingdata do not match ",
            "codebook vectors")
-    
+
+    object$data <- trainingdata  # saves a check in map.kohonen
     mappingX <- map(object,
-                    newdata = trainingdata,
                     whatmap = whatmap,
                     maxNA.fraction = maxNA.fraction,
                     ...)$unit.classif
@@ -98,10 +99,10 @@ predict.kohonen <- function(object,
     if (any(factorNew <- sapply(newdata, is.factor)))
       newdata[factorNew] <- lapply(newdata[factorNew], classvec2classmat)
   } else {
-    if (is.matrix(newdata)) newdata <- list(newdata)
+    newdata <- check.data(newdata)
 
-    ## check data layers for newdata. Data layers of newdata may be a
-    ## subset of whatmap, but only it the names agree.
+    ## Data layers of newdata may be a subset of whatmap, but only it
+    ## the names agree.
     if (is.null(newnames <- names(newdata))) {
       whatmap.new <- whatmap
     } else {
@@ -117,7 +118,6 @@ predict.kohonen <- function(object,
       stop("Number of columns of newdata do not match codebook vectors")
 
     ## check all layers but only remove records from whatmap layers
-    newdata <- check.data(newdata)
 
     newrownames <- rownames(newdata[[1]])
     if (is.null(newrownames)) newrownames <- 1:nrow(newdata[[1]])

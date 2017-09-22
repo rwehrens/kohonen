@@ -2,8 +2,9 @@
 
 check.data <- function(data) {
   ## Check whether data is a list of data matrices or factors
-  if (!is.list(data) |
-      !all(sapply(data, class) %in% c("numeric", "matrix", "factor")))
+  if (!is.list(data) | is.data.frame(data))
+    data <- list(data)
+  if (!all(sapply(data, class) %in% c("numeric", "matrix", "factor")))
     stop("Argument data should be a list of numeric vectors or matrices, or factors")
   
   ## Convert vectors to one-column matrices in layers

@@ -4,10 +4,12 @@ R. Wehrens and J. Kruisselbrink, J. Stat. Softw. 2017 (to appear)
 Changes in version 3.0.5:
   - columns with too many NA values are no longer removed; it is
     virtually impossible to guarantee that the right columns are
-    matched when new data are submitted to the map.
-  - predict.kohonen now calls check.data to avoid illegitimate
-    arguments: presenting a data.frame led to a segfault (noticed by
-    @miranska)
+    matched when new data are submitted to the map (based on an error
+    reported by Ignacio Chacón).
+  - check.data is now always called for all data layers of new data
+    objects, not just for whatmap data layers. Affects functions map,
+    predict, supersom. Fixes a problem where presenting a data.frame
+    as test data led to a segfault (noticed by @miranska)
   - removed superfluous argument maxNA.fraction from check.data 
 
 Changes in version 3.0.4:

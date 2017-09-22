@@ -26,7 +26,7 @@
   \item{newdata}{List of data matrices, or one single data matrix, for
     which predictions are to be made. The data layers should match those
     in the trained map. If not presented, the training data in the map
-    will be used.}
+    will be used. No \code{data.frame} objects are allowed.}
   \item{unit.predictions}{Explicit definition of the predictions for each
     unit. Should be a list of matrices, vectors or factors, of the same
     length as \code{object$codes}.}
