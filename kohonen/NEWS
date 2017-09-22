@@ -1,4 +1,4 @@
-The kohonen package version 3.0.3 is described in 
+The kohonen package version 3.0.4 is described in 
 R. Wehrens and J. Kruisselbrink, J. Stat. Softw. 2017 (to appear)
 
 Changes in version 3.0.5:
@@ -27,6 +27,7 @@ Changes in version 3.0.4:
     description: peppaPic
   - added BC.cpp and wcc.cpp to inst/Distances directory
   - added JSSdemo1.R, JSSdemo2.R, JSSdemo3.R to demo directory
+  - added RGBdemo.R to demo directory
   - added kohonen-package.Rd to man pages
   - reordered NEWS contents to list most recent entry first
 
