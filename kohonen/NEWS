@@ -10,7 +10,8 @@ Changes in version 3.0.5:
     objects, not just for whatmap data layers. Affects functions map,
     predict, supersom. Fixes a problem where presenting a data.frame
     as test data led to a segfault (noticed by @miranska)
-  - removed superfluous argument maxNA.fraction from check.data 
+  - removed superfluous argument maxNA.fraction from check.data
+  - added 2018 JSS paper (pre-pub) to /inst/doc
 
 Changes in version 3.0.4:
   - if whatmap is used during training, some of the codebook layers
