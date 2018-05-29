@@ -22,7 +22,7 @@ object.distances <- function(kohobj, type = c("data", "codes"), whatmap) {
   nNA <- getnNA(data, maxNA.fraction, nobjects)
 
   datamat <- matrix(unlist(data), ncol = nobjects, byrow = TRUE)
-  datamat <- matrix(unlist(data[whatmap]), ncol = nobjects, byrow = TRUE)
+##  datamat <- matrix(unlist(data[whatmap]), ncol = nobjects, byrow = TRUE)
   res <- ObjectDistances(data = datamat,
                          numVars = nvars,
                          numNAs = nNA,
