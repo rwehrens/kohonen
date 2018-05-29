@@ -1,5 +1,5 @@
 Package: kohonen
-Version: 3.0.5
+Version: 3.0.6
 Title: Supervised and Unsupervised Self-Organising Maps
 Author: Ron Wehrens and Johannes Kruisselbrink
 Maintainer: Ron Wehrens <ron.wehrens@gmail.com>
