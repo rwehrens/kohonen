@@ -45,6 +45,8 @@ double EuclideanDistance(double *dataVector, double *codeVector, int n, int nNA)
 double SumOfSquaresDistance(double *dataVector, double *codeVector, int n, int nNA);
 double TanimotoDistance(double *dataVector, double *codeVector, int n, int nNA);
 double ManhattanDistance(double *dataVector, double *codeVector, int n, int nNA);
+double TimeSeriesDTW(double *dataVector, double *codeVector, int ndata, int nCodes);
+double EuclideanDTW(double x, double y);
 
 double EuclideanDistanceNaN(double *dataVector, double *codeVector, int n, int nNA);
 double SumOfSquaresDistanceNaN(double *dataVector, double *codeVector, int n, int nNA);

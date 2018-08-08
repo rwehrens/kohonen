@@ -127,11 +127,20 @@ Rcpp::List RcppSupersom(
 
       /* Linear decays for radius and learning parameter */
       tmp = (double)(curIter) / (double)(totalIters);
-      threshold = radii[0] - (radii[0] - radii[1]) * tmp;
+      
+      /* old threshold definition (not compatible with literature)*/
+      // threshold = radii[0] - (radii[0] - radii[1]) * tmp; 
+      /* new threshold definition (compatible with literature) */
+      threshold = radii[0]* exp(-tmp);
+      
       if (threshold < 1.0) {
         threshold = 0.5;
       }
-      alpha = alphas[0] - (alphas[0] - alphas[1]) * tmp;
+      
+      /* old learning rate definition (not compatible with literature) */
+      // alpha = alphas[0] - (alphas[0] - alphas[1]) * tmp;
+      /* new learning rate definition (compatible with literature) */
+      alpha = alphas[0] *(1 - tmp);
 
       /* Update changes */
       for (l = 0; l < numLayers; l++) {

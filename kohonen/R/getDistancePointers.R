@@ -7,7 +7,7 @@
 
 getDistancePointers <- function(dist.fcts,
                                 prefabDists = c("sumofsquares", "euclidean",
-                                                "manhattan", "tanimoto"),
+                                                "manhattan", "tanimoto", "dtw"),
                                 maxNA.fraction) {  
   ## Text distance functions can be predefined names, C++ function
   ## definitions, or file names containing these definitions.
