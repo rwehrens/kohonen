@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // CreateStdDistancePointers
 Rcpp::ExpressionVector CreateStdDistancePointers(const Rcpp::IntegerVector& types, bool considerNaNs);
-RcppExport SEXP kohonen_CreateStdDistancePointers(SEXP typesSEXP, SEXP considerNaNsSEXP) {
+RcppExport SEXP _kohonen_CreateStdDistancePointers(SEXP typesSEXP, SEXP considerNaNsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,7 +20,7 @@ END_RCPP
 }
 // CreateStdDistancePointer
 Rcpp::XPtr<DistanceFunctionPtr> CreateStdDistancePointer(int type, bool considerNaNs);
-RcppExport SEXP kohonen_CreateStdDistancePointer(SEXP typeSEXP, SEXP considerNaNsSEXP) {
+RcppExport SEXP _kohonen_CreateStdDistancePointer(SEXP typeSEXP, SEXP considerNaNsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -32,7 +32,7 @@ END_RCPP
 }
 // ObjectDistances
 Rcpp::NumericVector ObjectDistances(Rcpp::NumericMatrix data, Rcpp::IntegerVector numVars, Rcpp::IntegerMatrix numNAs, Rcpp::ExpressionVector distanceFunctions, Rcpp::NumericVector weights);
-RcppExport SEXP kohonen_ObjectDistances(SEXP dataSEXP, SEXP numVarsSEXP, SEXP numNAsSEXP, SEXP distanceFunctionsSEXP, SEXP weightsSEXP) {
+RcppExport SEXP _kohonen_ObjectDistances(SEXP dataSEXP, SEXP numVarsSEXP, SEXP numNAsSEXP, SEXP distanceFunctionsSEXP, SEXP weightsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -47,7 +47,7 @@ END_RCPP
 }
 // RcppSupersom
 Rcpp::List RcppSupersom(Rcpp::NumericMatrix data, Rcpp::NumericMatrix codes, Rcpp::IntegerVector numVars, Rcpp::NumericVector weights, Rcpp::ExpressionVector distanceFunctions, Rcpp::IntegerMatrix numNAs, Rcpp::NumericMatrix neighbourhoodDistances, int neighbourhoodFct, Rcpp::NumericVector alphas, Rcpp::NumericVector radii, int numEpochs);
-RcppExport SEXP kohonen_RcppSupersom(SEXP dataSEXP, SEXP codesSEXP, SEXP numVarsSEXP, SEXP weightsSEXP, SEXP distanceFunctionsSEXP, SEXP numNAsSEXP, SEXP neighbourhoodDistancesSEXP, SEXP neighbourhoodFctSEXP, SEXP alphasSEXP, SEXP radiiSEXP, SEXP numEpochsSEXP) {
+RcppExport SEXP _kohonen_RcppSupersom(SEXP dataSEXP, SEXP codesSEXP, SEXP numVarsSEXP, SEXP weightsSEXP, SEXP distanceFunctionsSEXP, SEXP numNAsSEXP, SEXP neighbourhoodDistancesSEXP, SEXP neighbourhoodFctSEXP, SEXP alphasSEXP, SEXP radiiSEXP, SEXP numEpochsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -68,7 +68,7 @@ END_RCPP
 }
 // RcppBatchSupersom
 Rcpp::List RcppBatchSupersom(Rcpp::NumericMatrix data, Rcpp::NumericMatrix codes, Rcpp::IntegerVector numVars, Rcpp::NumericVector weights, Rcpp::ExpressionVector distanceFunctions, Rcpp::IntegerMatrix numNAs, Rcpp::NumericMatrix neighbourhoodDistances, int neighbourhoodFct, Rcpp::NumericVector radii, int numEpochs);
-RcppExport SEXP kohonen_RcppBatchSupersom(SEXP dataSEXP, SEXP codesSEXP, SEXP numVarsSEXP, SEXP weightsSEXP, SEXP distanceFunctionsSEXP, SEXP numNAsSEXP, SEXP neighbourhoodDistancesSEXP, SEXP neighbourhoodFctSEXP, SEXP radiiSEXP, SEXP numEpochsSEXP) {
+RcppExport SEXP _kohonen_RcppBatchSupersom(SEXP dataSEXP, SEXP codesSEXP, SEXP numVarsSEXP, SEXP weightsSEXP, SEXP distanceFunctionsSEXP, SEXP numNAsSEXP, SEXP neighbourhoodDistancesSEXP, SEXP neighbourhoodFctSEXP, SEXP radiiSEXP, SEXP numEpochsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -88,7 +88,7 @@ END_RCPP
 }
 // RcppParallelBatchSupersom
 Rcpp::List RcppParallelBatchSupersom(Rcpp::NumericMatrix data, Rcpp::NumericMatrix codes, Rcpp::IntegerVector numVars, Rcpp::NumericVector weights, Rcpp::ExpressionVector distanceFunctions, Rcpp::IntegerMatrix numNAs, Rcpp::NumericMatrix neighbourhoodDistances, int neighbourhoodFct, Rcpp::NumericVector radii, int numEpochs, int numCores);
-RcppExport SEXP kohonen_RcppParallelBatchSupersom(SEXP dataSEXP, SEXP codesSEXP, SEXP numVarsSEXP, SEXP weightsSEXP, SEXP distanceFunctionsSEXP, SEXP numNAsSEXP, SEXP neighbourhoodDistancesSEXP, SEXP neighbourhoodFctSEXP, SEXP radiiSEXP, SEXP numEpochsSEXP, SEXP numCoresSEXP) {
+RcppExport SEXP _kohonen_RcppParallelBatchSupersom(SEXP dataSEXP, SEXP codesSEXP, SEXP numVarsSEXP, SEXP weightsSEXP, SEXP distanceFunctionsSEXP, SEXP numNAsSEXP, SEXP neighbourhoodDistancesSEXP, SEXP neighbourhoodFctSEXP, SEXP radiiSEXP, SEXP numEpochsSEXP, SEXP numCoresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -109,7 +109,7 @@ END_RCPP
 }
 // RcppMap
 Rcpp::List RcppMap(Rcpp::NumericMatrix data, /* objects to be mapped */     Rcpp::IntegerVector numVars, Rcpp::IntegerMatrix numNAs, Rcpp::NumericMatrix codes, Rcpp::NumericVector weights, Rcpp::ExpressionVector distanceFunctions);
-RcppExport SEXP kohonen_RcppMap(SEXP dataSEXP, SEXP numVarsSEXP, SEXP numNAsSEXP, SEXP codesSEXP, SEXP weightsSEXP, SEXP distanceFunctionsSEXP) {
+RcppExport SEXP _kohonen_RcppMap(SEXP dataSEXP, SEXP numVarsSEXP, SEXP numNAsSEXP, SEXP codesSEXP, SEXP weightsSEXP, SEXP distanceFunctionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -122,4 +122,20 @@ BEGIN_RCPP
     rcpp_result_gen = Rcpp::wrap(RcppMap(data, numVars, numNAs, codes, weights, distanceFunctions));
     return rcpp_result_gen;
 END_RCPP
+}
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_kohonen_CreateStdDistancePointers", (DL_FUNC) &_kohonen_CreateStdDistancePointers, 2},
+    {"_kohonen_CreateStdDistancePointer", (DL_FUNC) &_kohonen_CreateStdDistancePointer, 2},
+    {"_kohonen_ObjectDistances", (DL_FUNC) &_kohonen_ObjectDistances, 5},
+    {"_kohonen_RcppSupersom", (DL_FUNC) &_kohonen_RcppSupersom, 11},
+    {"_kohonen_RcppBatchSupersom", (DL_FUNC) &_kohonen_RcppBatchSupersom, 10},
+    {"_kohonen_RcppParallelBatchSupersom", (DL_FUNC) &_kohonen_RcppParallelBatchSupersom, 11},
+    {"_kohonen_RcppMap", (DL_FUNC) &_kohonen_RcppMap, 6},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_kohonen(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }

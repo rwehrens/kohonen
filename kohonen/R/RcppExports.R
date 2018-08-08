@@ -2,30 +2,30 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 CreateStdDistancePointers <- function(types, considerNaNs) {
-    .Call('kohonen_CreateStdDistancePointers', PACKAGE = 'kohonen', types, considerNaNs)
+    .Call('_kohonen_CreateStdDistancePointers', PACKAGE = 'kohonen', types, considerNaNs)
 }
 
 CreateStdDistancePointer <- function(type, considerNaNs) {
-    .Call('kohonen_CreateStdDistancePointer', PACKAGE = 'kohonen', type, considerNaNs)
+    .Call('_kohonen_CreateStdDistancePointer', PACKAGE = 'kohonen', type, considerNaNs)
 }
 
 ObjectDistances <- function(data, numVars, numNAs, distanceFunctions, weights) {
-    .Call('kohonen_ObjectDistances', PACKAGE = 'kohonen', data, numVars, numNAs, distanceFunctions, weights)
+    .Call('_kohonen_ObjectDistances', PACKAGE = 'kohonen', data, numVars, numNAs, distanceFunctions, weights)
 }
 
 RcppSupersom <- function(data, codes, numVars, weights, distanceFunctions, numNAs, neighbourhoodDistances, neighbourhoodFct, alphas, radii, numEpochs) {
-    .Call('kohonen_RcppSupersom', PACKAGE = 'kohonen', data, codes, numVars, weights, distanceFunctions, numNAs, neighbourhoodDistances, neighbourhoodFct, alphas, radii, numEpochs)
+    .Call('_kohonen_RcppSupersom', PACKAGE = 'kohonen', data, codes, numVars, weights, distanceFunctions, numNAs, neighbourhoodDistances, neighbourhoodFct, alphas, radii, numEpochs)
 }
 
 RcppBatchSupersom <- function(data, codes, numVars, weights, distanceFunctions, numNAs, neighbourhoodDistances, neighbourhoodFct, radii, numEpochs) {
-    .Call('kohonen_RcppBatchSupersom', PACKAGE = 'kohonen', data, codes, numVars, weights, distanceFunctions, numNAs, neighbourhoodDistances, neighbourhoodFct, radii, numEpochs)
+    .Call('_kohonen_RcppBatchSupersom', PACKAGE = 'kohonen', data, codes, numVars, weights, distanceFunctions, numNAs, neighbourhoodDistances, neighbourhoodFct, radii, numEpochs)
 }
 
 RcppParallelBatchSupersom <- function(data, codes, numVars, weights, distanceFunctions, numNAs, neighbourhoodDistances, neighbourhoodFct, radii, numEpochs, numCores) {
-    .Call('kohonen_RcppParallelBatchSupersom', PACKAGE = 'kohonen', data, codes, numVars, weights, distanceFunctions, numNAs, neighbourhoodDistances, neighbourhoodFct, radii, numEpochs, numCores)
+    .Call('_kohonen_RcppParallelBatchSupersom', PACKAGE = 'kohonen', data, codes, numVars, weights, distanceFunctions, numNAs, neighbourhoodDistances, neighbourhoodFct, radii, numEpochs, numCores)
 }
 
 RcppMap <- function(data, numVars, numNAs, codes, weights, distanceFunctions) {
-    .Call('kohonen_RcppMap', PACKAGE = 'kohonen', data, numVars, numNAs, codes, weights, distanceFunctions)
+    .Call('_kohonen_RcppMap', PACKAGE = 'kohonen', data, numVars, numNAs, codes, weights, distanceFunctions)
 }
 
