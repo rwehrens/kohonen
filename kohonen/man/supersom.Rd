@@ -32,7 +32,7 @@ supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
     is entered, it will be converted to a one-column matrix. No
     \code{data.frame} objectss are allowed.}
   \item{grid}{a grid for the codebook vectors:
-    see \code{\link[class]{somgrid}}.}
+    see \code{somgrid}.}
   \item{rlen}{the number of times the complete data set will be
     presented to the network.}
   \item{alpha}{learning rate, a vector of two numbers indicating the
@@ -88,7 +88,7 @@ supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
     only returned if \code{keep.data == TRUE}.}
   \item{distances}{distances of objects to their corresponding winning
     unit, only returned if \code{keep.data == TRUE}.}
-  \item{grid}{the grid, an object of class \code{\link[class]{somgrid}}.}
+  \item{grid}{the grid, an object of class \code{somgrid}.}
   \item{codes}{a list of matrices containing codebook vectors.}
   \item{changes}{matrix of mean average deviations from code vectors;
     every map corresponds with one column.}
