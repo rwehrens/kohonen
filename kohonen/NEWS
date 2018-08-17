@@ -1,8 +1,10 @@
-The kohonen package version 3.0.4 is described in 
-R. Wehrens and J. Kruisselbrink, J. Stat. Softw. 2017 (to appear)
+The kohonen package version 3.0.6 is described in 
+R. Wehrens and J. Kruisselbrink, J. Stat. Softw. 2018 (to appear)
 
 Changes in version 3.0.6:
   - fixed a bug in object.distances
+  - require Rcpp version 0.12.12, and removed Makevars and kohonen_init.c
+    because of this (suggestions by Gilberto Camara)
 
 Changes in version 3.0.5:
   - columns with too many NA values are no longer removed; it is
