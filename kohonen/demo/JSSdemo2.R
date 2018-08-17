@@ -8,8 +8,8 @@ require("Rcpp")
 
 ### Ecology example using Bray-Curtis distance
 ## definition of the distance measure in C++
-BCcode <- '
-  #include <Rcpp.h>
+BCcode <-
+  '#include <Rcpp.h>
   typedef double (*DistanceFunctionPtr)(double *, double *, int, int);
   
   double brayCurtisDissim(double *data, double *codes, int n, int nNA) {

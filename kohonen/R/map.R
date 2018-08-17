@@ -27,14 +27,18 @@ map.kohonen <- function(x,
     useTrainingWeights <- FALSE
   }
   if (length(user.weights) == 1) user.weights <- rep(1, nlayers)
-  if (is.null(whatmap)) whatmap <- x$whatmap
  
   dist.ptrs <- getDistancePointers(x$dist.fcts,
                                    maxNA.fraction = maxNA.fraction)
 
   ## ##########################################################################
   ## Check whatmap
-  whatmap <- check.whatmap(newdata, whatmap)
+  if (is.null(whatmap)) {
+    whatmap <- whatmap.tr <- x$whatmap
+  } else {
+    whatmap.tr <- check.whatmap(x, whatmap)
+    whatmap <- check.whatmap(newdata, whatmap)
+  }
 
   ## ##########################################################################
   ## Apply whatmap.
@@ -42,16 +46,16 @@ map.kohonen <- function(x,
   nachecks <- check.data.na(newdata, maxNA.fraction = maxNA.fraction)
   newdata <- remove.data.na(newdata, nachecks)
             
-  if (useTrainingWeights & any(user.weights[whatmap] < 1e-8))
+  if (useTrainingWeights & any(user.weights[whatmap.tr] < 1e-8))
     warning("Mapping new data using data layers not involved in training")
 
   ## ##########################################################################
   ## Apply whatmap to other objects
-  dist.ptrs <- dist.ptrs[whatmap]
-  codes <- codes[whatmap]
+  dist.ptrs <- dist.ptrs[whatmap.tr]
+  codes <- codes[whatmap.tr]
   user.weights.orig <- user.weights
-  user.weights <- user.weights[whatmap]
-  if (length(whatmap) == 1) {
+  user.weights <- user.weights[whatmap.tr]
+  if (length(whatmap.tr) == 1) {
     user.weights <- 1
   } else {
     if (sum(user.weights >= 1e-8) == 0)
@@ -69,7 +73,7 @@ map.kohonen <- function(x,
   newdata <- matrix(unlist(newdata), ncol=nobjects, byrow=TRUE)
   codes <- matrix(unlist(codes), ncol=ncodes, byrow=TRUE)
 
-  weights <- user.weights * x$distance.weights[whatmap]
+  weights <- user.weights * x$distance.weights[whatmap.tr]
   weights <- weights / sum(weights)
 
   ## ##########################################################################
