@@ -257,13 +257,15 @@ supersom <- function(data,
   ## ##########################################################################
   ## Prepare results
   if (keep.data) {
-    mapping <- map.kohonen(list(codes = codes,
-                                distance.weights = distance.weights,
-                                dist.fcts = orig.dist.fcts,
-                                data = full.data),
-                           whatmap = whatmap,
-                           user.weights = orig.user.weights,
-                           maxNA.fraction = maxNA.fraction)
+    mapping <-
+      map.kohonen(structure(list(codes = codes,
+                                 distance.weights = distance.weights,
+                                 dist.fcts = orig.dist.fcts,
+                                 data = full.data),
+                            class = "kohonen"),
+                  whatmap = whatmap,
+                  user.weights = orig.user.weights,
+                  maxNA.fraction = maxNA.fraction)
     structure(list(data = full.data,
                    unit.classif = mapping$unit.classif,
                    distances = mapping$distances,
