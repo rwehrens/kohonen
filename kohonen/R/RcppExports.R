@@ -13,8 +13,8 @@ ObjectDistances <- function(data, numVars, numNAs, distanceFunctions, weights) {
     .Call('_kohonen_ObjectDistances', PACKAGE = 'kohonen', data, numVars, numNAs, distanceFunctions, weights)
 }
 
-RcppSupersom <- function(data, codes, numVars, weights, distanceFunctions, numNAs, neighbourhoodDistances, neighbourhoodFct, alphas, radii, numEpochs) {
-    .Call('_kohonen_RcppSupersom', PACKAGE = 'kohonen', data, codes, numVars, weights, distanceFunctions, numNAs, neighbourhoodDistances, neighbourhoodFct, alphas, radii, numEpochs)
+RcppSupersom <- function(data, codes, numVars, weights, distanceFunctions, numNAs, neighbourhoodDistances, neighbourhoodFct, alphas, radii, numEpochs, decay) {
+    .Call('_kohonen_RcppSupersom', PACKAGE = 'kohonen', data, codes, numVars, weights, distanceFunctions, numNAs, neighbourhoodDistances, neighbourhoodFct, alphas, radii, numEpochs, decay)
 }
 
 RcppBatchSupersom <- function(data, codes, numVars, weights, distanceFunctions, numNAs, neighbourhoodDistances, neighbourhoodFct, radii, numEpochs) {

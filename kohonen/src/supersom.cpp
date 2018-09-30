@@ -23,7 +23,7 @@
 
 #include <Rcpp.h>
 #include <Rmath.h>
-
+#include <iostream>
 #include "kohonen.h"
 #include "distance-functions.h"
 #include "neighbourhood-functions.h"
@@ -43,7 +43,8 @@ Rcpp::List RcppSupersom(
   int neighbourhoodFct,
   Rcpp::NumericVector alphas,
   Rcpp::NumericVector radii,
-  int numEpochs
+  int numEpochs,
+  int decay
   )
 {
   int
@@ -125,14 +126,34 @@ Rcpp::List RcppSupersom(
         ::Rf_error("No nearest neighbour found...");
       }
 
+     
       /* Linear decays for radius and learning parameter */
       tmp = (double)(curIter) / (double)(totalIters);
-      threshold = radii[0] - (radii[0] - radii[1]) * tmp;
+      
+     if (decay == 1)
+     {
+        threshold = radii[0] - (radii[0] - radii[1]) * tmp;
+        alpha = alphas[0] - (alphas[0] - alphas[1]) * tmp;
+        std::cout<<"linear decay"<<std::endl;
+     }else{
+        /*Appropriate Learning rate and nehighboorhood function
+         * of SOM for specific humidy pattern classification
+         * over southern Thailand  (Natita,2016)
+         */
+        
+        //For time series the neighborhood is defined by an exponential decay function
+        threshold = radii[0]* exp(-tmp);
+        
+        //For time series the decay of learning rate is define by inverse of time function 
+        alpha = alphas[0] *(1 - tmp);
+       std::cout<<"exponential decay"<<std::endl;
+      }
+      
       if (threshold < 1.0) {
         threshold = 0.5;
       }
-      alpha = alphas[0] - (alphas[0] - alphas[1]) * tmp;
-
+      
+      
       /* Update changes */
       for (l = 0; l < numLayers; l++) {
         distance = 0.0;

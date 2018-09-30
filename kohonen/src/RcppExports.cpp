@@ -46,8 +46,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppSupersom
-Rcpp::List RcppSupersom(Rcpp::NumericMatrix data, Rcpp::NumericMatrix codes, Rcpp::IntegerVector numVars, Rcpp::NumericVector weights, Rcpp::ExpressionVector distanceFunctions, Rcpp::IntegerMatrix numNAs, Rcpp::NumericMatrix neighbourhoodDistances, int neighbourhoodFct, Rcpp::NumericVector alphas, Rcpp::NumericVector radii, int numEpochs);
-RcppExport SEXP _kohonen_RcppSupersom(SEXP dataSEXP, SEXP codesSEXP, SEXP numVarsSEXP, SEXP weightsSEXP, SEXP distanceFunctionsSEXP, SEXP numNAsSEXP, SEXP neighbourhoodDistancesSEXP, SEXP neighbourhoodFctSEXP, SEXP alphasSEXP, SEXP radiiSEXP, SEXP numEpochsSEXP) {
+Rcpp::List RcppSupersom(Rcpp::NumericMatrix data, Rcpp::NumericMatrix codes, Rcpp::IntegerVector numVars, Rcpp::NumericVector weights, Rcpp::ExpressionVector distanceFunctions, Rcpp::IntegerMatrix numNAs, Rcpp::NumericMatrix neighbourhoodDistances, int neighbourhoodFct, Rcpp::NumericVector alphas, Rcpp::NumericVector radii, int numEpochs, int decay);
+RcppExport SEXP _kohonen_RcppSupersom(SEXP dataSEXP, SEXP codesSEXP, SEXP numVarsSEXP, SEXP weightsSEXP, SEXP distanceFunctionsSEXP, SEXP numNAsSEXP, SEXP neighbourhoodDistancesSEXP, SEXP neighbourhoodFctSEXP, SEXP alphasSEXP, SEXP radiiSEXP, SEXP numEpochsSEXP, SEXP decaySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -62,7 +62,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type alphas(alphasSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type radii(radiiSEXP);
     Rcpp::traits::input_parameter< int >::type numEpochs(numEpochsSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSupersom(data, codes, numVars, weights, distanceFunctions, numNAs, neighbourhoodDistances, neighbourhoodFct, alphas, radii, numEpochs));
+    Rcpp::traits::input_parameter< int >::type decay(decaySEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSupersom(data, codes, numVars, weights, distanceFunctions, numNAs, neighbourhoodDistances, neighbourhoodFct, alphas, radii, numEpochs, decay));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -128,7 +129,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kohonen_CreateStdDistancePointers", (DL_FUNC) &_kohonen_CreateStdDistancePointers, 2},
     {"_kohonen_CreateStdDistancePointer", (DL_FUNC) &_kohonen_CreateStdDistancePointer, 2},
     {"_kohonen_ObjectDistances", (DL_FUNC) &_kohonen_ObjectDistances, 5},
-    {"_kohonen_RcppSupersom", (DL_FUNC) &_kohonen_RcppSupersom, 11},
+    {"_kohonen_RcppSupersom", (DL_FUNC) &_kohonen_RcppSupersom, 12},
     {"_kohonen_RcppBatchSupersom", (DL_FUNC) &_kohonen_RcppBatchSupersom, 10},
     {"_kohonen_RcppParallelBatchSupersom", (DL_FUNC) &_kohonen_RcppParallelBatchSupersom, 11},
     {"_kohonen_RcppMap", (DL_FUNC) &_kohonen_RcppMap, 6},

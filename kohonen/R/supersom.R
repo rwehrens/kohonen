@@ -11,7 +11,8 @@ supersom <- function(data,
                      mode = c("online", "batch", "pbatch"),
                      cores = -1,
                      init,
-                     normalizeDataLayers = TRUE)
+                     normalizeDataLayers = TRUE,
+                     decay.fcts = c("linear", "exponential"))
 {
   ## ##########################################################################
   ## Check data
@@ -193,6 +194,13 @@ supersom <- function(data,
     weights <- weights / sum(weights)
   }
   
+  
+
+   decay.fcts<-match.arg(decay.fcts)
+   decay.fcts<-factor(decay.fcts,levels = c("linear", "exponential"))
+   decay.fcts<-as.integer(decay.fcts)
+   
+  
   ## ##########################################################################
   ## Go!
   mode <- match.arg(mode)
@@ -209,7 +217,8 @@ supersom <- function(data,
                           as.integer(grid$neighbourhood.fct),
                         alphas = alpha,
                         radii = radius,
-                        numEpochs = rlen)
+                        numEpochs = rlen,
+                        decay=decay.fcts)
   },
   batch = {
     res <- RcppBatchSupersom(data = data.matrix,

@@ -12,7 +12,8 @@ Rcpp::List RcppSupersom(
   int neighbourhoodFct,
   Rcpp::NumericVector alphas,
   Rcpp::NumericVector radii,
-  int numEpochs
+  int numEpochs,
+  int decay
   );
 
 // [[Rcpp::export]]
