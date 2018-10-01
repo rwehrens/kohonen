@@ -85,7 +85,7 @@ supersom <- function(data,
   if (any(tanidists <- dist.fcts == "tanimoto")) {
     minvals <- sapply(data[which(tanidists)], min, na.rm = TRUE)
     maxvals <- sapply(data[which(tanidists)], max, na.rm = TRUE)
-    if (any(minvals < 0 | maxvals < 0))
+    if (any(minvals < 0 | maxvals > 0))
       stop("Layers for which the Tanimoto distance is used should have data within the [0,1] range") 
   }
   
