@@ -159,7 +159,7 @@ void FindBestMatchingUnit(
   double *weights,
   int &index,
   double &distance) {
-  int nind = 0;
+  int nind = 1;
   double dist;
 
   index = NA_INTEGER;
@@ -179,7 +179,7 @@ void FindBestMatchingUnit(
     /* Update best matching unit */
     if (dist <= distance * (1 + EPS)) {
       if (dist < distance * (1 - EPS)) {
-        nind = 0;
+        nind = 1;
         index = cd;
       } else {
         if (++nind * UNIF < 1.0) {
