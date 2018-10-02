@@ -194,11 +194,10 @@ supersom <- function(data,
     weights <- weights / sum(weights)
   }
   
-  
-
-   decay.fcts<-match.arg(decay.fcts)
-   decay.fcts<-factor(decay.fcts,levels = c("linear", "exponential"))
-   decay.fcts<-as.integer(decay.fcts)
+  ## Get the decay linear as default.
+  decay.fcts<-match.arg(decay.fcts)
+  decay.fcts<-factor(decay.fcts,levels = c("linear","exponential"))
+  decay.fcts<-as.integer(decay.fcts)
    
   
   ## ##########################################################################

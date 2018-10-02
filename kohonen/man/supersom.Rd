@@ -22,7 +22,7 @@ supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
          whatmap = NULL, user.weights = 1, maxNA.fraction = 0L,
          keep.data = TRUE, dist.fcts = NULL,
          mode = c("online", "batch", "pbatch"), cores = -1, init,
-         normalizeDataLayers = TRUE)
+         normalizeDataLayers = TRUE, decay.fcts= c("linear", "exponential"))
 }
 
 \arguments{
@@ -78,6 +78,14 @@ supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
     \code{distance.weights} should be calculated (see details section).
     If \code{normalizeDataLayers == FALSE} the user weights 
     are applied to the data immediately.}
+  \item{decay.fcts}{type of learning rate and neighborhood decay functions. Admissable 
+  values are "linear" and "exponential". If the "exponential" decay is set, the 
+  learning rate will be calulated by the linear decay using only the start 
+  value of \code{alpha}. Besides that, the decline of radius of neighbourhood will
+  be calculated by the exponential neihborhood decay using only the start value
+  of \code{radius}. Default is the type "linear". This type use linear decay for
+  both functions(learning rate and neighborhood) and allows to set a range of 
+  values for start and final \code{alpha} and \code{radius}.} 
   \item{\dots}{Further arguments for the \code{supersom} function
     presented to the \code{som} or \code{xyf} wrappers.}
 }
