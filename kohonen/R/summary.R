@@ -6,16 +6,19 @@ summary.kohonen <- function(object, ...)
       as.character(object$grid$neighbourhood.fct),
       " neighbourhood function.", sep="")
 
+  cat("\nThe number of data layers is ", length(object$codes), ".", sep = "")
+  cat("\nDistance measure(s) used: ",
+      paste(object$dist.fcts, collapse = ", "), ".", sep = "")
+  
   if (!is.null(object$data)) {
-    cat("\nTraining data included of",
-        nrow(object$data[[1]]), "objects")
-    cat("\nThe number of layers is", length(object$data))
+    cat("\nTraining data included:",
+        nrow(object$data[[1]]), "objects.")
     if (length(object$data) > length(object$whatmap))
       cat(", of which", length(object$whatmap),
           ifelse(length(object$whatmap) > 1, "have", "has"),
           "been used in training.")
-    cat("\nMean distance to the closest unit in the map:",
-        mean(object$distances, na.rm = TRUE))
+    cat("\nMean distance to the closest unit in the map: ",
+        round(mean(object$distances, na.rm = TRUE), 3), ".", sep = "")
   } else {
     cat("\nNo training data included in the object.")
   }

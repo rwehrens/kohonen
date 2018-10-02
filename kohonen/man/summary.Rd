@@ -6,7 +6,8 @@
   Summary and print methods for \code{kohonen} objects. The \code{print}
   method shows the dimensions and the topology of the map; if
   information on the training data is included, the \code{summary}
-  method additionally prints information on the size of the data and the
+  method additionally prints information on the size of the data, the
+  distance functions used, and the
   mean distance of an object to its closest codebookvector, which is an
   indication of the quality of the mapping.}
 \usage{

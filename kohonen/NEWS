@@ -1,6 +1,19 @@
 The kohonen package version 3.0.6 is described in 
 R. Wehrens and J. Kruisselbrink, J. Stat. Softw. 2018 (to appear)
 
+Changes in version 3.0.7:
+  - reinstated Makevars, that is necessary for OpenMP flags (without
+    it the package still compiles but no parallel computation is
+    possible)
+  - fixed a bug in FindBestMatchingUnit that in case of ties did not
+    allow unit 1 to be the winning unit. Longstanding bug, also
+    present in the class library (function VR_onlineSOM), but not very
+    prominent since it only surfaces in cases of ties in distances.
+  - added a working example to the degelder data, using the custom
+    WCCd distance function also used in the J. Stat. Softw. paper.
+  - added the published version of the 2018 J. Stat. Softw. paper to
+    the doc directory 
+
 Changes in version 3.0.6:
   - fixed a bug in object.distances
   - require Rcpp version 0.12.12, and removed Makevars and kohonen_init.c

@@ -21,10 +21,17 @@
 \examples{
 \dontrun{
 data(degelder)
-set.seed(1)
-geldermap <- wccsom(degelder$patterns, somgrid(6, 6, "hexagonal"))
-options(digits = 3)
-summary(geldermap, "unit", nr=1, properties = degelder$properties)
+mydata <- list(patterns = degelder$patterns,
+               CellVol = log(degelder$properties[,"cell.vol"]))
+
+## custom distance function
+require(Rcpp)
+sourceCpp(system.file("Distances", "wcc.cpp", package = "kohonen"))
+set.seed(7)
+powsom <- supersom(data = mydata, grid = somgrid(6, 4, "hexagonal"),
+                   dist.fcts = c("WCCd", "sumofsquares"),
+                   keep.data = TRUE)
+summary(powsom)		   
 }
 }
 \keyword{datasets}
