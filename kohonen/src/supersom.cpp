@@ -126,26 +126,26 @@ Rcpp::List RcppSupersom(
         ::Rf_error("No nearest neighbour found...");
       }
 
-      
       tmp = (double)(curIter) / (double)(totalIters);
       
       switch (decay){
-         case 1:
-            /* Linear decays for radius and learning parameter */
-            threshold = radii[0] - (radii[0] - radii[1]) * tmp;
-            alpha = alphas[0] - (alphas[0] - alphas[1]) * tmp;
-         break;
+      case 1:
+        /* Linear decays for radius and learning parameter */
+        threshold = radii[0] - (radii[0] - radii[1]) * tmp;
+        alpha = alphas[0] - (alphas[0] - alphas[1]) * tmp;
+        break;
         
-        case 2:
-            /* Exponential decay for neighborhood */
-            threshold = radii[0] * exp(-tmp);
-            alpha = alphas[0] * (1 - tmp);
+      case 2:
+        /* Exponential decay for neighborhood */
+        threshold = radii[0] * exp(-tmp);
+        alpha = alphas[0] * (1 - tmp);
         break;
       }
       
       if (threshold < 1.0) {
         threshold = 0.5;
       }
+      
       /* Update changes */
       for (l = 0; l < numLayers; l++) {
         distance = 0.0;

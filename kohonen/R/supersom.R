@@ -193,10 +193,13 @@ supersom <- function(data,
     weights <- user.weights * distance.weights[whatmap]
     weights <- weights / sum(weights)
   }
+  ## ##########################################################################
+  ## Decay functions
+  ## Check decay functions
   
-  ## Get the decay linear as default.
   decay.fcts <- match.arg(decay.fcts)
-  decay.fcts <- factor(decay.fcts,levels = c("linear", "exponential"))
+  decay.fcts <- factor(decay.fcts,
+                       levels = c("linear", "exponential"))
   
   ## ##########################################################################
   ## Go!
