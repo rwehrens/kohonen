@@ -146,7 +146,6 @@ Rcpp::List RcppSupersom(
       if (threshold < 1.0) {
         threshold = 0.5;
       }
-      
       /* Update changes */
       for (l = 0; l < numLayers; l++) {
         distance = 0.0;
