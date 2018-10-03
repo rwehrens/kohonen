@@ -134,18 +134,15 @@ Rcpp::List RcppSupersom(
         threshold = radii[0] - (radii[0] - radii[1]) * tmp;
         alpha = alphas[0] - (alphas[0] - alphas[1]) * tmp;
         break;
-        
       case 2:
-        /* Exponential decay for neighborhood */
+        /* Exponential decay for radius and inverse of time for learning parameter (Natita,2016)   */
         threshold = radii[0] * exp(-tmp);
         alpha = alphas[0] * (1 - tmp);
-        break;
       }
       
       if (threshold < 1.0) {
         threshold = 0.5;
       }
-      
       /* Update changes */
       for (l = 0; l < numLayers; l++) {
         distance = 0.0;

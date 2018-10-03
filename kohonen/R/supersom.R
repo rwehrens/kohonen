@@ -193,6 +193,7 @@ supersom <- function(data,
     weights <- user.weights * distance.weights[whatmap]
     weights <- weights / sum(weights)
   }
+  
   ## ##########################################################################
   ## Decay functions
   ## Check decay functions
