@@ -83,7 +83,7 @@ supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
   "linear". This type uses linear decay for both functions (learning rate and 
   radius), and allowing to set a range of values for initial and final
   \code{alpha} and \code{radius}. If the "exponential" value is set,
-  the learning rate will be calulated by the inverse of time decay using only 
+  the learning rate will be calulated by the linear decay using only 
   the initial value of \code{alpha}, while the decline of radius will be 
   an exponential function decay using only the initial value of \code{radius}.} 
   \item{\dots}{Further arguments for the \code{supersom} function

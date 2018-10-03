@@ -135,7 +135,7 @@ Rcpp::List RcppSupersom(
         alpha = alphas[0] - (alphas[0] - alphas[1]) * tmp;
         break;
       case 2:
-        /* Exponential decay for radius and inverse of time for learning parameter (Natita,2016)   */
+        /* Exponential decay for radius and linear for learning parameter (Kohonen,1995)   */
         threshold = radii[0] * exp(-tmp);
         alpha = alphas[0] * (1 - tmp);
       }
