@@ -130,7 +130,11 @@ supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
   a check is done to make sure this is the case.
 }
 \references{R. Wehrens and L.M.C. Buydens, J. Stat. Softw. 21 (5), 2007;
-R. Wehrens and J. Kruisselbrink, submitted, 2017.}
+R. Wehrens and J. Kruisselbrink, submitted, 2017;
+T. Kohonen, J. Hynninen, J. Kangas, and J. Laaksonen.
+SOM_PAK: The Self-Organizing Map Program Package.
+Helsinki University of Technology, Laboratory of Computer and
+Information Science, 1995.}
 \author{Ron Wehrens and Johannes Kruisselbrink}
 
 \seealso{\code{somgrid}, \code{\link{plot.kohonen}},
