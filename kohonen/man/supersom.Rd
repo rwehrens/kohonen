@@ -22,7 +22,7 @@ supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
          whatmap = NULL, user.weights = 1, maxNA.fraction = 0L,
          keep.data = TRUE, dist.fcts = NULL,
          mode = c("online", "batch", "pbatch"), cores = -1, init,
-         normalizeDataLayers = TRUE, decay.fcts= c("linear", "exponential"))
+         normalizeDataLayers = TRUE, decay.fcts = c("linear", "exponential"))
 }
 
 \arguments{

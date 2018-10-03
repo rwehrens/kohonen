@@ -195,10 +195,8 @@ supersom <- function(data,
   }
   
   ## Get the decay linear as default.
-  decay.fcts<-match.arg(decay.fcts)
-  decay.fcts<-factor(decay.fcts,levels = c("linear","exponential"))
-  decay.fcts<-as.integer(decay.fcts)
-   
+  decay.fcts <- match.arg(decay.fcts)
+  decay.fcts <- factor(decay.fcts,levels = c("linear", "exponential"))
   
   ## ##########################################################################
   ## Go!
@@ -217,7 +215,7 @@ supersom <- function(data,
                         alphas = alpha,
                         radii = radius,
                         numEpochs = rlen,
-                        decay=decay.fcts)
+                        decay = decay.fcts)
   },
   batch = {
     res <- RcppBatchSupersom(data = data.matrix,
