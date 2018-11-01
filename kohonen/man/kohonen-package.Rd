@@ -34,4 +34,7 @@ Several visualisation methods are available in function
   
   Maintainer: \packageMaintainer{kohonen}
 }
+\references{
+R. Wehrens and J. Kruisselbrink: Flexible Self-Organising Maps in
+kohonen 3.0. Journal of Statistical Software, 87, 7 (2018).}
 \keyword{ package }

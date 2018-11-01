@@ -1,17 +1,32 @@
-citHeader("To cite the kohonen package publications use:")
-
-citEntry(entry="Article",
-         title = "Self- and Super-organising Maps in R: the kohonen package",
-         author = personList(as.person("R. Wehrens"), 
-                             as.person("L.M.C. Buydens")),
-         year         = 2007,
-	 journal      = "J. Stat. Softw.",
-         volume         = "21",
-	 number		= "5",
-         url          = "http://www.jstatsoft.org/v21/i05",
-         
-         textVersion = 
-         paste("R. Wehrens and L.M.C. Buydens,", 
-               "Self- and Super-organising Maps in R: the kohonen package",
-               "J. Stat. Softw., 21(5), 2007")
+bibentry(bibtype = "Article",
+  title        = "Flexible Self-Organizing Maps in {kohonen} 3.0",
+  author       = c(person(given = "Ron",
+                          family = "Wehrens",
+                          email = "ron.wehrens@wur.nl"),
+                   person(given = "Johannes",
+                          family = "Kruisselbrink",
+                          email = "johannes.kruisselbrink@wur.nl")),
+  journal      = "Journal of Statistical Software",
+  year         = "2018",
+  volume       = "87",
+  number       = "7",
+  pages        = "1--18",
+  doi          = "10.18637/jss.v087.i07",
+  header       = "To cite kohonen in publications use:"
 )
+
+bibentry(bibtype = "Article",
+  title        = "Self- and Super-Organizing Maps in {R}: The {kohonen} Package",
+  author       = c(person(given = "Ron",
+                          family = "Wehrens",
+                          email = "ron.wehrens@wur.nl"),
+                   person(given = c("Lutgarde", "M.", "C."),
+                          family = "Buydens")),
+  journal      = "Journal of Statistical Software",
+  year         = "2007",
+  volume       = "21",
+  number       = "5",
+  pages        = "1--19",
+  doi          = "10.18637/jss.v021.i05"
+)
+
