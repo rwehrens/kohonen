@@ -213,7 +213,7 @@ double EuclideanDistanceNaN(double *data, double *codes, int n, int nNA) {
       d += tmp * tmp;
     }
   }
-  d *= n / (n - nNA);
+  d *= n / (double)(n - nNA);
   d = sqrt(d);
   return d;
 }
@@ -249,7 +249,7 @@ double SumOfSquaresDistanceNaN(double *data, double *codes, int n, int nNA) {
       d += tmp * tmp;
     }
   }
-  d *= n / (n - nNA);
+  d *= n / (double)(n - nNA);
   return d;
 }
 
@@ -285,7 +285,7 @@ double TanimotoDistanceNaN(double *data, double *codes, int n, int nNA) {
       }
     }
   }
-  d *= n / (n - nNA);
+  d *= n / (double)(n - nNA);
   return d / n;
 }
 
@@ -320,7 +320,7 @@ double ManhattanDistanceNaN(double *data, double *codes, int n, int nNA) {
       d += fabs(data[i] - codes[i]);
     }
   }
-  d *= n / (n - nNA);
+  d *= n / (double)(n - nNA);
   return d;
 }
 
