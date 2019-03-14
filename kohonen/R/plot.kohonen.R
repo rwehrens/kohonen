@@ -786,6 +786,10 @@ add.cluster.boundaries <- function(x, clustering, lwd = 5, ...)
 
   }
 
+  opar <- par("xpd")
+  on.exit(par(xpd = opar))
+  par(xpd = NA)
+  
   switch(grd$topo,
          rectangular =
          plot.rect.boundary(neighbours, grd, lwd = lwd, ...),
