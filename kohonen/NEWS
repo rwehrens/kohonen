@@ -1,6 +1,11 @@
 The kohonen package version 3.0.6 is described in 
 R. Wehrens and J. Kruisselbrink, J. Stat. Softw. v87, i7, October 2018.
 
+Changes in version 3.0.9:
+  - removed dependency of MASS's eqcsplot (suggestion by Ulrike Groemping)
+  - added na.color argument to some of the plotting functions (request
+    by Ulrike Groemping)
+
 Changes in version 3.0.8:
   - fixed bug in calculating distances where NAs are involved (found
     by Rafael M. Mas)

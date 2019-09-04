@@ -16,7 +16,7 @@
                        heatkey = TRUE, property, codeRendering = NULL,
                        keepMargins = FALSE, heatkeywidth = .2,
                        shape = c("round", "straight"), border = "black",
-                       \dots)
+                       na.color = "gray", \dots)
 \method{identify}{kohonen}(x, \dots)
 add.cluster.boundaries(x, clustering, lwd = 5, ...)
 }
@@ -62,6 +62,7 @@ add.cluster.boundaries(x, clustering, lwd = 5, ...)
     "rectangular", and produces a map of hexagons when the grid is
     "hexagonal".}
   \item{border}{color of the shape's border.}
+  \item{na.color}{background color matching NA - default "gray".}
   \item{lwd, \dots}{other graphical parameters.}
   \item{clustering}{cluster labels of the map units.}
 }

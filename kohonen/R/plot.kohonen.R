@@ -35,7 +35,7 @@ plot.kohonen <- function (x,
                           codeRendering = NULL, keepMargins = FALSE,
                           heatkeywidth = .2,
                           shape = c("round", "straight"),
-                          border = "black", ...)
+                          border = "black", na.color = "gray", ...)
 {
   type <- match.arg(type)
   
@@ -51,7 +51,7 @@ plot.kohonen <- function (x,
                         zlim = zlim, heatkey = heatkey,
                         keepMargins = keepMargins,
                         heatkeywidth = heatkeywidth, shape = shape,
-                        border = border, ...),
+                        border = border, na.color = na.color, ...),
          codes =
            plot.kohcodes(x = x, whatmap = whatmap, main = main,
                          palette.name = palette.name, bgcol = bgcol,
@@ -71,7 +71,7 @@ plot.kohonen <- function (x,
                           zlim = zlim, heatkey = heatkey,
                           keepMargins = keepMargins,
                           heatkeywidth = heatkeywidth, shape = shape,
-                          border = border, ...),
+                          border = border, na.color = na.color, ...),
          changes =
            plot.kohchanges(x = x, main = main,
                            keepMargins = keepMargins, ...),
@@ -168,7 +168,7 @@ plot.kohmapping <- function(x, classif, main, labels, pchs, bgcol,
 plot.kohprop <- function(x, property, main, palette.name, ncolors,
                          zlim, heatkey, keepMargins,
                          heatkeywidth, shape = c("round", "straight"),
-                         border = "black", ...)
+                         border = "black", na.color = "gray", ...)
 {
   if (is.null(main)) main <- "Property plot"
   if (is.null(palette.name)) palette.name <- heat.colors
@@ -210,7 +210,7 @@ plot.kohprop <- function(x, property, main, palette.name, ncolors,
     ncolors <- min(length(unique(property[!is.na(property)])), 20)
   bgcol <- palette.name(ncolors)
 
-  bgcolors <- rep("gray", nrow(x$grid$pts))
+  bgcolors <- rep(na.color, nrow(x$grid$pts))
   if (contin) {
     showcolors <- as.integer(cut(property,
                                  seq(zlim[1], zlim[2],
@@ -324,7 +324,7 @@ plot.kohchanges <- function(x, main, keepMargins, ...)
 
 plot.kohcounts <- function(x, classif, main, palette.name, ncolors,
                            zlim, heatkey, keepMargins, heatkeywidth,
-                           shape, border, ...)
+                           shape, border, na.color = "gray", ...)
 {
   if (is.null(main)) main <- "Counts plot"
   if (is.null(palette.name)) palette.name <- heat.colors
@@ -468,7 +468,7 @@ plot.kohcodes <- function(x, whatmap, main, palette.name, bgcol,
       }
 
       plot.kohcodes(huhn, main = main.title, palette.name = palette.name,
-                    bgcol=bgcol, whatmap = NULL,
+                    bgcol = bgcol, whatmap = NULL,
                     codeRendering = cR, keepMargins = TRUE,
                     shape = shape, border = border, ...)
     }
