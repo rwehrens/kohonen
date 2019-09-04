@@ -91,8 +91,9 @@ plot.somgrid <- function(x, xlim, ylim, ...)
   ## sides of the plot if no xlim or ylim are given
   if (missing(xlim)) xlim <- c(0, max(x$pts[,1]) + min(x$pts[,1]))
   if (missing(ylim)) ylim <-  c(max(x$pts[,2]) + min(x$pts[,2]), 0)
-  eqscplot(xlim, ylim, axes = FALSE,
-           type = "n", xlab = "", ylab = "", ...)
+  ##  eqscplot(xlim, ylim, axes = FALSE,
+  ##           type = "n", xlab = "", ylab = "", ...)
+  plot(xlim, ylim, axes = FALSE, type = "n", xlab = "", ylab = "", asp=1, ...)
 }
 
 
