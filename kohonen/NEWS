@@ -5,6 +5,10 @@ Changes in version 3.0.9:
   - removed dependency of MASS's eqcsplot (suggestion by Ulrike Groemping)
   - added na.color argument to some of the plotting functions (request
     by Ulrike Groemping)
+  - added a check to see if the somgrid argument is correct: some
+    users load the class library after kohonen which leads to two fields
+    that are missing in a somgrid object. The check adds the defaults
+    and gives a warning (reported by Neal Burger)
 
 Changes in version 3.0.8:
   - fixed bug in calculating distances where NAs are involved (found
