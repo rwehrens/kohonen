@@ -9,6 +9,8 @@ Changes in version 3.0.9:
     users load the class library after kohonen which leads to two fields
     that are missing in a somgrid object. The check adds the defaults
     and gives a warning (reported by Neal Burger)
+  - replaced 'class(x) == "kohonen"' by 'inherits(x, "kohonen")' which
+    will not break in R 4.0.0 and further... 
 
 Changes in version 3.0.8:
   - fixed bug in calculating distances where NAs are involved (found
