@@ -3,7 +3,7 @@ check.whatmap <- function(x, whatmap)
   whatmap <- unique(whatmap)
 
   checkpar <- NULL
-  if (class(x) == "kohonen") {
+  if (inherits(x, "kohonen")) {
     checkpar <- getCodes(x)
   } else {
     if (is.list(x)) # not foolproof!
