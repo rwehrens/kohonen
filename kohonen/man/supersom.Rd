@@ -1,7 +1,6 @@
 \name{supersom}
 \alias{som}
 \alias{xyf}
-\alias{bdk}
 \alias{supersom}
 \title{Self- and super-organising maps}
 \description{
@@ -11,7 +10,7 @@
   weighted distance over all layers is calculated to determine the
   winning units during training.
   Functions \code{som} and \code{xyf} are simply wrappers for supersoms
-  with one and two layers, respectively. Function \code{bdk} is deprecated.
+  with one and two layers, respectively. 
 }
 
 \usage{
