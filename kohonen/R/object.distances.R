@@ -37,12 +37,16 @@ object.distances <- function(kohobj, type = c("data", "codes"), whatmap) {
 ## layer.distances calculates for each unit the average distance of
 ## objects mapped to that unit and the corresponding codebook vector.
 
-layer.distances <- function(kohobj, whatmap, data,
-                            classif = kohobj$unit.classif) {
-  if (is.null(classif))
-    stop("No classification information present")
+layer.distances <- function(kohobj, whatmap, data, classif = NULL) {
+  if (is.null(classif)) {
+    if (is.null(kohobj$unit.classif)) {
+      stop("No classification information present")
+    } else {
+      classif <- kohobj$unit.classif
+    }
+  }
   
-  d2wus <- dist2WU(kohobj, whatmap, data)
+  d2wus <- dist2WU(kohobj, whatmap, data, classif = classif)
   aggdists <- aggregate(d2wus, list(classif), mean)
   
   unit.distances <- rep(NA, nunits(kohobj))
@@ -57,7 +61,15 @@ layer.distances <- function(kohobj, whatmap, data,
 ## data were saved withthe object) - this function will usually be
 ## called with a single layer as whatmap argument.
 
-dist2WU <- function(kohobj, whatmap, data) {
+dist2WU <- function(kohobj, whatmap, data, classif = NULL) {
+  if (is.null(classif)) {
+    if (is.null(kohobj$unit.classif)) {
+      stop("No classification information present")
+    } else {
+      classif <- kohobj$unit.classif
+    }
+  }
+
   if (missing(data)) {
     if (!is.null(kohobj$data)) {
       data <- kohobj$data
@@ -75,6 +87,9 @@ dist2WU <- function(kohobj, whatmap, data) {
       !is.null(kohobj$distances))
     return(kohobj$distances)
 
+  ## the following statement is not strictly necessary, but it is hard
+  ## to see the use of a whatmap argument other than a single layer,
+  ## or all layers used in training.
   if (length(whatmap) > 1 & !all(whatmap == kohobj$whatmap))
     stop("Incorrect whatmap argument")
   
