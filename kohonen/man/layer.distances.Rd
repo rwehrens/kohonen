@@ -44,7 +44,7 @@ data(wines)
 wines.sc <- scale(wines)
 set.seed(7)
 xyf.wines <- xyf(wines.sc, vintages, grid = somgrid(5, 5, "hexagonal"))
-dist2WU(wines.sc, whatmap = 1)
+dist2WU(xyf.wines, whatmap = 1)
 plot(xyf.wines, "quality", whatmap = 1)
 plot(xyf.wines, "property",
      property = layer.distances(xyf.wines, whatmap = 1))
