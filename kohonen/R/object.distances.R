@@ -35,3 +35,57 @@ object.distances <- function(kohobj, type = c("data", "codes"), whatmap) {
   
   res
 }
+
+## layer.distances returns the distances of objects to the
+## corresponding winning units. If whatmap equals the kohobj whatmap
+## element this is already available in slot unit.distances - this
+## function is explicitly meant to take a single layer as whatmap
+## argument.
+
+layer.distances <- function(kohobj, whatmap, data) {
+  if (missing(data)) {
+    if (!is.null(kohobj$data)) {
+      data <- kohobj$data
+    } else {
+      stop("No data present")
+    }
+  }
+
+  if (missing(whatmap)) {
+    whatmap <- kohobj$whatmap
+  } else {
+    whatmap <- check.whatmap(kohobj, whatmap)
+  }
+  if (whatmap == kohobj$whatmap &
+      !is.null(kohobj$unit.distances))
+    return(kohobj$unit.distances)
+
+  if (length(whatmap) > 1 & whatmap != kohobj$whatmap)
+    stop("Incorrect whatmap argument")
+  
+  weights <- kohobj$user.weights[whatmap] * kohobj$distance.weights[whatmap]
+  maxNA.fraction <- kohobj$maxNA.fraction
+  distanceFunctions <- kohobj$dist.fcts[whatmap]
+  dist.ptrs <- getDistancePointers(distanceFunctions,
+                                   maxNA.fraction = maxNA.fraction)
+  
+  type <- match.arg(type)
+  data <- kohobj[[type]][whatmap]
+  if (any(factor.idx <- sapply(data, is.factor)))
+    data[factor.idx] <- lapply(data[factor.idx], classvec2classmat)
+
+  nvars <- sapply(data, ncol)
+  nobjects <- nrow(data[[1]])
+
+  nNA <- getnNA(data, maxNA.fraction, nobjects)
+
+  datamat <- matrix(unlist(data), ncol = nobjects, byrow = TRUE)
+  codemat <- matrix(unlist(getCodes(kohobj)), ncol = nunits(kohobj),
+                    byrow = TRUE)
+  LayerDistances(data = datamat,
+                 codes = codemat,
+                 numVars = nvars,
+                 numNAs = nNA,
+                 distanceFunctions = dist.ptrs,
+                 weights = weights)
+}
