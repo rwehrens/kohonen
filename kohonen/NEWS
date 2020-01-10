@@ -3,6 +3,7 @@ R. Wehrens and J. Kruisselbrink, J. Stat. Softw. v87, i7, October 2018.
 
 Changes in version 3.0.10 (currently develop branch):
   - replaced calls to the class function in 'check.data'
+  - added functions nunits, layer.distances and dist2WU
 
 Changes in version 3.0.9:
   - removed dependency of MASS's eqcsplot (suggestion by Ulrike Groemping)

@@ -45,6 +45,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// LayerDistances
+Rcpp::NumericVector LayerDistances(Rcpp::NumericMatrix data, Rcpp::NumericMatrix codes, Rcpp::IntegerVector uclassif, Rcpp::IntegerVector numVars, Rcpp::IntegerMatrix numNAs, Rcpp::ExpressionVector distanceFunctions, Rcpp::NumericVector weights);
+RcppExport SEXP _kohonen_LayerDistances(SEXP dataSEXP, SEXP codesSEXP, SEXP uclassifSEXP, SEXP numVarsSEXP, SEXP numNAsSEXP, SEXP distanceFunctionsSEXP, SEXP weightsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type codes(codesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type uclassif(uclassifSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type numVars(numVarsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type numNAs(numNAsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ExpressionVector >::type distanceFunctions(distanceFunctionsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type weights(weightsSEXP);
+    rcpp_result_gen = Rcpp::wrap(LayerDistances(data, codes, uclassif, numVars, numNAs, distanceFunctions, weights));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppSupersom
 Rcpp::List RcppSupersom(Rcpp::NumericMatrix data, Rcpp::NumericMatrix codes, Rcpp::IntegerVector numVars, Rcpp::NumericVector weights, Rcpp::ExpressionVector distanceFunctions, Rcpp::IntegerMatrix numNAs, Rcpp::NumericMatrix neighbourhoodDistances, int neighbourhoodFct, Rcpp::NumericVector alphas, Rcpp::NumericVector radii, int numEpochs);
 RcppExport SEXP _kohonen_RcppSupersom(SEXP dataSEXP, SEXP codesSEXP, SEXP numVarsSEXP, SEXP weightsSEXP, SEXP distanceFunctionsSEXP, SEXP numNAsSEXP, SEXP neighbourhoodDistancesSEXP, SEXP neighbourhoodFctSEXP, SEXP alphasSEXP, SEXP radiiSEXP, SEXP numEpochsSEXP) {
@@ -128,6 +145,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kohonen_CreateStdDistancePointers", (DL_FUNC) &_kohonen_CreateStdDistancePointers, 2},
     {"_kohonen_CreateStdDistancePointer", (DL_FUNC) &_kohonen_CreateStdDistancePointer, 2},
     {"_kohonen_ObjectDistances", (DL_FUNC) &_kohonen_ObjectDistances, 5},
+    {"_kohonen_LayerDistances", (DL_FUNC) &_kohonen_LayerDistances, 7},
     {"_kohonen_RcppSupersom", (DL_FUNC) &_kohonen_RcppSupersom, 11},
     {"_kohonen_RcppBatchSupersom", (DL_FUNC) &_kohonen_RcppBatchSupersom, 10},
     {"_kohonen_RcppParallelBatchSupersom", (DL_FUNC) &_kohonen_RcppParallelBatchSupersom, 11},
