@@ -143,11 +143,13 @@ Rcpp::NumericVector ObjectDistances(Rcpp::NumericMatrix data,
 
 /*
  * Computes the distances between all objects of the data matrix and
- * their nearest codebook vectors. Returns the complete distance
- * matrix as a vector. 
+ * their nearest codebook vectors. Returns a distance vector. The
+ * weights here are the product of the user weights and the distance
+ * weights in the kohonen object.
  */
 Rcpp::NumericVector LayerDistances(Rcpp::NumericMatrix data,
 				   Rcpp::NumericMatrix codes,
+				   Rcpp::IntegerVector uclassif,
 				   Rcpp::IntegerVector numVars,
 				   Rcpp::IntegerMatrix numNAs,
 				   Rcpp::ExpressionVector distanceFunctions,
@@ -155,11 +157,10 @@ Rcpp::NumericVector LayerDistances(Rcpp::NumericMatrix data,
   
   int numObjects = data.ncol();
   int totalVars = data.nrow();
-  int numCodes = codes.nrow();
   int numLayers = numVars.size();
   
   Rcpp::NumericVector offsets(numLayers);
-  Rcpp::NumericMatrix distances(numObjects, numCodes);
+  Rcpp::NumericVector distances(numObjects);
   
   totalVars = 0;
   for (int l = 0; l < numLayers; l++) {
@@ -171,25 +172,23 @@ Rcpp::NumericVector LayerDistances(Rcpp::NumericMatrix data,
   double *pDistances = REAL(distances);
   int *pNumVars = INTEGER(numVars);
   int *pNumNAs = INTEGER(numNAs);
-
+  int *pUClassif = INTEGER(uclassif);
+  
   /* Get the distance function pointers. */
   std::vector<DistanceFunctionPtr> distanceFunctionPtrs =
     GetDistanceFunctions(distanceFunctions);
-
-  for (int i = 0; i < numObjects; ++i) {
-    for (int j = 0; j < numCodes; ++j) {
-      distances(i, j) = (double)i;
-      /* distances(i, j) = 0.0;
-	 for (int l = 0; l < numLayers; ++l) {
-	 distances(i, j) += pWeights[l] * (*distanceFunctionPtrs[l])(
-	 &data[i * totalVars + offsets[l]],
-	 &codes[j * totalVars + offsets[l]],
-	 pNumVars[l],
-	 pNumNAs[i * numLayers + l]); */
-      }
-    }
-  }
   
+  for (int i = 0; i < numObjects; ++i) {
+    pDistances[i] = 0.0;
+    for (int l = 0; l < numLayers; ++l) {
+      pDistances[i] += pWeights[l] * (*distanceFunctionPtrs[l])(
+    	 &data[i * totalVars + offsets[l]],
+    	 &codes[pUClassif[i] * totalVars + offsets[l]],
+    	 pNumVars[l],
+    	 pNumNAs[i * numLayers + l]);
+    }
+  } 
+
   return distances;
 }
 

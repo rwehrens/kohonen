@@ -18,11 +18,9 @@ object.distances <- function(kohobj, type = c("data", "codes"), whatmap) {
 
   nvars <- sapply(data, ncol)
   nobjects <- nrow(data[[1]])
-
   nNA <- getnNA(data, maxNA.fraction, nobjects)
-
   datamat <- matrix(unlist(data), ncol = nobjects, byrow = TRUE)
-##  datamat <- matrix(unlist(data[whatmap]), ncol = nobjects, byrow = TRUE)
+
   res <- ObjectDistances(data = datamat,
                          numVars = nvars,
                          numNAs = nNA,
@@ -36,13 +34,30 @@ object.distances <- function(kohobj, type = c("data", "codes"), whatmap) {
   res
 }
 
-## layer.distances returns the distances of objects to the
-## corresponding winning units. If whatmap equals the kohobj whatmap
-## element this is already available in slot unit.distances - this
-## function is explicitly meant to take a single layer as whatmap
-## argument.
+## layer.distances calculates for each unit the average distance of
+## objects mapped to that unit and the corresponding codebook vector.
 
-layer.distances <- function(kohobj, whatmap, data) {
+layer.distances <- function(kohobj, whatmap, data,
+                            classif = kohobj$unit.classif) {
+  if (is.null(classif))
+    stop("No classification information present")
+  
+  d2wus <- dist2WU(kohobj, whatmap, data)
+  aggdists <- aggregate(d2wus, list(classif), mean)
+  
+  unit.distances <- rep(NA, nunits(kohobj))
+  unit.distances[aggdists[,1]] <- aggdists[,2]
+
+  unit.distances
+}
+
+## dist2WU returns the distances of objects to the
+## corresponding winning units. If whatmap equals the kohobj whatmap
+## element this is already available in slot unit.distances (unless no
+## data were saved withthe object) - this function will usually be
+## called with a single layer as whatmap argument.
+
+dist2WU <- function(kohobj, whatmap, data) {
   if (missing(data)) {
     if (!is.null(kohobj$data)) {
       data <- kohobj$data
@@ -56,11 +71,11 @@ layer.distances <- function(kohobj, whatmap, data) {
   } else {
     whatmap <- check.whatmap(kohobj, whatmap)
   }
-  if (whatmap == kohobj$whatmap &
-      !is.null(kohobj$unit.distances))
-    return(kohobj$unit.distances)
+  if (all(whatmap == kohobj$whatmap) &
+      !is.null(kohobj$distances))
+    return(kohobj$distances)
 
-  if (length(whatmap) > 1 & whatmap != kohobj$whatmap)
+  if (length(whatmap) > 1 & !all(whatmap == kohobj$whatmap))
     stop("Incorrect whatmap argument")
   
   weights <- kohobj$user.weights[whatmap] * kohobj$distance.weights[whatmap]
@@ -69,8 +84,8 @@ layer.distances <- function(kohobj, whatmap, data) {
   dist.ptrs <- getDistancePointers(distanceFunctions,
                                    maxNA.fraction = maxNA.fraction)
   
-  type <- match.arg(type)
-  data <- kohobj[[type]][whatmap]
+  data <- data[whatmap]
+  codes <- kohobj$codes[whatmap]
   if (any(factor.idx <- sapply(data, is.factor)))
     data[factor.idx] <- lapply(data[factor.idx], classvec2classmat)
 
@@ -80,10 +95,11 @@ layer.distances <- function(kohobj, whatmap, data) {
   nNA <- getnNA(data, maxNA.fraction, nobjects)
 
   datamat <- matrix(unlist(data), ncol = nobjects, byrow = TRUE)
-  codemat <- matrix(unlist(getCodes(kohobj)), ncol = nunits(kohobj),
-                    byrow = TRUE)
+  codemat <- matrix(unlist(codes), ncol = nunits(kohobj), byrow = TRUE)
+  
   LayerDistances(data = datamat,
                  codes = codemat,
+                 uclassif = kohobj$unit.classif - 1, # C numbering
                  numVars = nvars,
                  numNAs = nNA,
                  distanceFunctions = dist.ptrs,
