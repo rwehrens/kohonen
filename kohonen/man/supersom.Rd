@@ -2,6 +2,7 @@
 \alias{som}
 \alias{xyf}
 \alias{supersom}
+\alias{nunits}
 \title{Self- and super-organising maps}
 \description{
   A supersom is an extension of self-organising maps (SOMs) to multiple
@@ -10,7 +11,8 @@
   weighted distance over all layers is calculated to determine the
   winning units during training.
   Functions \code{som} and \code{xyf} are simply wrappers for supersoms
-  with one and two layers, respectively. 
+  with one and two layers, respectively. Function \code{nunits} is a
+  utility function returning the number of units in the map.
 }
 
 \usage{
@@ -22,6 +24,7 @@ supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
          keep.data = TRUE, dist.fcts = NULL,
          mode = c("online", "batch", "pbatch"), cores = -1, init,
          normalizeDataLayers = TRUE)
+nunits(kohobj)
 }
 
 \arguments{
@@ -98,6 +101,7 @@ supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
     of ones.}
   \item{dist.fcts}{distance functions corresponding to all layers of the
     data, not just the ones indicated by the whatmap argument.}
+  \item{kohobj}{an object of class \code{kohonen}.}
 }
 \details{In order to avoid some layers to overwhelm others, simply
   because of the scale of the data points, the \code{supersom} function
