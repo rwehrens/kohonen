@@ -80,6 +80,7 @@ nunits(kohobj)
     \code{distance.weights} should be calculated (see details section).
     If \code{normalizeDataLayers == FALSE} the user weights 
     are applied to the data immediately.}
+  \item{kohobj}{an object of class \code{kohonen}.}
   \item{\dots}{Further arguments for the \code{supersom} function
     presented to the \code{som} or \code{xyf} wrappers.}
 }
@@ -101,7 +102,6 @@ nunits(kohobj)
     of ones.}
   \item{dist.fcts}{distance functions corresponding to all layers of the
     data, not just the ones indicated by the whatmap argument.}
-  \item{kohobj}{an object of class \code{kohonen}.}
 }
 \details{In order to avoid some layers to overwhelm others, simply
   because of the scale of the data points, the \code{supersom} function
@@ -136,6 +136,7 @@ data(wines)
 ## som
 som.wines <- som(scale(wines), grid = somgrid(5, 5, "hexagonal"))
 summary(som.wines)
+nunits(som.wines)
 
 ## xyf
 xyf.wines <- xyf(scale(wines), vintages, grid = somgrid(5, 5, "hexagonal"))
