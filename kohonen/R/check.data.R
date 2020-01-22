@@ -1,19 +1,24 @@
 ## several checks for input data of the supersom and map functions
 
 check.data <- function(data) {
-  ## Check whether data is a list of data matrices or factors
   if (!is.list(data) | is.data.frame(data))
     data <- list(data)
-  if (!all(sapply(data, class) %in% c("numeric", "matrix", "factor")))
-    stop("Argument data should be a list of numeric vectors or matrices, or factors")
+
+  ## Check whether data contains only vectors, matrices or factors
+  vector.idx <- sapply(data, is.vector, mode = "numeric")
+  matrix.idx <- sapply(data, is.matrix)
+  factor.idx <- sapply(data, is.factor)
+  
+  if (!all(vector.idx | matrix.idx | factor.idx))
+    stop("Argument 'data' should be a list of numeric vectors or matrices, or factors")
   
   ## Convert vectors to one-column matrices in layers
-  if (any (vector.idx <- sapply(data, is.vector, mode = "numeric"))) {
+  if (any(vector.idx)) {
     vector.idx <- which(vector.idx)
     data[vector.idx] <- lapply(data[vector.idx],
                                function(x) matrix(x, ncol = 1))
   }
-  if (any(factor.idx <- sapply(data, is.factor)))
+  if (any(factor.idx))
     data[factor.idx] <- lapply(data[factor.idx], classvec2classmat)
 
   ## Check whether data is numeric

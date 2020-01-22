@@ -1,5 +1,5 @@
 Package: kohonen
-Version: 3.0.9
+Version: 3.0.10
 Title: Supervised and Unsupervised Self-Organising Maps
 Author: Ron Wehrens and Johannes Kruisselbrink
 Maintainer: Ron Wehrens <ron.wehrens@gmail.com>
@@ -8,3 +8,7 @@ License: GPL (>= 2)
 Depends: R (>= 2.10)
 Imports: Rcpp (>= 0.12.12)
 LinkingTo: Rcpp
+NeedsCompilation: yes
+Packaged: 2019-11-26 09:14:12 UTC; ron
+Repository: CRAN
+Date/Publication: 2019-11-26 09:50:03 UTC
