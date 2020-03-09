@@ -3,6 +3,8 @@ R. Wehrens and J. Kruisselbrink, J. Stat. Softw. v87, i7, October 2018.
 
 Changes in version 3.0.11 (currently develop branch):
   - added functions nunits, layer.distances and dist2WU
+  - fixed man page for function map.kohonen which incorrectly listed
+    'dists' as a slot in the return object (noted by Samuel Granjeaud)
 
 Changes in version 3.0.10:
   - replaced calls to the class function in 'check.data'
