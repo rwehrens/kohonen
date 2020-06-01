@@ -248,8 +248,7 @@ void FindBestMatchingUnit(
 }
 
 /*
- * Returns a function pointer to compute the euclidean distance between a data
- * vector and a codebook vector.
+ * Returns the euclidean distance between a data vector and a codebook vector.
  */
 double EuclideanDistanceNaN(double *data, double *codes, int n, int nNA) {
   if (nNA == 0) {
@@ -270,8 +269,7 @@ double EuclideanDistanceNaN(double *data, double *codes, int n, int nNA) {
 }
 
 /*
- * Returns a function pointer to compute the euclidean distance between a data
- * vector and a codebook vector.
+ * Returns the euclidean distance between a data vector and a codebook vector.
  */
 double EuclideanDistance(double *data, double *codes, int n, int nNA) {
   double tmp, d = 0.0;
@@ -284,8 +282,8 @@ double EuclideanDistance(double *data, double *codes, int n, int nNA) {
 }
 
 /*
- * Returns a function pointer to compute the distance as the the sum of squared
- * differences between a data vector and a codebook vector.
+ * Returns the distance as the the sum of squared differences between a data
+ * vector and a codebook vector.
  */
 double SumOfSquaresDistanceNaN(double *data, double *codes, int n, int nNA) {
   if (nNA == 0) {
@@ -305,8 +303,8 @@ double SumOfSquaresDistanceNaN(double *data, double *codes, int n, int nNA) {
 }
 
 /*
- * Returns a function pointer to compute the distance as the the sum of squared
- * differences between a data vector and a codebook vector.
+ * Returns the distance as the the sum of squared differences between a data
+ * vector and a codebook vector.
  */
 double SumOfSquaresDistance(double *data, double *codes, int n, int nNA) {
   double tmp, d = 0.0;
@@ -318,8 +316,7 @@ double SumOfSquaresDistance(double *data, double *codes, int n, int nNA) {
 }
 
 /*
- * Returns a function pointer to compute the tanimoto distance between a data
- * vector and a codebook vector.
+ * Returns the tanimoto distance between a data vector and a codebook vector.
  */
 double TanimotoDistanceNaN(double *data, double *codes, int n, int nNA) {
   if (nNA == 0) {
@@ -341,8 +338,7 @@ double TanimotoDistanceNaN(double *data, double *codes, int n, int nNA) {
 }
 
 /*
- * Returns a function pointer to compute the tanimoto distance between a data
- * vector and a codebook vector.
+ * Returns the tanimoto distance between a data vector and a codebook vector.
  */
 double TanimotoDistance(double *data, double *codes, int n, int nNA) {
   double d = 0.0;
@@ -356,8 +352,8 @@ double TanimotoDistance(double *data, double *codes, int n, int nNA) {
 }
 
 /*
- * Returns a function pointer to compute the Manhattan or taxicab distance
- * between a data vector and a codebook vector.
+ * Returns the Manhattan or taxicab distance between a data vector and a 
+ * codebook vector.
  */
 double ManhattanDistanceNaN(double *data, double *codes, int n, int nNA) {
   if (nNA == 0) {
@@ -376,8 +372,8 @@ double ManhattanDistanceNaN(double *data, double *codes, int n, int nNA) {
 }
 
 /*
- * Returns a function pointer to compute the Manhattan or taxicab distance
- * between a data vector and a codebook vector.
+ * Returns the Manhattan or taxicab distance between a data vector and a 
+ * codebook vector.
  */
 double ManhattanDistance(double *data, double *codes, int n, int nNA) {
   double d = 0.0;
