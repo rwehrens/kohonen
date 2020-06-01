@@ -1,4 +1,6 @@
 # R history and RData files
+kohonen.Rcheck
+*.tar.gz
 *.Rhistory
 *.RData
 

@@ -25,9 +25,9 @@
   A list with elements
   \item{unit.classif}{a vector of units that are closest to the objects
     in the data matrix.}
-  \item{dists}{distances of the objects to the closest units. Distance measures
-    are the same ones used in training the map.}
-  \item{whatmap,weights}{Values used for these arguments.}
+  \item{distances}{distances of the objects to the closest
+    units. Distance measures are the same ones used in training the map.}
+  \item{whatmap, user.weights}{Values used for these arguments.}
 }
 \author{Ron Wehrens}
 \seealso{\code{\link{predict.kohonen}}, \code{\link{supersom}}}

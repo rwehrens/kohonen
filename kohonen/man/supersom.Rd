@@ -1,8 +1,8 @@
 \name{supersom}
 \alias{som}
 \alias{xyf}
-\alias{bdk}
 \alias{supersom}
+\alias{nunits}
 \title{Self- and super-organising maps}
 \description{
   A supersom is an extension of self-organising maps (SOMs) to multiple
@@ -11,7 +11,8 @@
   weighted distance over all layers is calculated to determine the
   winning units during training.
   Functions \code{som} and \code{xyf} are simply wrappers for supersoms
-  with one and two layers, respectively. Function \code{bdk} is deprecated.
+  with one and two layers, respectively. Function \code{nunits} is a
+  utility function returning the number of units in the map.
 }
 
 \usage{
@@ -23,6 +24,7 @@ supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
          keep.data = TRUE, dist.fcts = NULL,
          mode = c("online", "batch", "pbatch"), cores = -1, init,
          normalizeDataLayers = TRUE)
+nunits(kohobj)
 }
 
 \arguments{
@@ -78,6 +80,7 @@ supersom(data, grid=somgrid(), rlen = 100, alpha = c(0.05, 0.01),
     \code{distance.weights} should be calculated (see details section).
     If \code{normalizeDataLayers == FALSE} the user weights 
     are applied to the data immediately.}
+  \item{kohobj}{an object of class \code{kohonen}.}
   \item{\dots}{Further arguments for the \code{supersom} function
     presented to the \code{som} or \code{xyf} wrappers.}
 }
@@ -133,6 +136,7 @@ data(wines)
 ## som
 som.wines <- som(scale(wines), grid = somgrid(5, 5, "hexagonal"))
 summary(som.wines)
+nunits(som.wines)
 
 ## xyf
 xyf.wines <- xyf(scale(wines), vintages, grid = somgrid(5, 5, "hexagonal"))

@@ -1,7 +1,7 @@
 export("som", "xyf", "supersom", "expandMap", "somgrid",
        "classvec2classmat", "classmat2classvec",
-       "map", "add.cluster.boundaries", 
-       "object.distances", "unit.distances",
+       "nunits", "map", "add.cluster.boundaries", 
+       "object.distances", "unit.distances", "layer.distances", "dist2WU",
        "getCodes", "check.whatmap", "tricolor")
 
 S3method(print, kohonen)

@@ -36,10 +36,18 @@ void FindBestMatchingUnit(
   
 // [[Rcpp::export]]
 Rcpp::NumericVector ObjectDistances(Rcpp::NumericMatrix data,
-            Rcpp::IntegerVector numVars,
-            Rcpp::IntegerMatrix numNAs,
-            Rcpp::ExpressionVector distanceFunctions,
-            Rcpp::NumericVector weights);
+				    Rcpp::IntegerVector numVars,
+				    Rcpp::IntegerMatrix numNAs,
+				    Rcpp::ExpressionVector distanceFunctions,
+				    Rcpp::NumericVector weights);
+// [[Rcpp::export]]
+Rcpp::NumericVector LayerDistances(Rcpp::NumericMatrix data,
+				   Rcpp::NumericMatrix codes,
+				   Rcpp::IntegerVector uclassif,
+				   Rcpp::IntegerVector numVars,
+				   Rcpp::IntegerMatrix numNAs,
+				   Rcpp::ExpressionVector distanceFunctions,
+				   Rcpp::NumericVector weights);
             
 double EuclideanDistance(double *dataVector, double *codeVector, int n, int nNA);
 double SumOfSquaresDistance(double *dataVector, double *codeVector, int n, int nNA);

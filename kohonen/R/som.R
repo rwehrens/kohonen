@@ -2,3 +2,7 @@
 {
   supersom(list(X), ...)
 }
+
+"nunits" <- function(kohobj) {
+  nrow(kohobj$grid$pts)
+}

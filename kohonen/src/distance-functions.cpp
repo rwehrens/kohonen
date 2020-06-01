@@ -142,6 +142,57 @@ Rcpp::NumericVector ObjectDistances(Rcpp::NumericMatrix data,
 }
 
 /*
+ * Computes the distances between all objects of the data matrix and
+ * their nearest codebook vectors. Returns a distance vector. The
+ * weights here are the product of the user weights and the distance
+ * weights in the kohonen object.
+ */
+Rcpp::NumericVector LayerDistances(Rcpp::NumericMatrix data,
+				   Rcpp::NumericMatrix codes,
+				   Rcpp::IntegerVector uclassif,
+				   Rcpp::IntegerVector numVars,
+				   Rcpp::IntegerMatrix numNAs,
+				   Rcpp::ExpressionVector distanceFunctions,
+				   Rcpp::NumericVector weights) {
+  
+  int numObjects = data.ncol();
+  int totalVars = data.nrow();
+  int numLayers = numVars.size();
+  
+  Rcpp::NumericVector offsets(numLayers);
+  Rcpp::NumericVector distances(numObjects);
+  
+  totalVars = 0;
+  for (int l = 0; l < numLayers; l++) {
+    offsets[l] = totalVars;
+    totalVars += numVars[l];
+  }
+
+  double *pWeights = REAL(weights);
+  double *pDistances = REAL(distances);
+  int *pNumVars = INTEGER(numVars);
+  int *pNumNAs = INTEGER(numNAs);
+  int *pUClassif = INTEGER(uclassif);
+  
+  /* Get the distance function pointers. */
+  std::vector<DistanceFunctionPtr> distanceFunctionPtrs =
+    GetDistanceFunctions(distanceFunctions);
+  
+  for (int i = 0; i < numObjects; ++i) {
+    pDistances[i] = 0.0;
+    for (int l = 0; l < numLayers; ++l) {
+      pDistances[i] += pWeights[l] * (*distanceFunctionPtrs[l])(
+    	 &data[i * totalVars + offsets[l]],
+    	 &codes[pUClassif[i] * totalVars + offsets[l]],
+    	 pNumVars[l],
+    	 pNumNAs[i * numLayers + l]);
+    }
+  } 
+
+  return distances;
+}
+
+/*
  * Finds the best matching codebook unit for the given data object and stores
  * its index and distance in the specified nearest unit index and nearest unit
  * distance references.

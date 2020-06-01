@@ -59,7 +59,8 @@ plot.kohonen <- function (x,
                          keepMargins = keepMargins, shape = shape,
                          border = border, ...),
          quality =
-           plot.kohquality(x = x, classif = classif, main = main,
+           plot.kohquality(x = x, whatmap = whatmap,
+                           classif = classif, main = main,
                            palette.name = palette.name, ncolors = ncolors,
                            zlim = zlim, heatkey = heatkey,
                            keepMargins = keepMargins,
@@ -201,6 +202,8 @@ plot.kohprop <- function(x, property, main, palette.name, ncolors,
   if (is.null(zlim)) {
     if (contin) {
       zlim <- range(property, finite = TRUE)
+      if (diff(zlim) < 1e-12) # only one value...
+        zlim <- zlim + c(-.5, .5)
     } else {
       zlim <- range(1:nlevels(property))
     }
@@ -379,30 +382,16 @@ plot.kohUmatrix <- function(x, classif, main, palette.name,
 }
 
 
-plot.kohquality <- function(x, classif, main, palette.name, ncolors,
+plot.kohquality <- function(x, whatmap, classif, main, palette.name, ncolors,
                             zlim, heatkey, keepMargins, shape, border, ...)
 {
   if (is.null(main)) main <- "Quality plot"
   if (is.null(palette.name)) palette.name <- heat.colors
-
-  distances <- NULL
-  if (is.null(classif) & !is.null(x$unit.classif)) {
-    classif <- x$unit.classif
-    distances <- x$distances
-  } else {
-    if (is.list(classif) &&
-        !is.null(classif$unit.classif) &&
-        !is.null(classif$distances)) {
-      classif <- classif$unit.classif
-      distances <- classif$distances
-    }
-  }
-  if (is.null(distances))
-    stop("No mapping or mapping distances available")
-
-  similarities <- rep(NA, nrow(x$grid$pts))
-  hits <- as.integer(names(table(classif)))
-  similarities[hits] <- sapply(split(distances, classif), mean)
+  if (is.null(whatmap)) whatmap <- x$whatmap
+  if (is.null(classif)) classif <- x$unit.classif
+  
+  similarities <- layer.distances(x, whatmap = whatmap,
+                                  classif = classif, data = x$data)
 
   plot.kohprop(x, property = similarities, main = main,
                palette.name = palette.name, ncolors = ncolors,
