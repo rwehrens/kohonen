@@ -115,6 +115,10 @@ table(vintages[-training], som.prediction$predictions[["vintages"]])
 som.prediction <- predict(som.wines, newdata = list(Xtest), whatmap = 1)
 table(vintages[-training], som.prediction$predictions[["vintages"]])
 
+## for xyf: explicitly indicate which layer is to be used for the mapping
+xyf.wines <- xyf(Xtraining, vintages[training], grid = mygrid)
+xyf.prediction <- predict(xyf.wines, Xtest, whatmap = 1)
+table(vintages[-training], xyf.prediction$predictions[[2]])
 
 ## ###############################################################
 ## Situation 3: predictions for layers not present in the original
