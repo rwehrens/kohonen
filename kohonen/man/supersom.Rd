@@ -95,6 +95,8 @@ nunits(kohobj)
   \item{codes}{a list of matrices containing codebook vectors.}
   \item{changes}{matrix of mean average deviations from code vectors;
     every map corresponds with one column.}
+  \item{na.rows}{vector of row numbers with too many NA values
+    (according to argument \code{maxNA.fraction}.}
   \item{alpha, radius, user.weights, whatmap, maxNA.fraction}{input arguments
     presented to the function.}
   \item{distance.weights}{if \code{normalizeDataLayers} weights to
