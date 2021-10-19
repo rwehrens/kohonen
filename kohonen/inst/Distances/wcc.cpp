@@ -52,7 +52,7 @@ double wcc_autocorr(double *p1, int np) {
 
 /* If you want to use wccd inside R, you can call the function with this
    applyDF wrapper:
-   wccvalue <- applyDF(wccd, pattern1, pattern2, numNA) */
+   wccvalue <- applyDF(WCCd() pattern1, pattern2, numNA) */
 
 // [[Rcpp::export]]
 double applyDF(SEXP xpsexp, Rcpp::NumericVector data,
