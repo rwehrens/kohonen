@@ -3,6 +3,7 @@
 
 #include <R.h>
 #include <Rcpp.h>
+#include <cfloat>
 
 #include "kohonen_types.h"
 
