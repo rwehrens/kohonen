@@ -65,7 +65,7 @@ plot.kohonen <- function (x,
                            zlim = zlim, heatkey = heatkey,
                            keepMargins = keepMargins,
                            heatkeywidth = heatkeywidth, shape = shape,
-                           border = border, ...),
+                           border = border, na.color = na.color, ...),
          counts =
            plot.kohcounts(x = x, classif = classif, main = main,
                           palette.name = palette.name, ncolors = ncolors,
@@ -355,7 +355,7 @@ plot.kohcounts <- function(x, classif, main, palette.name, ncolors,
                palette.name = palette.name, ncolors = ncolors,
                zlim = zlim, heatkey = heatkey, 
                keepMargins = keepMargins, heatkeywidth = heatkeywidth,
-               shape = shape, border = border, ...)
+               shape = shape, border = border, na.color = na.color, ...)
 
   invisible(counts)
 }
@@ -383,7 +383,8 @@ plot.kohUmatrix <- function(x, classif, main, palette.name,
 
 
 plot.kohquality <- function(x, whatmap, classif, main, palette.name, ncolors,
-                            zlim, heatkey, keepMargins, shape, border, ...)
+                            zlim, heatkey, keepMargins, shape, border,
+                            na.color = "gray", ...)
 {
   if (is.null(main)) main <- "Quality plot"
   if (is.null(palette.name)) palette.name <- heat.colors
@@ -396,7 +397,8 @@ plot.kohquality <- function(x, whatmap, classif, main, palette.name, ncolors,
   plot.kohprop(x, property = similarities, main = main,
                palette.name = palette.name, ncolors = ncolors,
                zlim = zlim, heatkey = heatkey, 
-               keepMargins = keepMargins, shape = shape, border = border, ...)
+               keepMargins = keepMargins, shape = shape,
+               border = border, na.color = na.color, ...)
 
   invisible(similarities)
 }
@@ -408,7 +410,7 @@ plot.kohcodes <- function(x, whatmap, main, palette.name, bgcol,
 {
   if (!keepMargins) {
     opar <- par(c("mar"))
-    on.exit(par(opar))
+    on.exit(par(mar=opar))
   }
 
   if (is.null(palette.name)) palette.name <- terrain.colors
