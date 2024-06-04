@@ -209,8 +209,13 @@ plot.kohprop <- function(x, property, main, palette.name, ncolors,
     }
   }
 
-  if (missing(ncolors))
-    ncolors <- min(length(unique(property[!is.na(property)])), 20)
+  if (missing(ncolors)) {
+    if (contin) {
+      ncolors <- min(length(unique(property[!is.na(property)])), 20)
+    } else {
+      ncolors <- nlevels(property)
+    }
+  }
   bgcol <- palette.name(ncolors)
 
   bgcolors <- rep(na.color, nrow(x$grid$pts))
