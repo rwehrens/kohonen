@@ -85,6 +85,7 @@ predict.kohonen <- function(object,
 
   ## ###############################################################
   ## map newdata
+  
   if (is.null(newdata)) {
     newdata <- object$data
     if (is.null(newdata))
@@ -123,9 +124,11 @@ predict.kohonen <- function(object,
     if (is.null(newrownames)) newrownames <- 1:nrow(newdata[[1]])
     nnewrows <- length(newrownames)
 
-    narows <- check.data.na(newdata[whatmap.new],
-                            maxNA.fraction = maxNA.fraction)
-    newdata <- remove.data.na(newdata, narows)
+    ## ## June 10, 2024: I think the next two statements can go - this
+    ## ## situation is handled automatically by map.kohonen 
+    ## narows <- check.data.na(newdata[whatmap.new],
+    ##                         maxNA.fraction = maxNA.fraction)
+    ## newdata <- remove.data.na(newdata, narows)
     
     ## finally: calculate mapping of new data
     newmapping <- map(object,
@@ -134,12 +137,16 @@ predict.kohonen <- function(object,
                       ...)$unit.classif
   }
 
-  if (length(narows) > 0) {
-    rowidx <- (1:nnewrows)[-narows]
-  } else {
-    rowidx <- 1:nnewrows
-  }
-  nonNA <- rowidx[which(!is.na(newmapping))]
+  ## ## June 10, 2024: this can be done simply by checking the NA
+  ## ## locations in newmapping
+  ## if (length(narows) > 0) {
+  ##   rowidx <- (1:nnewrows)[-narows]
+  ## } else {
+  ##   rowidx <- 1:nnewrows
+  ## }
+  ## nonNA <- rowidx[which(!is.na(newmapping))]
+
+  nonNA <- !is.na(newmapping)
   predictions <- lapply(unit.predictions,
                         function(x) {
                           pred <- matrix(NA, nnewrows, ncol(x))
