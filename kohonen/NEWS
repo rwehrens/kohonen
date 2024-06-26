@@ -3,9 +3,14 @@ R. Wehrens and J. Kruisselbrink, J. Stat. Softw. v87, i7, October 2018.
 
 Changes in version 3.0.13 (currently develop branch):
   - fixed bug in plot.property where unpopulated levels in plotting a
-  factor would lead to duplicate labels in the heatkey
+    factor would lead to duplicate labels in the heatkey
+  - fixed bug in predict.kohonen that mixed up prediction results in
+    the case of NA values
+  - changed classvec2classmat behaviour for factors containing NAs:
+    the old behaviour would lead to rows of zeros, the new behaviour to
+    rows of NAs
 
-Changes in version 3.0.11:
+Changes in version 3.0.11 (became stable version 3.0.12):
   - added functions nunits, layer.distances and dist2WU
   - fixed man page for function map.kohonen which incorrectly listed
     'dists' as a slot in the return object (noted by Samuel Granjeaud)

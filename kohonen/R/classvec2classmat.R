@@ -2,13 +2,16 @@ classvec2classmat <- function(yvec)
 {
   if (!is.factor(yvec)) yvec <- factor(yvec)
   nclasses <- nlevels(yvec)
-
+  na.idx <- which(is.na(yvec))
+  
   outmat <- matrix(0, length(yvec), nclasses)
   dimnames(outmat) <- list(NULL, levels(yvec))
   
   for (i in 1:nclasses)
     outmat[which(as.integer(yvec) == i),i] <- 1
 
+  outmat[na.idx,] <- NA
+  
   outmat
 }
 
