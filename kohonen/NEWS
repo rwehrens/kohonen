@@ -1,7 +1,9 @@
 Kohonen package version 3.0.7 is described in 
 R. Wehrens and J. Kruisselbrink, J. Stat. Softw. v87, i7, October 2018.
 
-Changes in version 3.0.13 (currently develop branch):
+Changes in version 3.0.13:
+  - added "Suggests" field in DESCRIPTION
+  - added Authors@R field in DESCRIPTION
   - fixed bug in plot.property where unpopulated levels in plotting a
     factor would lead to duplicate labels in the heatkey
   - fixed bug in predict.kohonen that mixed up prediction results in
