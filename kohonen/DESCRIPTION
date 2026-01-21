@@ -1,14 +1,18 @@
 Package: kohonen
 Version: 3.0.13
 Title: Supervised and Unsupervised Self-Organising Maps
-Author: Ron Wehrens and Johannes Kruisselbrink
+Authors@R: c(person(given = "Ron",
+                      family = "Wehrens",
+                      role = c("aut", "cre"),
+                      email = "ron.wehrens@gmail.com"),
+               person(given = "Johannes",
+                      family = "Kruisselbrink",
+                      role = "aut"))
 Maintainer: Ron Wehrens <ron.wehrens@gmail.com>
 Description: Functions to train self-organising maps (SOMs). Also interrogation of the maps and prediction using trained maps are supported. The name of the package refers to Teuvo Kohonen, the inventor of the SOM.
 License: GPL (>= 2)
 Depends: R (>= 2.10)
 Imports: Rcpp (>= 0.12.12)
+Suggests: RColorBrewer, lattice, vegan
 LinkingTo: Rcpp
 NeedsCompilation: yes
-Packaged: 2019-11-26 09:14:12 UTC; ron
-Repository: CRAN
-Date/Publication: 2019-11-26 09:50:03 UTC
