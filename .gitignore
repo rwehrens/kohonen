@@ -3,6 +3,7 @@ kohonen.Rcheck
 *.tar.gz
 *.Rhistory
 *.RData
+.Rproj.user
 
 # C/C++ object files and compiled libraries
 *.o
