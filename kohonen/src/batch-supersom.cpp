@@ -25,8 +25,7 @@ Rcpp::List RcppBatchSupersom(
   int neighbourhoodFct,
   Rcpp::NumericVector radii,
   int numEpochs
-  )
-{
+) {
   int numObjects = data.ncol(),   /* number of objects */
     numLayers = numVars.size(),   /* number of layers */
     numCodes = codes.ncol(),      /* number of units in the map */
@@ -60,7 +59,7 @@ Rcpp::List RcppBatchSupersom(
 
   std::vector<DistanceFunctionPtr> distanceFunctionPtrs =
     GetDistanceFunctions(distanceFunctions);
-  
+
   /* Create the neighborhood influence function pointer. */
   NeighbourhoodFunctionPtr neighbourhoodFunctionPtr =
     CreateNeighbourhoodFunction((NeighbourhoodFunctionType)neighbourhoodFct);;
@@ -92,7 +91,7 @@ Rcpp::List RcppBatchSupersom(
 
       /* Find best matching unit index and distance */
       pObject = &pData[i * totalVars];
-      
+
       /* Find best matching unit index and distance */
       FindBestMatchingUnit(
         pObject,
@@ -107,9 +106,9 @@ Rcpp::List RcppBatchSupersom(
         pWeights,
         nearest,
         dist);
-        
+
       if (nearest < 0) {
-        ::Rf_error("No nearest neighbour found...");
+        Rcpp::stop("No nearest neighbour found...");
       }
 
       /* Update changes */
@@ -117,7 +116,7 @@ Rcpp::List RcppBatchSupersom(
         dist = 0.0;
         for (j = 0; j < numVars[l]; j++) {
           if (!std::isnan(data[i * totalVars + offsets[l] + j])) {
-            tmp = data[i * totalVars + offsets[l] + j] - 
+            tmp = data[i * totalVars + offsets[l] + j] -
               codes[nearest * totalVars + offsets[l] + j];
             dist += tmp * tmp;
           }
@@ -147,7 +146,7 @@ Rcpp::List RcppBatchSupersom(
     for (cd = 0; cd < numCodes; cd++) {
       if (pCodeWeights[cd] > 0) {
         for (j = 0; j < totalVars; j++) {
-          codes[cd * totalVars + j] = 
+          codes[cd * totalVars + j] =
             pCodeSums[cd * totalVars + j] / pCodeWeights[cd];
         }
       }
@@ -160,9 +159,10 @@ Rcpp::List RcppBatchSupersom(
     }
   }
 
+  RANDOUT;
+
   return Rcpp::List::create(
     Rcpp::Named("codes") = codes,
-    Rcpp::Named("changes") = changes);
-
-  RANDOUT;
+    Rcpp::Named("changes") = changes
+  );
 }

@@ -146,7 +146,7 @@ Rcpp::List RcppParallelBatchSupersom(
           dist);
 
         if (nearest < 0) {
-          ::Rf_error("No nearest neighbour found...");
+          Rcpp::stop("No nearest neighbour found...");
         }
 
         /* Update changes */
@@ -221,16 +221,16 @@ Rcpp::List RcppParallelBatchSupersom(
     }
   }
 
+  RANDOUT;
+
   return Rcpp::List::create(
     Rcpp::Named("codes") = codes,
     Rcpp::Named("changes") = changes);
 
-  RANDOUT;
-  
   #else
-    ::Rf_warning("OpenMP not available: cannot run in parallel mode");
+    Rcpp::warning("OpenMP not available: cannot run in parallel mode");
     return RcppBatchSupersom(data, codes, numVars, weights, distanceFunctions,
-			     numNAs, neighbourhoodDistances, neighbourhoodFct,
-			     radii, numEpochs);  
+           numNAs, neighbourhoodDistances, neighbourhoodFct,
+           radii, numEpochs);
   #endif
 }

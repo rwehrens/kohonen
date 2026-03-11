@@ -12,7 +12,7 @@
    object has more NAs than allowed (indicated as a fraction of the
    total number), it is removed from the data set in the pre-C R
    code. It can be mapped later using the whatmaps argument in the
-   map.kohonen function. 
+   map.kohonen function.
    NOTE: this means that our distance functions never should return NAs...
 
    Author: Ron Wehrens and Johannes Kruisselbrink
@@ -44,8 +44,7 @@ Rcpp::List RcppSupersom(
   Rcpp::NumericVector alphas,
   Rcpp::NumericVector radii,
   int numEpochs
-  )
-{
+) {
   int
     numObjects = data.ncol(),     /* number of objects */
     numLayers = numVars.size(),   /* number of layers */
@@ -74,11 +73,11 @@ Rcpp::List RcppSupersom(
     *pOffsets = INTEGER(offsets),
     *pNumVars = INTEGER(numVars),
     *pNumNAs = INTEGER(numNAs);
-  
+
   /* Get the distance function pointers. */
   std::vector<DistanceFunctionPtr> distanceFunctionPtrs =
     GetDistanceFunctions(distanceFunctions);
-  
+
   /* Create the neighborhood influence function pointer. */
   NeighbourhoodFunctionPtr neighbourhoodFunctionPtr =
     CreateNeighbourhoodFunction((NeighbourhoodFunctionType)neighbourhoodFct);
@@ -93,7 +92,7 @@ Rcpp::List RcppSupersom(
   totalIters = numEpochs * numObjects;
 
   RANDIN;
-  
+
   /* Outer loop: number of iterations */
   for (m = 0; m < numEpochs; m++) {
 
@@ -122,7 +121,7 @@ Rcpp::List RcppSupersom(
         distance);
 
       if (nearest < 0) {
-        ::Rf_error("No nearest neighbour found...");
+        Rcpp::stop("No nearest neighbour found...");
       }
 
       /* Linear decays for radius and learning parameter */
